@@ -1,0 +1,260 @@
+{
+  "_note": "Shared by the app and the voice generators. Every jp and en line starts with {n}: that part is the name clip, the rest is generated per honorific. After editing, re-run scripts/generate_voices.py (Japanese) and scripts/generate_voices_en.py (English).",
+  "honorifics": [
+    {
+      "key": "kun",
+      "jp": "くん",
+      "en": "-kun",
+      "label": "-kun (boy)",
+      "enSpeak": "koon"
+    },
+    {
+      "key": "chan",
+      "jp": "ちゃん",
+      "en": "-chan",
+      "label": "-chan (girl)",
+      "enSpeak": "chahn"
+    },
+    {
+      "key": "san",
+      "jp": "さん",
+      "en": "-san",
+      "label": "-san (polite)",
+      "enSpeak": "sahn"
+    },
+    {
+      "key": "none",
+      "jp": "",
+      "en": "",
+      "label": "Just my name",
+      "enSpeak": ""
+    },
+    {
+      "key": "senpai",
+      "jp": "せんぱい",
+      "en": "-senpai",
+      "label": "-senpai",
+      "enSpeak": "senpai"
+    }
+  ],
+  "girls": {
+    "hana": {
+      "speaker": "猫使ビィ",
+      "nameStyle": "ノーマル",
+      "speed": 0.95,
+      "pitch": 0.0,
+      "styles": {
+        "love": "人見知り",
+        "angry": "つよつよ",
+        "miss": "おちつき",
+        "shy": "人見知り",
+        "night": "おちつき",
+        "call": "ノーマル",
+        "message": "人見知り",
+        "morning": "人見知り"
+      },
+      "en": {
+        "voice": "af_nicole",
+        "speed": 0.9
+      }
+    },
+    "rei": {
+      "speaker": "冥鳴ひまり",
+      "nameStyle": "ノーマル",
+      "speed": 0.95,
+      "pitch": -0.02,
+      "styles": {
+        "love": "ノーマル",
+        "angry": "ノーマル",
+        "miss": "ノーマル",
+        "shy": "ノーマル",
+        "night": "ノーマル",
+        "call": "ノーマル",
+        "message": "ノーマル",
+        "morning": "ノーマル"
+      },
+      "en": {
+        "voice": "af_kore",
+        "speed": 0.9
+      }
+    },
+    "aiko": {
+      "speaker": "四国めたん",
+      "nameStyle": "ツンツン",
+      "speed": 1.05,
+      "pitch": 0.0,
+      "styles": {
+        "love": "ツンツン",
+        "angry": "ツンツン",
+        "miss": "あまあま",
+        "shy": "ツンツン",
+        "night": "ささやき",
+        "call": "ツンツン",
+        "message": "ノーマル",
+        "morning": "ツンツン"
+      },
+      "en": {
+        "voice": "af_bella",
+        "speed": 1.05
+      }
+    },
+    "yui": {
+      "speaker": "満別花丸",
+      "nameStyle": "元気",
+      "speed": 1.1,
+      "pitch": 0.0,
+      "styles": {
+        "love": "ぶりっ子",
+        "angry": "ノーマル",
+        "miss": "ぶりっ子",
+        "shy": "ぶりっ子",
+        "night": "ささやき",
+        "call": "元気",
+        "message": "元気",
+        "morning": "元気"
+      },
+      "en": {
+        "voice": "af_heart",
+        "speed": 1.1
+      }
+    }
+  },
+  "lines": {
+    "hana": {
+      "love": {
+        "en": "{n}... I... I really like you...",
+        "jp": "{n}…すき、です…"
+      },
+      "angry": {
+        "en": "{n}... that was mean... hmph...",
+        "jp": "{n}…ひどい…"
+      },
+      "miss": {
+        "en": "{n}... I missed you so much...",
+        "jp": "{n}…あいたかった…"
+      },
+      "shy": {
+        "en": "{n}... d-don't look at me like that...",
+        "jp": "{n}…み、みないで…"
+      },
+      "night": {
+        "en": "{n}... good night... sweet dreams...",
+        "jp": "{n}…おやすみなさい…"
+      },
+      "call": {
+        "en": "{n}... someone is calling you...",
+        "jp": "{n}…でんわですよ…"
+      },
+      "message": {
+        "en": "{n}... you have a message...",
+        "jp": "{n}…メッセージです…"
+      },
+      "morning": {
+        "en": "{n}... g-good morning... time to wake up...",
+        "jp": "{n}…お、おはよう…おきて…"
+      }
+    },
+    "rei": {
+      "love": {
+        "en": "{n}. I will always protect you.",
+        "jp": "{n}。わたしがまもる。"
+      },
+      "angry": {
+        "en": "{n}. Don't do that again.",
+        "jp": "{n}。もうやめて。"
+      },
+      "miss": {
+        "en": "{n}... come back to me.",
+        "jp": "{n}…もどってきて。"
+      },
+      "shy": {
+        "en": "{n}... it's not a big deal.",
+        "jp": "{n}…べつに。"
+      },
+      "night": {
+        "en": "{n}. Sleep. I'll keep watch.",
+        "jp": "{n}。おやすみ。"
+      },
+      "call": {
+        "en": "{n}. Your phone. Answer it.",
+        "jp": "{n}。でんわ。でて。"
+      },
+      "message": {
+        "en": "{n}. New message.",
+        "jp": "{n}。メッセージ。"
+      },
+      "morning": {
+        "en": "{n}. Wake up.",
+        "jp": "{n}。おきて。"
+      }
+    },
+    "aiko": {
+      "love": {
+        "en": "{n}! It's not like I like you... baka!",
+        "jp": "{n}！べつにすきじゃないからね！ばか！"
+      },
+      "angry": {
+        "en": "{n}! You idiot! Hmph!",
+        "jp": "{n}のばか！ふん！"
+      },
+      "miss": {
+        "en": "{n}... I did NOT miss you. Okay, maybe a little.",
+        "jp": "{n}…さびしくなんか、ないんだから。"
+      },
+      "shy": {
+        "en": "{n}! W-what are you staring at?!",
+        "jp": "{n}！な、なにみてるのよ！"
+      },
+      "night": {
+        "en": "{n}... good night. Not that I care!",
+        "jp": "{n}…おやすみ。ふん！"
+      },
+      "call": {
+        "en": "{n}! Pick up the phone! Hmph!",
+        "jp": "{n}！はやくでてよ！"
+      },
+      "message": {
+        "en": "{n}! Read your message!",
+        "jp": "{n}！メッセージよ！"
+      },
+      "morning": {
+        "en": "{n}! Wake up! I'm not waiting for you!",
+        "jp": "{n}！おきなさい！"
+      }
+    },
+    "yui": {
+      "love": {
+        "en": "{n}! I love you so much!",
+        "jp": "{n}！だいすき！"
+      },
+      "angry": {
+        "en": "{n}! Ugh! I'm so mad!",
+        "jp": "{n}！もう、おこったよ！"
+      },
+      "miss": {
+        "en": "{n}! Where were you? I missed you!",
+        "jp": "{n}！あいたかったよ！"
+      },
+      "shy": {
+        "en": "{n}, hehe... you're making me blush!",
+        "jp": "{n}、えへへ、はずかしい！"
+      },
+      "night": {
+        "en": "{n}! Night night! See you tomorrow!",
+        "jp": "{n}！おやすみ！またあした！"
+      },
+      "call": {
+        "en": "{n}! Phone! Phone! Pick it up!",
+        "jp": "{n}！でんわだよ！"
+      },
+      "message": {
+        "en": "{n}! You got a message! Yay!",
+        "jp": "{n}！メッセージだよ！"
+      },
+      "morning": {
+        "en": "{n}! Good morning! Let's go!",
+        "jp": "{n}！おはよう！いこう！"
+      }
+    }
+  }
+}
