@@ -36,7 +36,9 @@ jobs:
       - name: Install ffmpeg and Orpheus
         run: |
           sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
-          pip install -r scripts/requirements-voices-en.txt
+          # Portable CPU build (AVX2), so a pip-cached wheel also works on other runner CPUs.
+          CMAKE_ARGS="-DGGML_NATIVE=OFF -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON" \
+            pip install --no-binary llama-cpp-python -r scripts/requirements-voices-en.txt
 
       - name: Cache Orpheus model
         uses: actions/cache@v4
