@@ -7,7 +7,7 @@ Usage:
 
 Needs `pip install orpheus-cpp scipy` plus llama-cpp-python (Metal build on Apple Silicon:
 `pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/metal`),
-and ffmpeg on PATH. The ~2 GB model downloads from Hugging Face on first run.
+and ffmpeg (system, or the one bundled with imageio-ffmpeg). The ~2 GB model downloads from Hugging Face on first run.
 
 Orpheus has no style field: emotion comes from the wording, punctuation, CAPS and its vocal tags
 (<laugh> <chuckle> <sigh> <sniffle> <groan> <yawn> <gasp>). Our lines.json tags are mapped onto those.
@@ -18,6 +18,7 @@ import argparse
 import hashlib
 import json
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -31,6 +32,17 @@ OUT = VOICES / "en"
 SAMPLES = ROOT / ".voicegen/samples/en"
 LEADING_PUNCT = "…。！？、!?., "
 MODEL = "orpheus-3b-0.1-ft-q4_k_m"
+
+def ffmpeg_exe() -> str:
+    """System ffmpeg if installed, otherwise the binary bundled with imageio-ffmpeg."""
+    found = shutil.which("ffmpeg")
+    if found:
+        return found
+    import imageio_ffmpeg
+
+    return imageio_ffmpeg.get_ffmpeg_exe()
+
+
 TRIM = ("silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
         "silenceremove=start_periods=1:start_threshold=-45dB,areverse")
 # lines.json uses a wider tag set; map to what Orpheus was trained on ("" drops the tag).
@@ -58,7 +70,7 @@ def to_mp3(pcm, rate: int, dest: Path, tail: float):
             w.writeframes(pcm.tobytes())
         # Same CBR, header-free format as the Japanese clips so they can be byte-joined.
         subprocess.run(
-            ["ffmpeg", "-loglevel", "error", "-y", "-i", tmp.name, "-af", f"{TRIM},apad=pad_dur={tail}",
+            [ffmpeg_exe(), "-loglevel", "error", "-y", "-i", tmp.name, "-af", f"{TRIM},apad=pad_dur={tail}",
              "-ac", "1", "-ar", "24000", "-b:a", "48k", "-map_metadata", "-1", "-id3v2_version", "0",
              "-write_xing", "0", str(dest)],
             check=True,

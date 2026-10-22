@@ -5,3 +5,4 @@
 orpheus-cpp==0.0.3
 llama-cpp-python==0.3.19
 scipy
+imageio-ffmpeg  # bundled ffmpeg, so CI doesn't depend on the (sometimes very slow) apt mirror
