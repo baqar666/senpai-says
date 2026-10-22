@@ -6,24 +6,24 @@ Original anime girls (Hana, Rei, Aiko, Yui) say your name with different emotion
 
 Real voices in both languages ship inside the app as small MP3s in `assets/voices/jp` and `assets/voices/en`, so they work offline.
 
-| Girl | Japanese ([VOICEVOX](https://voicevox.hiroshiba.jp/)) | English ([Kokoro](https://huggingface.co/hexgrad/Kokoro-82M)) |
+| Girl | Japanese ([VOICEVOX](https://voicevox.hiroshiba.jp/)) | English ([Orpheus](https://github.com/canopyai/Orpheus-TTS)) |
 | --- | --- | --- |
-| Hana (shy) | 猫使ビィ | af_nicole |
-| Rei (cool) | 冥鳴ひまり | af_kore |
-| Aiko (tsundere) | 四国めたん | af_bella |
-| Yui (genki) | 満別花丸 | af_heart |
+| Hana (shy) | WhiteCUL | leah |
+| Rei (cool) | 冥鳴ひまり | zoe |
+| Aiko (tsundere) | 四国めたん | jess |
+| Yui (genki) | 満別花丸 | tara |
 
-The four VOICEVOX voices allow commercial use with credit. The app shows "VOICEVOX:<name>" credits in Settings, and you must keep them (also add them to the Play Store description). Each voice's full terms are in its VOICEVOX library page. Kokoro is Apache 2.0, so commercial use is allowed and no credit is required.
+The four VOICEVOX voices allow commercial use with credit. The app shows "VOICEVOX:<name>" credits in Settings, and you must keep them (also add them to the Play Store description). Each voice's full terms are in its VOICEVOX library page. Orpheus is Apache 2.0 and built on Llama 3.2, whose community license allows commercial use with a "Built with Llama" credit (shown in Settings).
 
 How names work: each girl says the name clip (for example バーキル, or "Baqar" in English), then the rest of the line with the chosen honorific (-kun, -chan, -san, -senpai, or none). Names that aren't in `src/data/names.json` get the "senpai" version.
 
 ### Add names or change lines
 
 1. Edit `src/data/names.json` (katakana, then spellings) or `src/data/lines.json`.
-2. Get VOICEVOX Core: install the wheel from the [voicevox_core releases](https://github.com/VOICEVOX/voicevox_core/releases) (`pip install voicevox_core-*.whl`), then run its `download` tool to fetch ONNX Runtime and the dictionary (it asks you to accept the terms). Download only the voice models you need from [voicevox_vvm releases](https://github.com/VOICEVOX/voicevox_vvm/releases) into `models/vvms/`: `0.vvm`, `1.vvm`, `5.vvm`, `13.vvm`, `14.vvm`, `21.vvm`.
+2. Japanese: get VOICEVOX Core. Install the wheel from the [voicevox_core releases](https://github.com/VOICEVOX/voicevox_core/releases) (`pip install voicevox_core-*.whl`), then run its `download` tool to fetch ONNX Runtime and the dictionary (it asks you to accept the terms). Download only the voice models you need from [voicevox_vvm releases](https://github.com/VOICEVOX/voicevox_vvm/releases) into `models/vvms/`: `0.vvm`, `1.vvm`, `5.vvm`, `8.vvm`, `13.vvm`, `14.vvm`, `21.vvm`.
 3. Run `python scripts/generate_voices.py --vv <download dir>` (needs ffmpeg). Only changed clips are regenerated.
-4. English: `pip install kokoro-onnx`, download `kokoro-v1.0.fp16.onnx` and `voices-v1.0.bin` from the [kokoro-onnx releases](https://github.com/thewh1teagle/kokoro-onnx/releases) (model-files-v1.1), then run `python scripts/generate_voices_en.py --model kokoro-v1.0.fp16.onnx --voices voices-v1.0.bin`. If it fails with an espeak `phontab` error, the espeak data path is too long: copy `espeakng_loader/espeak-ng-data` from your Python packages to a short folder and add `--espeak-data <that folder>`.
-5. Commit `assets/voices/` and `src/data/voice-assets.ts`.
+4. English: run the **Generate English voices** workflow in the GitHub Actions tab. Pick `sample` to download a few previews first, then `full` to generate every clip; it commits them and starts the Android build. (Locally: `pip install orpheus-cpp scipy` plus `llama-cpp-python==0.3.19` from the Metal wheel index, then `python scripts/generate_voices_en.py`. It needs about 3 GB of free RAM and disk.)
+5. Commit `assets/voices/jp` and `src/data/voice-assets.ts` (the English workflow commits its own clips).
 
 ## Run locally (web preview)
 
@@ -71,7 +71,7 @@ Keep `upload.keystore` safe and never commit it. If you lose it, you can't updat
 - `src/components/`: neumorphic UI, face art, toast
 - `src/lib/motion.ts`: light native-driver animations (turned off by "Reduce animations")
 - `modules/ringtone-setter/`: Android native module that joins the voice clips into one file and sets it as a ringtone, notification, or alarm
-- `scripts/generate_voices.py` / `generate_voices_en.py`: make the Japanese (VOICEVOX) and English (Kokoro) clips; `voice_index.py` writes `src/data/voice-assets.ts`
+- `scripts/generate_voices.py` / `generate_voices_en.py`: make the Japanese (VOICEVOX, with per-emotion pitch shaping) and English (Orpheus) clips; `voice_index.py` writes `src/data/voice-assets.ts`
 - `plugins/withReleaseSigning.js`: config plugin that signs release builds in CI
 
 ## Next steps

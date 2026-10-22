@@ -1,0 +1,103 @@
+name: Generate English voices
+
+# Runs Orpheus TTS (free, open source) on GitHub's machines, one job per girl in parallel.
+#   sample: a few joined preview clips per girl, downloadable as artifacts, to listen first
+#   full:   every English clip, committed to the repo, then the Android build is started
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "sample (preview a few clips) or full (generate and commit everything)"
+        type: choice
+        options: [sample, full]
+        default: sample
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      matrix:
+        girl: [hana, rei, aiko, yui]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install ffmpeg and Orpheus
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+          pip install orpheus-cpp==0.0.3 scipy
+          pip install llama-cpp-python==0.3.19 --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+
+      - name: Cache Orpheus model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: orpheus-3b-q4km-snac-v1
+
+      - name: Generate ${{ matrix.girl }}
+        run: python scripts/generate_voices_en.py --girl ${{ matrix.girl }} ${{ inputs.mode == 'sample' && '--sample' || '' }}
+
+      - name: Upload samples
+        if: inputs.mode == 'sample'
+        uses: actions/upload-artifact@v4
+        with:
+          name: samples-${{ matrix.girl }}
+          path: .voicegen/samples/en/listen/
+
+      - name: Upload clips
+        if: inputs.mode == 'full'
+        uses: actions/upload-artifact@v4
+        with:
+          name: voices-${{ matrix.girl }}
+          path: assets/voices/en/${{ matrix.girl }}/
+          retention-days: 3
+
+  commit:
+    if: inputs.mode == 'full'
+    needs: generate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: voices-*
+          path: ${{ runner.temp }}/voices
+
+      - name: Replace English clips and rebuild the index
+        run: |
+          for g in hana rei aiko yui; do
+            rm -rf "assets/voices/en/$g"
+            mkdir -p assets/voices/en
+            mv "$RUNNER_TEMP/voices/voices-$g" "assets/voices/en/$g"
+          done
+          python scripts/voice_index.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/voices/en src/data/voice-assets.ts
+          git diff --cached --quiet && { echo "No changes"; exit 0; }
+          git commit -m "Generate English voices with Orpheus"
+          git push
+
+      # Pushes made with GITHUB_TOKEN don't trigger other workflows, so start the APK build explicitly.
+      - name: Start Android build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run android.yml --ref main

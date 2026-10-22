@@ -33,14 +33,15 @@ def write_index():
             out.append("      },")
             out.append("      names: {")
             for entry in NAMES:
-                out.append(f"        '{entry[1]}': {req(f'{lang}/{gid}/names/{entry[1]}.mp3')},")
+                tones = ", ".join(f"{t}: {req(f'{lang}/{gid}/names/{entry[1]}_{t}.mp3')}" for t in ("soft", "loud"))
+                out.append(f"        '{entry[1]}': {{ {tones} }},")
             out.append("      },")
             out.append("    },")
         out.append("  },")
     out.append("} as const;")
     out.append("")
     credits = [f"VOICEVOX:{c}" for c in sorted({g["speaker"] for g in LINES["girls"].values()})]
-    credits.append("Kokoro TTS (English)")
+    credits.append("Orpheus TTS (English, Built with Llama)")
     out.append(f"export const VOICE_CREDITS = {json.dumps(credits, ensure_ascii=False)};")
     out.append("")
     INDEX.write_text("\n".join(out))

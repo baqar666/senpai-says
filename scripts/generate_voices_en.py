@@ -1,41 +1,55 @@
 #!/usr/bin/env python3
-"""Generate the girls' English voice clips with Kokoro TTS (Apache 2.0).
+"""Generate the girls' expressive English voice clips with Orpheus TTS (free, runs locally).
 
 Usage:
-  python scripts/generate_voices_en.py --model kokoro-v1.0.fp16.onnx --voices voices-v1.0.bin
+  python scripts/generate_voices_en.py --sample   # a few clips per girl into .voicegen/samples to listen first
+  python scripts/generate_voices_en.py            # everything, into assets/voices/en
 
-Model files: https://github.com/thewh1teagle/kokoro-onnx/releases (model-files-v1.1).
-Needs `pip install kokoro-onnx` and ffmpeg on PATH.
+Needs `pip install orpheus-cpp scipy` plus llama-cpp-python (Metal build on Apple Silicon:
+`pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/metal`),
+and ffmpeg on PATH. The ~2 GB model downloads from Hugging Face on first run.
 
-Writes assets/voices/en/<girl>/{names,lines}/*.mp3 and refreshes src/data/voice-assets.ts.
-Clips whose text and voice settings haven't changed are skipped.
+Orpheus has no style field: emotion comes from the wording, punctuation, CAPS and its vocal tags
+(<laugh> <chuckle> <sigh> <sniffle> <groan> <yawn> <gasp>). Our lines.json tags are mapped onto those.
+Clips whose text and settings haven't changed are skipped; progress is saved as it goes.
 """
 
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import sys
 import tempfile
 import wave
 from pathlib import Path
 
-import numpy as np
-from kokoro_onnx import EspeakConfig, Kokoro
-
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from voice_index import LEADING_PUNCT, LINES, NAMES, VOICES, write_index  # noqa: E402
+from voice_index import LINES, NAMES, ROOT, VOICES, write_index  # noqa: E402
 
 OUT = VOICES / "en"
-MANIFEST = OUT / "manifest.json"
-# Trim leading/trailing silence so the name clip and the line join naturally.
+SAMPLES = ROOT / ".voicegen/samples/en"
+LEADING_PUNCT = "…。！？、!?., "
+MODEL = "orpheus-3b-0.1-ft-q4_k_m"
 TRIM = ("silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
         "silenceremove=start_periods=1:start_threshold=-45dB,areverse")
+# lines.json uses a wider tag set; map to what Orpheus was trained on ("" drops the tag).
+TAGS = {
+    "giggle": "<chuckle>", "laugh": "<laugh>", "cheer": "<laugh>", "chuckle": "<chuckle>",
+    "sigh": "<sigh>", "whimper": "<sniffle>", "grr": "<groan>", "pff": "<sigh>", "tsk": "",
+    "yawn": "<yawn>", "gasp": "<gasp>", "breath": "", "short pause": "...",
+}
 
 
-def to_mp3(samples: np.ndarray, rate: int, dest: Path, tail: float):
+def orpheus_text(text: str) -> str:
+    def sub(m):
+        return TAGS.get(m.group(1).lower(), "")
+    text = re.sub(r"<([^>]+)>", sub, text)
+    return re.sub(r"\s{2,}", " ", text).strip()
+
+
+def to_mp3(pcm, rate: int, dest: Path, tail: float):
     dest.parent.mkdir(parents=True, exist_ok=True)
-    pcm = (np.clip(samples, -1, 1) * 32767).astype(np.int16)
     with tempfile.NamedTemporaryFile(suffix=".wav") as tmp:
         with wave.open(tmp.name, "wb") as w:
             w.setnchannels(1)
@@ -51,60 +65,100 @@ def to_mp3(samples: np.ndarray, rate: int, dest: Path, tail: float):
         )
 
 
+def jobs(sample: bool, gid: str):
+    """Yields (dest, text, tail) for one girl."""
+    base = SAMPLES if sample else OUT
+    hons = [h for h in LINES["honorifics"] if not sample or h["key"] == "kun"]
+    names = [e for e in NAMES if not sample or e[1] == "baqar"]
+    for lkey, line in LINES["lines"][gid].items():
+        if sample and lkey not in ("love", "angry", "miss", "shy"):
+            continue
+        assert line["en"].startswith("{n}"), f"{gid}.{lkey} en must start with {{n}}"
+        rest = line["en"][len("{n}"):]
+        for hon in hons:
+            text = f"{hon['enSpeak']}{rest}".lstrip(LEADING_PUNCT)
+            if text[:1].isalpha():
+                text = text[0].upper() + text[1:]
+            yield base / gid / "lines" / f"{lkey}_{hon['key']}.mp3", orpheus_text(text), 0.15
+    for entry in names:
+        spelling = entry[1].capitalize()
+        for tone, punct in (("soft", "..."), ("loud", "!")):
+            yield base / gid / "names" / f"{entry[1]}_{tone}.mp3", spelling + punct, 0.04
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", type=Path, required=True)
-    ap.add_argument("--voices", type=Path, required=True)
-    # espeak-ng silently fails on data paths longer than ~160 characters (common in venvs);
-    # copy espeakng_loader's espeak-ng-data somewhere short and pass it here if that happens.
-    ap.add_argument("--espeak-data", type=Path, help="Short path to an espeak-ng-data folder")
+    ap.add_argument("--sample", action="store_true", help="Only make a few clips into .voicegen/samples/en")
+    ap.add_argument("--girl", choices=list(LINES["girls"]), help="Only this girl (lets CI run girls in parallel)")
     args = ap.parse_args()
 
-    espeak = EspeakConfig(data_path=str(args.espeak_data)) if args.espeak_data else None
-    kokoro = Kokoro(str(args.model), str(args.voices), espeak_config=espeak)
-    available = set(kokoro.get_voices())
-    for g in LINES["girls"].values():
-        if g["en"]["voice"] not in available:
-            sys.exit(f"Unknown Kokoro voice {g['en']['voice']}. Available: {sorted(available)}")
+    import llama_cpp
+    import orpheus_cpp.model as om  # imported late so --help works without it
 
-    manifest = json.loads(MANIFEST.read_text()) if MANIFEST.exists() else {}
-    new_manifest = {}
+    # orpheus-cpp asks llama.cpp for the model's full 131K context (n_ctx=0), which reserves ~15 GB.
+    # One short line needs a tiny fraction of that.
+    llama_init = llama_cpp.Llama.__init__
+
+    def small_ctx_init(self, *a, **kw):
+        llama_init(self, *a, **{**kw, "n_ctx": 2048})
+
+    llama_cpp.Llama.__init__ = small_ctx_init
+    orpheus = om.OrpheusCpp(n_gpu_layers=-1, lang="en", verbose=False)
     made = skipped = 0
+    for gid in [args.girl] if args.girl else list(LINES["girls"]):
+        cfg = LINES["girls"][gid]["enOrpheus"]
+        # One progress file per girl, so parallel CI jobs never clash.
+        manifest_path = OUT / gid / "manifest.json"
+        manifest = {} if args.sample or not manifest_path.exists() else json.loads(manifest_path.read_text())
+        keep: set[str] = set()
+        girl_jobs = list(jobs(args.sample, gid))
+        print(f"{gid}: {len(girl_jobs)} clips to check", flush=True)
 
-    def clip(dest: Path, text: str, cfg: dict, tail: float):
-        nonlocal made, skipped
-        key = str(dest.relative_to(OUT))
-        sig = hashlib.sha1(json.dumps([text, cfg["voice"], cfg["speed"], tail, TRIM]).encode()).hexdigest()
-        new_manifest[key] = sig
-        if manifest.get(key) == sig and dest.exists():
-            skipped += 1
-            return
-        samples, rate = kokoro.create(text, voice=cfg["voice"], speed=cfg["speed"], lang="en-us")
-        to_mp3(samples, rate, dest, tail)
-        made += 1
-        if made % 50 == 0:
-            print(f"  {made} clips made...", flush=True)
+        for dest, text, tail in girl_jobs:
+            rel = str(dest.relative_to((SAMPLES if args.sample else OUT) / gid))
+            keep.add(rel)
+            sig = hashlib.sha1(json.dumps([MODEL, text, cfg, tail, TRIM]).encode()).hexdigest()
+            if manifest.get(rel) == sig and dest.exists():
+                skipped += 1
+                continue
+            # Orpheus samples randomly and sometimes rambles or cuts off; retry when the length looks wrong.
+            words = max(1, len(re.sub(r"<[^>]+>", "", text).split()))
+            for attempt in range(4):
+                rate, samples = orpheus.tts(text, options={"voice_id": cfg["voice"], "temperature": cfg["temperature"]})
+                pcm = samples.squeeze()
+                seconds = len(pcm) / rate
+                if 0.25 <= seconds <= 1.5 + words * 0.75:
+                    break
+                print(f"  retry {gid}/{rel} ({seconds:.1f}s for {words} words)", flush=True)
+            to_mp3(pcm, rate, dest, tail)
+            manifest[rel] = sig
+            made += 1
+            if not args.sample:
+                manifest_path.write_text(json.dumps(manifest, indent=0, sort_keys=True) + "\n")
+            if made % 50 == 0:
+                print(f"  {made} clips made...", flush=True)
 
-    for gid, girl in LINES["girls"].items():
-        cfg = girl["en"]
-        print(f"{gid}: {cfg['voice']}", flush=True)
-        for lkey, line in LINES["lines"][gid].items():
-            assert line["en"].startswith("{n}"), f"{gid}.{lkey} en must start with {{n}}"
-            rest = line["en"][len("{n}"):]
-            for hon in LINES["honorifics"]:
-                text = f"{hon['enSpeak']}{rest}".lstrip(LEADING_PUNCT)
-                # Capitalize when the line itself starts the sentence (no honorific).
-                text = text[:1].upper() + text[1:]
-                clip(OUT / gid / "lines" / f"{lkey}_{hon['key']}.mp3", text, cfg, 0.15)
-        for entry in NAMES:
-            spelling = entry[1]
-            clip(OUT / gid / "names" / f"{spelling}.mp3", spelling.capitalize(), cfg, 0.04)
+        if not args.sample:
+            # Remove this girl's clips that are no longer in the plan (old engines, renamed lines).
+            for stale in (OUT / gid).rglob("*.mp3"):
+                if str(stale.relative_to(OUT / gid)) not in keep:
+                    stale.unlink()
+            manifest = {k: v for k, v in manifest.items() if k in keep}
+            manifest_path.write_text(json.dumps(manifest, indent=0, sort_keys=True) + "\n")
 
-    for key in set(manifest) - set(new_manifest):
-        (OUT / key).unlink(missing_ok=True)
-    MANIFEST.write_text(json.dumps(new_manifest, indent=0, sort_keys=True) + "\n")
-    write_index()
     print(f"Done: {made} made, {skipped} unchanged.")
+    if args.sample:
+        # Join name + line into ready-to-play previews, like the app does.
+        listen = SAMPLES / "listen"
+        listen.mkdir(parents=True, exist_ok=True)
+        for gid in [args.girl] if args.girl else list(LINES["girls"]):
+            for lkey in ("love", "angry", "miss", "shy"):
+                tone = LINES["lines"][gid][lkey]["tone"]
+                parts = [SAMPLES / gid / "names" / f"baqar_{tone}.mp3", SAMPLES / gid / "lines" / f"{lkey}_kun.mp3"]
+                (listen / f"{gid}_{lkey}.mp3").write_bytes(b"".join(p.read_bytes() for p in parts))
+        print(f"Samples in {listen}")
+    elif not args.girl:
+        write_index()
 
 
 if __name__ == "__main__":

@@ -1,26 +1,26 @@
 {
-  "_note": "Shared by the app and the voice generators. Every jp and en line starts with {n}: that part is the name clip, the rest is generated per honorific. After editing, re-run scripts/generate_voices.py (Japanese) and scripts/generate_voices_en.py (English).",
+  "_note": "Shared by the app and the voice generators. Every jp and en line starts with {n} (the name clip, soft or loud per line `tone`); the rest is generated per honorific. English <tags> are vocal sounds Orpheus performs (the app hides them on screen). `jpContour` picks a VOICEVOX pitch/timing shape from `jpContours`.",
   "honorifics": [
     {
       "key": "kun",
       "jp": "くん",
       "en": "-kun",
       "label": "-kun (boy)",
-      "enSpeak": "koon"
+      "enSpeak": "kun"
     },
     {
       "key": "chan",
       "jp": "ちゃん",
       "en": "-chan",
       "label": "-chan (girl)",
-      "enSpeak": "chahn"
+      "enSpeak": "chan"
     },
     {
       "key": "san",
       "jp": "さん",
       "en": "-san",
       "label": "-san (polite)",
-      "enSpeak": "sahn"
+      "enSpeak": "san"
     },
     {
       "key": "none",
@@ -39,23 +39,23 @@
   ],
   "girls": {
     "hana": {
-      "speaker": "猫使ビィ",
+      "speaker": "WhiteCUL",
       "nameStyle": "ノーマル",
-      "speed": 0.95,
+      "speed": 1.0,
       "pitch": 0.0,
       "styles": {
-        "love": "人見知り",
-        "angry": "つよつよ",
-        "miss": "おちつき",
-        "shy": "人見知り",
-        "night": "おちつき",
+        "love": "ノーマル",
+        "angry": "かなしい",
+        "miss": "かなしい",
+        "shy": "ノーマル",
+        "night": "ノーマル",
         "call": "ノーマル",
-        "message": "人見知り",
-        "morning": "人見知り"
+        "message": "ノーマル",
+        "morning": "たのしい"
       },
-      "en": {
-        "voice": "af_nicole",
-        "speed": 0.9
+      "enOrpheus": {
+        "voice": "leah",
+        "temperature": 0.7
       }
     },
     "rei": {
@@ -73,9 +73,9 @@
         "message": "ノーマル",
         "morning": "ノーマル"
       },
-      "en": {
-        "voice": "af_kore",
-        "speed": 0.9
+      "enOrpheus": {
+        "voice": "zoe",
+        "temperature": 0.6
       }
     },
     "aiko": {
@@ -93,9 +93,9 @@
         "message": "ノーマル",
         "morning": "ツンツン"
       },
-      "en": {
-        "voice": "af_bella",
-        "speed": 1.05
+      "enOrpheus": {
+        "voice": "jess",
+        "temperature": 0.8
       }
     },
     "yui": {
@@ -113,148 +113,318 @@
         "message": "元気",
         "morning": "元気"
       },
-      "en": {
-        "voice": "af_heart",
-        "speed": 1.1
+      "enOrpheus": {
+        "voice": "tara",
+        "temperature": 0.85
       }
     }
   },
   "lines": {
     "hana": {
       "love": {
-        "en": "{n}... I... I really like you...",
-        "jp": "{n}…すき、です…"
+        "en": "{n}... <breath> I... I really like you...",
+        "jp": "{n}…あの、す、すき…です",
+        "tone": "soft",
+        "jpContour": "shy"
       },
       "angry": {
-        "en": "{n}... that was mean... hmph...",
-        "jp": "{n}…ひどい…"
+        "en": "{n}... that was mean... <whimper>",
+        "jp": "{n}…ひどいよ、ぐすっ",
+        "tone": "soft",
+        "jpContour": "sad"
       },
       "miss": {
-        "en": "{n}... I missed you so much...",
-        "jp": "{n}…あいたかった…"
+        "en": "{n}... <sigh> I missed you so much...",
+        "jp": "{n}…ずっと、あいたかった",
+        "tone": "soft",
+        "jpContour": "sad"
       },
       "shy": {
-        "en": "{n}... d-don't look at me like that...",
-        "jp": "{n}…み、みないで…"
+        "en": "{n}... d-don't look at me like that... <giggle>",
+        "jp": "{n}…み、みないでぇ、はずかしいよ",
+        "tone": "soft",
+        "jpContour": "shy"
       },
       "night": {
-        "en": "{n}... good night... sweet dreams...",
-        "jp": "{n}…おやすみなさい…"
+        "en": "{n}... <yawn> good night... sweet dreams...",
+        "jp": "{n}…おやすみなさい",
+        "tone": "soft",
+        "jpContour": "sleepy"
       },
       "call": {
         "en": "{n}... someone is calling you...",
-        "jp": "{n}…でんわですよ…"
+        "jp": "{n}、でんわなってるよ",
+        "tone": "soft",
+        "jpContour": "shy"
       },
       "message": {
         "en": "{n}... you have a message...",
-        "jp": "{n}…メッセージです…"
+        "jp": "{n}、メッセージきてるよ",
+        "tone": "soft",
+        "jpContour": "shy"
       },
       "morning": {
-        "en": "{n}... g-good morning... time to wake up...",
-        "jp": "{n}…お、おはよう…おきて…"
+        "en": "{n}... g-good morning... <short pause> time to wake up...",
+        "jp": "{n}…お、おはよう、おきて",
+        "tone": "soft",
+        "jpContour": "shy"
       }
     },
     "rei": {
       "love": {
         "en": "{n}. I will always protect you.",
-        "jp": "{n}。わたしがまもる。"
+        "jp": "{n}。…わたしが、まもる。",
+        "tone": "soft",
+        "jpContour": "cool"
       },
       "angry": {
-        "en": "{n}. Don't do that again.",
-        "jp": "{n}。もうやめて。"
+        "en": "{n}. <tsk> Don't do that again.",
+        "jp": "{n}。…ちっ。もう、やめて。",
+        "tone": "loud",
+        "jpContour": "cool"
       },
       "miss": {
-        "en": "{n}... come back to me.",
-        "jp": "{n}…もどってきて。"
+        "en": "{n}... <sigh> come back to me.",
+        "jp": "{n}…はぁ…もどってきて。",
+        "tone": "soft",
+        "jpContour": "sad"
       },
       "shy": {
-        "en": "{n}... it's not a big deal.",
-        "jp": "{n}…べつに。"
+        "en": "{n}... it's not... a big deal.",
+        "jp": "{n}…べ、べつに…なんでもない。",
+        "tone": "soft",
+        "jpContour": "shy"
       },
       "night": {
         "en": "{n}. Sleep. I'll keep watch.",
-        "jp": "{n}。おやすみ。"
+        "jp": "{n}。おやすみ。…そばにいる。",
+        "tone": "soft",
+        "jpContour": "sleepy"
       },
       "call": {
         "en": "{n}. Your phone. Answer it.",
-        "jp": "{n}。でんわ。でて。"
+        "jp": "{n}。でんわ。はやく、でて。",
+        "tone": "loud",
+        "jpContour": "cool"
       },
       "message": {
         "en": "{n}. New message.",
-        "jp": "{n}。メッセージ。"
+        "jp": "{n}。メッセージ。",
+        "tone": "soft",
+        "jpContour": "cool"
       },
       "morning": {
-        "en": "{n}. Wake up.",
-        "jp": "{n}。おきて。"
+        "en": "{n}. Wake up. <short pause> ...Good morning.",
+        "jp": "{n}。おきて。…おはよう。",
+        "tone": "soft",
+        "jpContour": "cool"
       }
     },
     "aiko": {
       "love": {
-        "en": "{n}! It's not like I like you... baka!",
-        "jp": "{n}！べつにすきじゃないからね！ばか！"
+        "en": "{n}! It's not like I like you or anything... <pff> baka!",
+        "jp": "{n}！べ、べつにすきじゃないんだからねっ！ばかっ！",
+        "tone": "loud",
+        "jpContour": "bossy"
       },
       "angry": {
-        "en": "{n}! You idiot! Hmph!",
-        "jp": "{n}のばか！ふん！"
+        "en": "{n}! You IDIOT! <grr>",
+        "jp": "{n}のばかぁっ！ふんっ！",
+        "tone": "loud",
+        "jpContour": "angry"
       },
       "miss": {
-        "en": "{n}... I did NOT miss you. Okay, maybe a little.",
-        "jp": "{n}…さびしくなんか、ないんだから。"
+        "en": "{n}... I did NOT miss you. <short pause> Okay... maybe a little.",
+        "jp": "{n}…さ、さびしくなんか…ないんだから…",
+        "tone": "soft",
+        "jpContour": "shy"
       },
       "shy": {
         "en": "{n}! W-what are you staring at?!",
-        "jp": "{n}！な、なにみてるのよ！"
+        "jp": "{n}！な、なにじろじろみてるのよっ！",
+        "tone": "loud",
+        "jpContour": "angry"
       },
       "night": {
-        "en": "{n}... good night. Not that I care!",
-        "jp": "{n}…おやすみ。ふん！"
+        "en": "{n}... good night. Not that I care! <pff>",
+        "jp": "{n}…お、おやすみ…ふんっ！",
+        "tone": "soft",
+        "jpContour": "shy"
       },
       "call": {
-        "en": "{n}! Pick up the phone! Hmph!",
-        "jp": "{n}！はやくでてよ！"
+        "en": "{n}! Pick up the phone already! <tsk>",
+        "jp": "{n}！はやくでなさいよっ！もうっ！",
+        "tone": "loud",
+        "jpContour": "angry"
       },
       "message": {
-        "en": "{n}! Read your message!",
-        "jp": "{n}！メッセージよ！"
+        "en": "{n}! Read your message! Hurry up!",
+        "jp": "{n}！メッセージよっ！はやくよみなさいっ！",
+        "tone": "loud",
+        "jpContour": "bossy"
       },
       "morning": {
-        "en": "{n}! Wake up! I'm not waiting for you!",
-        "jp": "{n}！おきなさい！"
+        "en": "{n}! Wake up! I'm NOT waiting for you!",
+        "jp": "{n}！おきなさいっ！まってあげないんだからっ！",
+        "tone": "loud",
+        "jpContour": "bossy"
       }
     },
     "yui": {
       "love": {
-        "en": "{n}! I love you so much!",
-        "jp": "{n}！だいすき！"
+        "en": "{n}! I love you SO much! <giggle>",
+        "jp": "{n}！だーいすきっ！",
+        "tone": "loud",
+        "jpContour": "excited"
       },
       "angry": {
-        "en": "{n}! Ugh! I'm so mad!",
-        "jp": "{n}！もう、おこったよ！"
+        "en": "{n}! <grr> I'm so mad at you!",
+        "jp": "{n}！もぉーっ！おこったよっ！",
+        "tone": "loud",
+        "jpContour": "angry"
       },
       "miss": {
-        "en": "{n}! Where were you? I missed you!",
-        "jp": "{n}！あいたかったよ！"
+        "en": "{n}! Where were you?! I missed you! <whimper>",
+        "jp": "{n}！どこいってたのー！あいたかったよぉ！",
+        "tone": "loud",
+        "jpContour": "sweet"
       },
       "shy": {
-        "en": "{n}, hehe... you're making me blush!",
-        "jp": "{n}、えへへ、はずかしい！"
+        "en": "{n}, <giggle> you're making me blush!",
+        "jp": "{n}、えへへ…はずかしいよぉ！",
+        "tone": "soft",
+        "jpContour": "shy"
       },
       "night": {
-        "en": "{n}! Night night! See you tomorrow!",
-        "jp": "{n}！おやすみ！またあした！"
+        "en": "{n}! <yawn> Night night! See you tomorrow!",
+        "jp": "{n}！ふぁぁ…おやすみぃ！またあしたね！",
+        "tone": "soft",
+        "jpContour": "sleepy"
       },
       "call": {
-        "en": "{n}! Phone! Phone! Pick it up!",
-        "jp": "{n}！でんわだよ！"
+        "en": "{n}! Phone! Phone! Pick it up! <laugh>",
+        "jp": "{n}！でんわだよっ！でんわでんわーっ！",
+        "tone": "loud",
+        "jpContour": "excited"
       },
       "message": {
         "en": "{n}! You got a message! Yay!",
-        "jp": "{n}！メッセージだよ！"
+        "jp": "{n}！メッセージきたよー！やったぁ！",
+        "tone": "loud",
+        "jpContour": "excited"
       },
       "morning": {
-        "en": "{n}! Good morning! Let's go!",
-        "jp": "{n}！おはよう！いこう！"
+        "en": "{n}! Good morning! Let's GO! <cheer>",
+        "jp": "{n}！おっはよー！いっくよー！",
+        "tone": "loud",
+        "jpContour": "excited"
       }
+    }
+  },
+  "jpNameTune": {
+    "soft": {
+      "intonation": 1.4,
+      "pitch": 0.03,
+      "speed": 1.08,
+      "endLength": 1.0
+    },
+    "loud": {
+      "intonation": 1.8,
+      "pitch": 0.06,
+      "speed": 1.05,
+      "volume": 1.15,
+      "endPitch": [
+        0.15
+      ]
+    }
+  },
+  "jpContours": {
+    "excited": {
+      "intonation": 1.7,
+      "pitch": 0.06,
+      "speed": 1.1,
+      "vowelScale": 0.95,
+      "accentBoost": 0.1,
+      "endPitch": [
+        0.1,
+        0.25
+      ]
+    },
+    "angry": {
+      "intonation": 1.8,
+      "pitch": 0.02,
+      "speed": 1.15,
+      "volume": 1.2,
+      "vowelScale": 0.85,
+      "startPitch": 0.15,
+      "accentBoost": 0.15,
+      "endPitch": [
+        -0.1,
+        -0.25
+      ]
+    },
+    "sad": {
+      "intonation": 1.35,
+      "pitch": -0.04,
+      "speed": 1.08,
+      "volume": 0.92,
+      "endPitch": [
+        -0.08,
+        -0.18,
+        -0.3
+      ],
+      "endLength": 1.1,
+      "pauseScale": 0.75
+    },
+    "shy": {
+      "intonation": 1.45,
+      "pitch": 0.05,
+      "speed": 1.1,
+      "volume": 0.9,
+      "endPitch": [
+        -0.05,
+        -0.15
+      ],
+      "endLength": 1.05,
+      "pauseScale": 0.7
+    },
+    "sleepy": {
+      "intonation": 0.9,
+      "pitch": -0.03,
+      "speed": 1.0,
+      "volume": 0.85,
+      "endLength": 1.15,
+      "pauseScale": 0.85
+    },
+    "cool": {
+      "intonation": 1.1,
+      "pitch": -0.02,
+      "speed": 1.05,
+      "endPitch": [
+        -0.1
+      ],
+      "pauseScale": 0.9
+    },
+    "bossy": {
+      "intonation": 1.7,
+      "pitch": 0.03,
+      "speed": 1.1,
+      "volume": 1.15,
+      "accentBoost": 0.12,
+      "endPitch": [
+        0.05,
+        0.15
+      ]
+    },
+    "sweet": {
+      "intonation": 1.6,
+      "pitch": 0.05,
+      "speed": 1.08,
+      "endPitch": [
+        0.05,
+        -0.1
+      ],
+      "endLength": 1.15
     }
   }
 }

@@ -72,16 +72,21 @@ export type ResolvedLine = {
   sub?: string; // translation under it
   known: KnownName | null;
   honorific: Honorific; // honorific actually used (unknown names use senpai)
+  tone: 'soft' | 'loud'; // which name clip leads into this line
 };
 
+// Vocal-sound tags like <sigh> are performed by the voice, not shown on screen.
+const stripTags = (s: string) => s.replace(/\s*<[^>]+>\s*/g, ' ').replace(/\s+([!?.,])/g, '$1').replace(/\s{2,}/g, ' ').trim();
+
 export function lineFor(girl: GirlId, key: LineKey, lang: Lang, name: string, honorific: Honorific): ResolvedLine {
-  const l = (LINES.lines as Record<GirlId, Record<LineKey, { en: string; jp: string }>>)[girl][key];
+  const l = (LINES.lines as Record<GirlId, Record<LineKey, { en: string; jp: string; tone: string }>>)[girl][key];
+  const tone = l.tone === 'loud' ? 'loud' : 'soft';
   const known = findName(name);
   const hon = known ? honorific : 'senpai';
   const h = HONORIFICS.find((x) => x.key === hon)!;
   const display = name.trim() || 'Senpai';
-  const en = l.en.replace(/\{n\}/g, known ? `${display}${h.en}` : 'Senpai');
-  if (lang === 'en') return { show: en, known, honorific: hon };
+  const en = stripTags(l.en.replace(/\{n\}/g, known ? `${display}${h.en}` : 'Senpai'));
+  if (lang === 'en') return { show: en, known, honorific: hon, tone };
   const jp = l.jp.replace('{n}', `${known ? known.kana : ''}${h.jp}`);
-  return { show: jp, sub: en, known, honorific: hon };
+  return { show: jp, sub: en, known, honorific: hon, tone };
 }

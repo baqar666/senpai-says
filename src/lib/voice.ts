@@ -14,7 +14,7 @@ function clipsFor(girl: Girl, key: LineKey, lang: Lang, name: string, honorific:
   const l = lineFor(girl.id, key, lang, name, honorific);
   const clips = VOICE_CLIPS[lang][girl.id];
   const rest = clips.lines[key][l.honorific];
-  return l.known ? [(clips.names as Record<string, number>)[l.known.id], rest] : [rest];
+  return l.known ? [(clips.names as Record<string, Record<'soft' | 'loud', number>>)[l.known.id][l.tone], rest] : [rest];
 }
 
 let player: AudioPlayer | null = null;
