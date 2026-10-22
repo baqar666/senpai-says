@@ -9,7 +9,7 @@ Real voices in both languages ship inside the app as small MP3s in `assets/voice
 | Girl | Japanese ([VOICEVOX](https://voicevox.hiroshiba.jp/)) | English ([Orpheus](https://github.com/canopyai/Orpheus-TTS)) |
 | --- | --- | --- |
 | Hana (shy) | WhiteCUL | leah |
-| Rei (cool) | 冥鳴ひまり | zoe |
+| Rei (cool) | 冥鳴ひまり | mia |
 | Aiko (tsundere) | 四国めたん | jess |
 | Yui (genki) | 満別花丸 | tara |
 
