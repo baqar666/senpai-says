@@ -123,11 +123,16 @@ def main():
                 continue
             # Orpheus samples randomly and sometimes rambles or cuts off; retry when the length looks wrong.
             words = max(1, len(re.sub(r"<[^>]+>", "", text).split()))
+            max_seconds = 1.5 + words * 0.75
             for attempt in range(4):
-                rate, samples = orpheus.tts(text, options={"voice_id": cfg["voice"], "temperature": cfg["temperature"]})
+                rate, samples = orpheus.tts(text, options={
+                    "voice_id": cfg["voice"], "temperature": cfg["temperature"],
+                    # Orpheus emits ~85 audio tokens per second; stop runaway takes early instead of at 2048 tokens.
+                    "max_tokens": int(max_seconds * 100) + 100,
+                })
                 pcm = samples.squeeze()
                 seconds = len(pcm) / rate
-                if 0.25 <= seconds <= 1.5 + words * 0.75:
+                if 0.25 <= seconds <= max_seconds:
                     break
                 print(f"  retry {gid}/{rel} ({seconds:.1f}s for {words} words)", flush=True)
             to_mp3(pcm, rate, dest, tail)

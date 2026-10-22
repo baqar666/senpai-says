@@ -11,6 +11,10 @@ on:
         type: choice
         options: [sample, full]
         default: sample
+      girls:
+        description: 'Which girls, as a JSON list (for example ["rei"])'
+        type: string
+        default: '["hana","rei","aiko","yui"]'
 
 permissions:
   contents: write
@@ -23,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        girl: [hana, rei, aiko, yui]
+        girl: ${{ fromJSON(inputs.girls) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -82,10 +86,11 @@ jobs:
 
       - name: Replace English clips and rebuild the index
         run: |
-          for g in hana rei aiko yui; do
+          mkdir -p assets/voices/en
+          for dir in "$RUNNER_TEMP"/voices/voices-*; do
+            g="${dir##*/voices-}"
             rm -rf "assets/voices/en/$g"
-            mkdir -p assets/voices/en
-            mv "$RUNNER_TEMP/voices/voices-$g" "assets/voices/en/$g"
+            mv "$dir" "assets/voices/en/$g"
           done
           python scripts/voice_index.py
 
