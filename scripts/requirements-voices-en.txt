@@ -1,0 +1,6 @@
+# English voice generation (scripts/generate_voices_en.py). CPU build of llama.cpp;
+# on Apple Silicon use https://abetlen.github.io/llama-cpp-python/whl/metal instead.
+--extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+orpheus-cpp==0.0.3
+llama-cpp-python==0.3.19
+scipy
