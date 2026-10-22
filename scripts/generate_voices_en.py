@@ -77,8 +77,36 @@ def to_mp3(pcm, rate: int, dest: Path, tail: float):
         )
 
 
+# A single word on its own comes out flat and robotic. Names are spoken inside a short phrase
+# for natural intonation, then cut at the pause right after the name.
+NAME_PHRASE = {"soft": "{name}... okay.", "loud": "{name}! Hey!"}
+
+
+def cut_at_first_pause(pcm, rate: int, min_pause: float = 0.12):
+    """Returns the audio up to the first real pause after speech starts, or None if there isn't one."""
+    import numpy as np
+
+    frame = int(rate * 0.01)
+    n = len(pcm) // frame
+    if n < 10:
+        return None
+    rms = np.sqrt(np.mean(pcm[: n * frame].astype(np.float64).reshape(n, frame) ** 2, axis=1))
+    quiet = rms < rms.max() * 0.08
+    voiced = np.flatnonzero(~quiet)
+    if not len(voiced):
+        return None
+    start = voiced[0]
+    need = int(min_pause / 0.01)
+    run = 0
+    for i in range(start + 15, n):  # the name itself is at least ~150 ms
+        run = run + 1 if quiet[i] else 0
+        if run >= need:
+            return pcm[: (i - run + 3) * frame]
+    return None
+
+
 def jobs(sample: bool, gid: str):
-    """Yields (dest, text, tail) for one girl."""
+    """Yields (dest, text, tail, is_name) for one girl."""
     base = SAMPLES if sample else OUT
     hons = [h for h in LINES["honorifics"] if not sample or h["key"] == "kun"]
     names = [e for e in NAMES if not sample or e[1] == "baqar"]
@@ -91,11 +119,11 @@ def jobs(sample: bool, gid: str):
             text = f"{hon['enSpeak']}{rest}".lstrip(LEADING_PUNCT)
             if text[:1].isalpha():
                 text = text[0].upper() + text[1:]
-            yield base / gid / "lines" / f"{lkey}_{hon['key']}.mp3", orpheus_text(text), 0.15
+            yield base / gid / "lines" / f"{lkey}_{hon['key']}.mp3", orpheus_text(text), 0.15, False
     for entry in names:
         spelling = entry[1].capitalize()
-        for tone, punct in (("soft", "..."), ("loud", "!")):
-            yield base / gid / "names" / f"{entry[1]}_{tone}.mp3", spelling + punct, 0.04
+        for tone, phrase in NAME_PHRASE.items():
+            yield base / gid / "names" / f"{entry[1]}_{tone}.mp3", phrase.format(name=spelling), 0.04, True
 
 
 def main():
@@ -126,7 +154,7 @@ def main():
         girl_jobs = list(jobs(args.sample, gid))
         print(f"{gid}: {len(girl_jobs)} clips to check", flush=True)
 
-        for dest, text, tail in girl_jobs:
+        for dest, text, tail, is_name in girl_jobs:
             rel = str(dest.relative_to((SAMPLES if args.sample else OUT) / gid))
             keep.add(rel)
             sig = hashlib.sha1(json.dumps([MODEL, text, cfg, tail, TRIM]).encode()).hexdigest()
@@ -143,6 +171,14 @@ def main():
                     "max_tokens": int(max_seconds * 100) + 100,
                 })
                 pcm = samples.squeeze()
+                if is_name:
+                    name_only = cut_at_first_pause(pcm, rate)
+                    seconds = len(name_only) / rate if name_only is not None else 0.0
+                    if 0.2 <= seconds <= 1.6:
+                        pcm = name_only
+                        break
+                    print(f"  retry {gid}/{rel} (no clean pause after the name)", flush=True)
+                    continue
                 seconds = len(pcm) / rate
                 if 0.25 <= seconds <= max_seconds:
                     break
