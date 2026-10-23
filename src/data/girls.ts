@@ -5,7 +5,8 @@ import NAMES_JP_EXTRA from './names_jp_extra.json';
 export type GirlId = 'hana' | 'rei' | 'aiko' | 'yui';
 export type Emotion = 'love' | 'angry' | 'miss' | 'shy' | 'night' | 'call';
 export type ToneLine = 'call' | 'message' | 'morning';
-export type LineKey = Emotion | ToneLine;
+export type Moment = 'birthday' | 'eid' | 'luck' | 'eat' | 'gym' | 'care' | 'proud' | 'thanks';
+export type LineKey = Emotion | ToneLine | Moment;
 export type Lang = 'en' | 'jp';
 
 export type Girl = {
@@ -34,6 +35,26 @@ export const EMOTIONS: { key: Emotion; label: string; icon: string }[] = [
   { key: 'night', label: 'Good night', icon: 'moon-outline' },
   { key: 'call', label: 'Calling', icon: 'call-outline' },
 ];
+
+export const MOMENTS: { key: Moment; label: string; icon: string }[] = [
+  { key: 'birthday', label: 'Birthday', icon: 'gift-outline' },
+  { key: 'eid', label: 'Eid', icon: 'moon-outline' },
+  { key: 'luck', label: 'Exam luck', icon: 'school-outline' },
+  { key: 'eat', label: 'Eat food', icon: 'restaurant-outline' },
+  { key: 'gym', label: 'Gym', icon: 'barbell-outline' },
+  { key: 'care', label: 'Take care', icon: 'medkit-outline' },
+  { key: 'proud', label: 'Proud', icon: 'trophy-outline' },
+  { key: 'thanks', label: 'Thanks', icon: 'flower-outline' },
+];
+
+const EMOTION_KEYS = new Set<string>(['love', 'angry', 'miss', 'shy', 'night', 'call']);
+
+// Which face to show for any line: emotions show themselves, other lines name a face in lines.json.
+export function faceFor(girl: GirlId, key: LineKey): Emotion {
+  if (EMOTION_KEYS.has(key)) return key as Emotion;
+  const face = (LINES.lines as Record<GirlId, Record<string, { face?: string }>>)[girl][key]?.face;
+  return face && EMOTION_KEYS.has(face) ? (face as Emotion) : 'love';
+}
 
 
 export type Honorific = 'kun' | 'chan' | 'san' | 'none' | 'senpai';

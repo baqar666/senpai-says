@@ -1,9 +1,11 @@
 import { memo, useMemo } from 'react';
+import { Image } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
+import { ART } from '../data/art';
 import { Emotion, Girl } from '../data/girls';
 
-// Placeholder portrait art. Swap for commissioned images (one per girl per emotion) later.
+// Drawn fallback faces, used wherever art/raw has no portrait yet (see scripts/process_art.py).
 function faceXml(o: Girl, em: Emotion) {
   const S = '#FCE6D6';
   const D = '#2C2C2A';
@@ -73,6 +75,18 @@ function faceXml(o: Girl, em: Emotion) {
 }
 
 export const Face = memo(function Face({ girl, emotion, size }: { girl: Girl; emotion: Emotion; size: number }) {
-  const xml = useMemo(() => faceXml(girl, emotion), [girl, emotion]);
-  return <SvgXml xml={xml} width={size} height={size} accessibilityLabel={`${girl.name} looking ${emotion}`} />;
+  const art = ART[girl.id]?.[emotion];
+  const xml = useMemo(() => (art ? '' : faceXml(girl, emotion)), [art, girl, emotion]);
+  const label = `${girl.name} looking ${emotion}`;
+  if (art) {
+    return (
+      <Image
+        source={art}
+        style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: girl.bg }}
+        accessibilityLabel={label}
+        fadeDuration={0}
+      />
+    );
+  }
+  return <SvgXml xml={xml} width={size} height={size} accessibilityLabel={label} />;
 });

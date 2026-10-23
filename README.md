@@ -25,6 +25,18 @@ How names work: each girl says the name clip (for example バーキル, or "Baqa
 4. English: run the **Generate English voices** workflow in the GitHub Actions tab. Pick `sample` to download a few previews first, then `full` to generate every clip; it commits them and starts the Android build. (Locally: `pip install orpheus-cpp scipy` plus `llama-cpp-python==0.3.19` from the Metal wheel index, then `python scripts/generate_voices_en.py`. It needs about 3 GB of free RAM and disk.)
 5. Commit `assets/voices/jp` and `src/data/voice-assets.ts` (the English workflow commits its own clips).
 
+## Character art
+
+Follow `art/GROK_PROMPTS.md` to make the 24 portraits (4 girls × 6 expressions) and the icon in Grok, save them in `art/raw/`, then run `python3 scripts/process_art.py`. The app shows real art wherever a portrait exists and the drawn faces everywhere else.
+
+## Features
+
+- Emotions (love, angry, miss, shy, good night, calling) and special moments (birthday, Eid, exam luck, eat, gym, take care, proud, thanks)
+- Share a voice line as an MP3 (WhatsApp, TikTok, Instagram)
+- Set lines as ringtone, message tone, or alarm (Android)
+- Daily message notification (Settings, off by default)
+- Store text and privacy policy: `store/STORE_LISTING.md`, https://baqar666.github.io/privacy-policies/senpai-says/
+
 ## Run locally (web preview)
 
 Needs Node 22 (`nvm use` picks it up from `.nvmrc`).
@@ -76,5 +88,6 @@ Keep `upload.keystore` safe and never commit it. If you lose it, you can't updat
 
 ## Next steps
 
-- Replace the placeholder face art with real art (one image per girl per emotion)
+- Add the Grok character art (see Character art above)
+- Rewarded ads (AdMob) to unlock extra lines
 - Optionally replace the main lines with a hired Japanese voice actor, and keep VOICEVOX for the name clips

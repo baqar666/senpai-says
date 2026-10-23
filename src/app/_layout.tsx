@@ -1,12 +1,15 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { router } from 'expo-router';
 import { TabList, Tabs, TabSlot, TabTrigger, TabTriggerSlotProps } from 'expo-router/ui';
+import * as Notifications from 'expo-notifications';
 import { StatusBar } from 'expo-status-bar';
-import { ComponentProps } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ComponentProps, useEffect } from 'react';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { C, NeuCard } from '../components/Neu';
 import { ToastProvider } from '../components/Toast';
+import { DailyPick, openDaily, scheduleDaily } from '../lib/daily';
 import { SettingsProvider, useSettings } from '../lib/store';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
@@ -22,9 +25,34 @@ function TabButton({ icon, label, isFocused, ref: _ref, ...props }: TabTriggerSl
   );
 }
 
+// Keeps the next week of daily messages planned and opens the tapped one on the Girls screen.
+function useDailyMessages() {
+  const { ready, dailyOn, dailyHour, name, lang, honorific } = useSettings();
+  useEffect(() => {
+    if (ready) scheduleDaily({ enabled: dailyOn, hour: dailyHour, name, lang, honorific }).catch(() => {});
+  }, [ready, dailyOn, dailyHour, name, lang, honorific]);
+
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+    const open = (n: Notifications.Notification) => {
+      const data = n.request.content.data as Partial<DailyPick> | undefined;
+      if (data?.girl && data?.key) {
+        router.navigate('/');
+        openDaily({ girl: data.girl, key: data.key });
+        Notifications.clearLastNotificationResponse();
+      }
+    };
+    const last = Notifications.getLastNotificationResponse();
+    if (last?.notification) open(last.notification);
+    const sub = Notifications.addNotificationResponseReceivedListener((r) => open(r.notification));
+    return () => sub.remove();
+  }, []);
+}
+
 function AppTabs() {
   const insets = useSafeAreaInsets();
   const { ready } = useSettings();
+  useDailyMessages();
   if (!ready) return <View style={{ flex: 1, backgroundColor: C.base }} />;
   return (
     <Tabs style={{ flex: 1, backgroundColor: C.base }}>

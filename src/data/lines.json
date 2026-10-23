@@ -168,6 +168,62 @@
         "jp": "{n}…お、おはよう、おきて",
         "tone": "soft",
         "jpContour": "shy"
+      },
+      "birthday": {
+        "en": "{n}... h-happy birthday... <giggle> I made you a little cake...",
+        "jp": "{n}…お、おたんじょうび、おめでとう…ケーキ、つくったの…",
+        "tone": "soft",
+        "jpContour": "shy",
+        "face": "love"
+      },
+      "eid": {
+        "en": "{n}... Eid Mubarak... I hope your day is full of happiness...",
+        "jp": "{n}…イード・ムバラク…しあわせな一日になりますように…",
+        "tone": "soft",
+        "jpContour": "sweet",
+        "face": "love"
+      },
+      "luck": {
+        "en": "{n}... good luck on your exam... I believe in you...",
+        "jp": "{n}…しけん、がんばってね…しんじてるよ…",
+        "tone": "soft",
+        "jpContour": "shy",
+        "face": "love"
+      },
+      "eat": {
+        "en": "{n}... did you eat yet? Please don't skip meals...",
+        "jp": "{n}…ごはん、たべた？ちゃんとたべてね…",
+        "tone": "soft",
+        "jpContour": "sweet",
+        "face": "shy"
+      },
+      "gym": {
+        "en": "{n}... you're working so hard... I'll cheer for you...",
+        "jp": "{n}…がんばってるね…おうえんしてるよ…",
+        "tone": "soft",
+        "jpContour": "shy",
+        "face": "love"
+      },
+      "care": {
+        "en": "{n}... please take care of yourself, okay?",
+        "jp": "{n}…むりしないでね…",
+        "tone": "soft",
+        "jpContour": "sweet",
+        "face": "miss"
+      },
+      "proud": {
+        "en": "{n}... I'm really proud of you... <breath> really...",
+        "jp": "{n}…ほんとうに、すごいよ…じまんだよ…",
+        "tone": "soft",
+        "jpContour": "shy",
+        "face": "love"
+      },
+      "thanks": {
+        "en": "{n}... thank you... for always being there...",
+        "jp": "{n}…いつも、ありがとう…",
+        "tone": "soft",
+        "jpContour": "shy",
+        "face": "shy"
       }
     },
     "rei": {
@@ -218,6 +274,62 @@
         "jp": "{n}。おきて。…おはよう。",
         "tone": "soft",
         "jpContour": "cool"
+      },
+      "birthday": {
+        "en": "{n}. Happy birthday. ...I got you something.",
+        "jp": "{n}。たんじょうび、おめでとう。…プレゼント、ある。",
+        "tone": "soft",
+        "jpContour": "cool",
+        "face": "love"
+      },
+      "eid": {
+        "en": "{n}. Eid Mubarak. May peace be with you.",
+        "jp": "{n}。イード・ムバラク。へいわがありますように。",
+        "tone": "soft",
+        "jpContour": "cool",
+        "face": "love"
+      },
+      "luck": {
+        "en": "{n}. You'll pass. I know it.",
+        "jp": "{n}。だいじょうぶ。あなたならできる。",
+        "tone": "soft",
+        "jpContour": "cool",
+        "face": "love"
+      },
+      "eat": {
+        "en": "{n}. Eat something. Now.",
+        "jp": "{n}。ちゃんとたべて。いますぐ。",
+        "tone": "loud",
+        "jpContour": "cool",
+        "face": "angry"
+      },
+      "gym": {
+        "en": "{n}. One more set. Don't give up.",
+        "jp": "{n}。あと一回。あきらめないで。",
+        "tone": "loud",
+        "jpContour": "cool",
+        "face": "call"
+      },
+      "care": {
+        "en": "{n}. Be careful out there.",
+        "jp": "{n}。きをつけて。",
+        "tone": "soft",
+        "jpContour": "cool",
+        "face": "miss"
+      },
+      "proud": {
+        "en": "{n}. ...I'm proud of you.",
+        "jp": "{n}。…よくやった。",
+        "tone": "soft",
+        "jpContour": "cool",
+        "face": "shy"
+      },
+      "thanks": {
+        "en": "{n}. Thank you. ...I mean it.",
+        "jp": "{n}。ありがとう。…ほんとうに。",
+        "tone": "soft",
+        "jpContour": "cool",
+        "face": "shy"
       }
     },
     "aiko": {
@@ -268,6 +380,62 @@
         "jp": "{n}！おきなさいっ！まってあげないんだからっ！",
         "tone": "loud",
         "jpContour": "bossy"
+      },
+      "birthday": {
+        "en": "{n}! Happy birthday! I didn't buy you a gift or anything... <pff> okay, maybe I did!",
+        "jp": "{n}！たんじょうびおめでとう！べ、べつにプレゼントなんか…よういしたけど！",
+        "tone": "loud",
+        "jpContour": "bossy",
+        "face": "shy"
+      },
+      "eid": {
+        "en": "{n}! Eid Mubarak! Don't eat too many sweets, okay?",
+        "jp": "{n}！イード・ムバラク！あまいもの、たべすぎないでよね！",
+        "tone": "loud",
+        "jpContour": "bossy",
+        "face": "love"
+      },
+      "luck": {
+        "en": "{n}! You better pass that exam! I'm not worried or anything!",
+        "jp": "{n}！しけん、ぜったいごうかくしなさいよ！しんぱいなんかしてないんだから！",
+        "tone": "loud",
+        "jpContour": "bossy",
+        "face": "angry"
+      },
+      "eat": {
+        "en": "{n}! Did you skip lunch again?! Go eat, idiot!",
+        "jp": "{n}！またごはんぬいたの？はやくたべなさい！ばか！",
+        "tone": "loud",
+        "jpContour": "angry",
+        "face": "angry"
+      },
+      "gym": {
+        "en": "{n}! Is that all you've got? Come on, push harder!",
+        "jp": "{n}！それだけ？もっとがんばりなさいよ！",
+        "tone": "loud",
+        "jpContour": "bossy",
+        "face": "call"
+      },
+      "care": {
+        "en": "{n}... take care, okay? It's not like I'd miss you...",
+        "jp": "{n}…きをつけてね。べつに、さびしくなんかないけど…",
+        "tone": "soft",
+        "jpContour": "shy",
+        "face": "miss"
+      },
+      "proud": {
+        "en": "{n}... hmph. You did good. Just this once.",
+        "jp": "{n}…ふん。まあ、よくやったじゃない。こんかいだけね。",
+        "tone": "soft",
+        "jpContour": "shy",
+        "face": "shy"
+      },
+      "thanks": {
+        "en": "{n}... th-thanks. Don't make it weird!",
+        "jp": "{n}…あ、ありがと。かんちがいしないでよね！",
+        "tone": "soft",
+        "jpContour": "shy",
+        "face": "shy"
       }
     },
     "yui": {
@@ -318,6 +486,62 @@
         "jp": "{n}！おっはよー！いっくよー！",
         "tone": "loud",
         "jpContour": "excited"
+      },
+      "birthday": {
+        "en": "{n}! Happy birthday! <cheer> Let's party all day!",
+        "jp": "{n}！おたんじょうびおめでとう！きょうはいっぱいあそぼう！",
+        "tone": "loud",
+        "jpContour": "excited",
+        "face": "love"
+      },
+      "eid": {
+        "en": "{n}! Eid Mubarak! <laugh> Let's eat all the sweets!",
+        "jp": "{n}！イード・ムバラク！あまいもの、いっぱいたべよう！",
+        "tone": "loud",
+        "jpContour": "excited",
+        "face": "love"
+      },
+      "luck": {
+        "en": "{n}! You've got this! Fighting! Fighting!",
+        "jp": "{n}！ファイト！ファイト！ぜったいだいじょうぶ！",
+        "tone": "loud",
+        "jpContour": "excited",
+        "face": "call"
+      },
+      "eat": {
+        "en": "{n}! Snack time! Let's eat something yummy!",
+        "jp": "{n}！おやつのじかんだよ！なにかおいしいものたべよう！",
+        "tone": "loud",
+        "jpContour": "excited",
+        "face": "love"
+      },
+      "gym": {
+        "en": "{n}! Go go go! You're so strong! <cheer>",
+        "jp": "{n}！いけいけ！つよい！かっこいい！",
+        "tone": "loud",
+        "jpContour": "excited",
+        "face": "call"
+      },
+      "care": {
+        "en": "{n}! Stay safe out there, okay? Promise me!",
+        "jp": "{n}！きをつけてね！やくそくだよ！",
+        "tone": "loud",
+        "jpContour": "sweet",
+        "face": "miss"
+      },
+      "proud": {
+        "en": "{n}! You're amazing! I'm so proud of you! <giggle>",
+        "jp": "{n}！すごいすごい！ほんとうにじまんだよ！",
+        "tone": "loud",
+        "jpContour": "excited",
+        "face": "love"
+      },
+      "thanks": {
+        "en": "{n}! Thank you so much! You're the best!",
+        "jp": "{n}！ほんとうにありがとう！だいすき！",
+        "tone": "loud",
+        "jpContour": "excited",
+        "face": "shy"
       }
     }
   },

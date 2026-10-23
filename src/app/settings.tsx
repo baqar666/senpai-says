@@ -1,13 +1,34 @@
-import { StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 
 import { C, NeuButton, NeuCard } from '../components/Neu';
 import { Screen } from '../components/Screen';
+import { useToast } from '../components/Toast';
 import { HONORIFICS } from '../data/girls';
 import { VOICE_CREDITS } from '../data/voice-assets';
+import { scheduleDaily } from '../lib/daily';
 import { useSettings } from '../lib/store';
 
+const DAILY_TIMES = [
+  { hour: 8, label: 'Morning' },
+  { hour: 13, label: 'Afternoon' },
+  { hour: 21, label: 'Night' },
+];
+
 export default function SettingsScreen() {
-  const { name, lang, honorific, reduceMotion, update } = useSettings();
+  const { name, lang, honorific, reduceMotion, dailyOn, dailyHour, update } = useSettings();
+  const toast = useToast();
+
+  const toggleDaily = async (on: boolean) => {
+    update({ dailyOn: on });
+    if (!on || Platform.OS === 'web') return;
+    const result = await scheduleDaily({ enabled: true, hour: dailyHour, name, lang, honorific });
+    if (result === 'denied') {
+      update({ dailyOn: false });
+      toast('Turn on notifications for Senpai Says in your phone settings first.');
+    } else if (result === 'scheduled') {
+      toast('Daily messages are on 💌');
+    }
+  };
   return (
     <Screen title="Settings">
       <Text style={styles.label}>Your name</Text>
@@ -39,6 +60,36 @@ export default function SettingsScreen() {
           </NeuButton>
         ))}
       </View>
+
+      <NeuCard radius={18} style={styles.row}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.rowTitle}>Daily message</Text>
+          <Text style={styles.rowSub}>A new line from one of the girls every day</Text>
+        </View>
+        <Switch
+          value={dailyOn}
+          onValueChange={toggleDaily}
+          trackColor={{ false: C.dark, true: '#ED93B1' }}
+          thumbColor={dailyOn ? C.accent : '#fff'}
+        />
+      </NeuCard>
+      {dailyOn && (
+        <View style={[styles.chips, { marginTop: -8 }]}>
+          {DAILY_TIMES.map((t) => (
+            <NeuButton
+              key={t.hour}
+              active={dailyHour === t.hour}
+              onPress={() => update({ dailyHour: t.hour })}
+              style={styles.chip}
+              radius={12}
+              depth={3}
+              accessibilityLabel={`${t.label} daily message`}
+            >
+              <Text style={[styles.chipText, dailyHour === t.hour && { color: C.accent }]}>{t.label}</Text>
+            </NeuButton>
+          ))}
+        </View>
+      )}
 
       <NeuCard radius={18} style={styles.row}>
         <View style={{ flex: 1 }}>

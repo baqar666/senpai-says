@@ -159,7 +159,9 @@ def main():
             rest = line["jp"][len("{n}"):]
             for hon in hons:
                 text = (hon["jp"] + rest).lstrip(LEADING_PUNCT)
-                clip(base / gid / "lines" / f"{lkey}_{hon['key']}.mp3", text, girl["styles"][lkey], girl,
+                # Special moments reuse the voice style of the face they show (lines.json "face").
+                style = girl["styles"].get(lkey) or girl["styles"][line.get("face", "love")]
+                clip(base / gid / "lines" / f"{lkey}_{hon['key']}.mp3", text, style, girl,
                      LINES["jpContours"][line["jpContour"]], 0.02, 0.15)
         for entry in names:
             kana, ident = entry[0], entry[1]

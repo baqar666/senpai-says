@@ -152,7 +152,12 @@ def main():
         cfg = LINES["girls"][gid]["enOrpheus"]
         # One progress file per girl, so parallel CI jobs never clash.
         manifest_path = OUT / gid / (f"manifest-{args.shard}.json" if sharded else "manifest.json")
-        manifest = {} if args.sample or not manifest_path.exists() else json.loads(manifest_path.read_text())
+        manifest = {}
+        if not args.sample:
+            # Slices also read the committed manifest.json, so clips that already exist are skipped.
+            for path in {OUT / gid / "manifest.json", manifest_path}:
+                if path.exists():
+                    manifest.update(json.loads(path.read_text()))
         keep: set[str] = set()
         girl_jobs = [j for i, j in enumerate(jobs(args.sample, gid)) if i % args.shards == args.shard]
         print(f"{gid}: {len(girl_jobs)} clips to check", flush=True)

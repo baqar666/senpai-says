@@ -1,5 +1,7 @@
 import { Asset } from 'expo-asset';
 import { AudioPlayer, AudioSource, createAudioPlayer, setAudioModeAsync } from 'expo-audio';
+import { File, Paths } from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { Alert, PermissionsAndroid, Platform } from 'react-native';
 
 import RingtoneSetter, { ToneType } from '../../modules/ringtone-setter';
@@ -12,9 +14,17 @@ setAudioModeAsync({ playsInSilentMode: true }).catch(() => {});
 // Unknown names skip the name clip and use the "senpai" version of the line.
 function clipsFor(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific): number[] {
   const l = lineFor(girl.id, key, lang, name, honorific);
+  const lines = VOICE_CLIPS[lang][girl.id].lines as Partial<Record<LineKey, Record<Honorific, number>>>;
+  const line = lines[key];
+  if (!line) return [];
   const clips = VOICE_CLIPS[lang][girl.id];
-  const rest = clips.lines[key][l.honorific];
+  const rest = line[l.honorific];
   return l.known ? [(clips.names as Record<string, Record<'soft' | 'loud', number>>)[l.known.id][l.tone], rest] : [rest];
+}
+
+// True once this line's clips are generated for the language (new lines can lag behind).
+export function lineAvailable(girl: Girl, key: LineKey, lang: Lang): boolean {
+  return key in VOICE_CLIPS[lang][girl.id].lines;
 }
 
 let player: AudioPlayer | null = null;
@@ -98,4 +108,45 @@ export async function setTone(girl: Girl, key: LineKey, lang: Lang, name: string
     type
   );
   return `${girl.name} is now your ${TYPE_LABEL[type]}`;
+}
+
+// Joins the name clip and the line into one MP3 (the clips are header-free CBR, so bytes concatenate cleanly).
+async function joinedClip(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific): Promise<Uint8Array> {
+  const assets = await Promise.all(clipsFor(girl, key, lang, name, honorific).map((m) => Asset.fromModule(m).downloadAsync()));
+  const parts =
+    Platform.OS === 'web'
+      ? await Promise.all(assets.map(async (a) => new Uint8Array(await (await fetch(a.localUri ?? a.uri)).arrayBuffer())))
+      : await Promise.all(assets.map((a) => new File(a.localUri!).bytes()));
+  const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+  let offset = 0;
+  for (const p of parts) {
+    out.set(p, offset);
+    offset += p.length;
+  }
+  return out;
+}
+
+// Shares the voice line as an MP3 (WhatsApp, TikTok, Instagram…). On web it downloads instead.
+export async function shareLine(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific): Promise<boolean> {
+  const bytes = await joinedClip(girl, key, lang, name, honorific);
+  const fileName = `${girl.name}-says-${(name.trim() || 'senpai').replace(/[^\w-]+/g, '')}-${key}.mp3`;
+  if (Platform.OS === 'web') {
+    const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: 'audio/mpeg' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+    return true;
+  }
+  if (!(await Sharing.isAvailableAsync())) {
+    Alert.alert('Sharing not available', "This phone doesn't support sharing files.");
+    return false;
+  }
+  const file = new File(Paths.cache, fileName);
+  if (file.exists) file.delete();
+  file.create();
+  await file.write(bytes);
+  await Sharing.shareAsync(file.uri, { mimeType: 'audio/mpeg', dialogTitle: `Share ${girl.name}'s voice` });
+  return true;
 }

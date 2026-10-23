@@ -40,7 +40,14 @@
         }
       ],
       "expo-asset",
-      "expo-font"
+      "expo-font",
+      "expo-sharing",
+      [
+        "expo-notifications",
+        {
+          "color": "#D4537E"
+        }
+      ]
     ],
     "scheme": "senpaisays",
     "backgroundColor": "#ECE8F3",

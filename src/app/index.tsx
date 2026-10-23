@@ -1,15 +1,16 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { ComponentProps, useEffect, useState } from 'react';
-import { Animated, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Animated, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Face } from '../components/Face';
 import { C, NeuButton, NeuCard } from '../components/Neu';
 import { Screen } from '../components/Screen';
 import { useToast } from '../components/Toast';
-import { Emotion, EMOTIONS, findName, getGirl, GIRLS, GirlId, HONORIFICS, lineFor, suggestNames } from '../data/girls';
+import { EMOTIONS, faceFor, findName, getGirl, GIRLS, GirlId, HONORIFICS, LineKey, lineFor, MOMENTS, suggestNames } from '../data/girls';
 import { useBob, usePop } from '../lib/motion';
 import { useSettings } from '../lib/store';
-import { playLine, setTone, stopSpeaking } from '../lib/voice';
+import { consumeDaily, onDailyOpen } from '../lib/daily';
+import { lineAvailable, playLine, setTone, shareLine, stopSpeaking } from '../lib/voice';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -17,20 +18,36 @@ export default function GirlsScreen() {
   const { name, lang, honorific, reduceMotion, update } = useSettings();
   const toast = useToast();
   const [girlId, setGirlId] = useState<GirlId>('hana');
-  const [emotion, setEmotion] = useState<Emotion>('love');
+  const [selectedKey, setLineKey] = useState<LineKey>('love');
   const [talking, setTalking] = useState(false);
   const [error, setError] = useState('');
   const girl = getGirl(girlId);
-  const pop = usePop(`${girlId}-${emotion}`, reduceMotion);
+  // A moment may not have clips in the current language yet; fall back to Love if so.
+  const lineKey: LineKey = lineAvailable(girl, selectedKey, lang) ? selectedKey : 'love';
+  const pop = usePop(`${girlId}-${lineKey}`, reduceMotion);
   const bob = useBob(talking, reduceMotion);
-  const line = lineFor(girlId, emotion, lang, name, honorific);
+  const line = lineFor(girlId, lineKey, lang, name, honorific);
   const known = findName(name, lang);
   const suggestions = suggestNames(name, lang);
   const hon = HONORIFICS.find((h) => h.key === honorific)!;
 
   useEffect(() => stopSpeaking, []);
+  // A tapped daily-message notification: show that girl and play her line.
+  useEffect(
+    () =>
+      onDailyOpen((p) => {
+        consumeDaily();
+        setGirlId(p.girl);
+        setLineKey(p.key);
+        if (name.trim()) {
+          setTalking(true);
+          playLine(getGirl(p.girl), p.key, lang, name, honorific, () => setTalking(false));
+        }
+      }),
+    [name, lang, honorific]
+  );
 
-  const play = (g: GirlId, e: Emotion) => {
+  const play = (g: GirlId, e: LineKey) => {
     if (!name.trim()) {
       setError('Enter your name first');
       return;
@@ -39,13 +56,25 @@ export default function GirlsScreen() {
     playLine(getGirl(g), e, lang, name, honorific, () => setTalking(false));
   };
 
+  const onShare = async () => {
+    if (!name.trim()) {
+      setError('Enter your name first');
+      return;
+    }
+    try {
+      await shareLine(girl, lineKey, lang, name, honorific);
+    } catch {
+      toast("Couldn't share the clip. Try again.");
+    }
+  };
+
   const onSetRingtone = async () => {
     if (!name.trim()) {
       setError('Enter your name first');
       return;
     }
     try {
-      const msg = await setTone(girl, emotion, lang, name, honorific, 'ringtone', `${girl.name} - ${emotion}`);
+      const msg = await setTone(girl, lineKey, lang, name, honorific, 'ringtone', `${girl.name} - ${lineKey}`);
       if (msg) toast(msg);
     } catch {
       toast("Couldn't set the tone. Try again.");
@@ -55,7 +84,7 @@ export default function GirlsScreen() {
   return (
     <Screen
       title="Senpai says"
-      subtitle="Pick a girl, then an emotion"
+      subtitle="Pick a girl, then a feeling"
       right={
         <NeuButton onPress={() => update({ lang: lang === 'en' ? 'jp' : 'en' })} style={styles.lang} radius={12} depth={4} accessibilityLabel="Switch voice language">
           <Text style={styles.langText}>{lang === 'en' ? 'EN' : 'JP'}</Text>
@@ -106,7 +135,7 @@ export default function GirlsScreen() {
       <NeuCard radius={28} depth={8} style={styles.hero}>
         <Animated.View style={{ transform: [{ scale: pop }, { translateY: bob }] }}>
           <View style={[styles.faceRing, { backgroundColor: girl.bg }]}>
-            <Face girl={girl} emotion={emotion} size={150} />
+            <Face girl={girl} emotion={faceFor(girlId, lineKey)} size={150} />
           </View>
         </Animated.View>
         <Text style={[styles.who, { color: girl.fg }]}>
@@ -120,19 +149,40 @@ export default function GirlsScreen() {
         {EMOTIONS.map((e) => (
           <NeuButton
             key={e.key}
-            active={e.key === emotion}
+            active={e.key === lineKey}
             onPress={() => {
-              setEmotion(e.key);
+              setLineKey(e.key);
               play(girlId, e.key);
             }}
             style={styles.emo}
             accessibilityLabel={e.label}
           >
-            <Ionicons name={e.icon as IconName} size={22} color={e.key === emotion ? C.accent : C.text} />
-            <Text style={[styles.emoText, e.key === emotion && { color: C.accent }]}>{e.label}</Text>
+            <Ionicons name={e.icon as IconName} size={22} color={e.key === lineKey ? C.accent : C.text} />
+            <Text style={[styles.emoText, e.key === lineKey && { color: C.accent }]}>{e.label}</Text>
           </NeuButton>
         ))}
       </View>
+
+      {MOMENTS.some((m) => lineAvailable(girl, m.key, lang)) && <Text style={styles.sectionTitle}>Special moments</Text>}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.momentsScroll} contentContainerStyle={styles.moments}>
+        {MOMENTS.filter((m) => lineAvailable(girl, m.key, lang)).map((m) => (
+          <NeuButton
+            key={m.key}
+            active={m.key === lineKey}
+            onPress={() => {
+              setLineKey(m.key);
+              play(girlId, m.key);
+            }}
+            style={styles.moment}
+            radius={14}
+            depth={4}
+            accessibilityLabel={m.label}
+          >
+            <Ionicons name={m.icon as IconName} size={18} color={m.key === lineKey ? C.accent : C.text} />
+            <Text style={[styles.momentText, m.key === lineKey && { color: C.accent }]}>{m.label}</Text>
+          </NeuButton>
+        ))}
+      </ScrollView>
 
       <View style={styles.girls}>
         {GIRLS.map((g) => (
@@ -141,7 +191,7 @@ export default function GirlsScreen() {
             active={g.id === girlId}
             onPress={() => {
               setGirlId(g.id);
-              play(g.id, emotion);
+              play(g.id, lineKey);
             }}
             style={styles.girl}
             radius={20}
@@ -153,12 +203,20 @@ export default function GirlsScreen() {
         ))}
       </View>
 
-      <NeuButton onPress={onSetRingtone} style={styles.cta} radius={18} accessibilityLabel="Set this line as ringtone">
-        <View style={styles.ctaRow}>
-          <Ionicons name="notifications-outline" size={18} color={C.accent} />
-          <Text style={styles.ctaText}>Set this line as ringtone</Text>
-        </View>
-      </NeuButton>
+      <View style={styles.ctaRowWrap}>
+        <NeuButton onPress={onShare} containerStyle={{ flex: 1 }} style={styles.cta} radius={18} accessibilityLabel="Share this voice line">
+          <View style={styles.ctaRow}>
+            <Ionicons name="share-social-outline" size={18} color={C.accent} />
+            <Text style={styles.ctaText}>Share</Text>
+          </View>
+        </NeuButton>
+        <NeuButton onPress={onSetRingtone} containerStyle={{ flex: 1.6 }} style={styles.cta} radius={18} accessibilityLabel="Set this line as ringtone">
+          <View style={styles.ctaRow}>
+            <Ionicons name="notifications-outline" size={18} color={C.accent} />
+            <Text style={styles.ctaText}>Set as ringtone</Text>
+          </View>
+        </NeuButton>
+      </View>
     </Screen>
   );
 }
@@ -182,9 +240,16 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 16, marginBottom: 24 },
   emo: { width: 100, height: 72, gap: 4 },
   emoText: { fontSize: 12, color: C.text, fontWeight: '500' },
+  sectionTitle: { fontSize: 15, fontWeight: '700', color: C.text, marginBottom: 4 },
+  // Negative margins let the neumorphic shadows show instead of being clipped by the scroll view.
+  momentsScroll: { marginHorizontal: -20, marginBottom: 14 },
+  moments: { paddingHorizontal: 20, paddingVertical: 12, gap: 12 },
+  moment: { flexDirection: 'row', paddingHorizontal: 14, height: 42, gap: 6 },
+  momentText: { fontSize: 13, fontWeight: '600', color: C.text },
   girls: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 },
   girl: { width: 74, paddingVertical: 10, gap: 4 },
   girlName: { fontSize: 12, fontWeight: '600', color: C.text },
+  ctaRowWrap: { flexDirection: 'row', gap: 14 },
   cta: { height: 54 },
   ctaRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   ctaText: { color: C.accent, fontWeight: '700', fontSize: 15 },

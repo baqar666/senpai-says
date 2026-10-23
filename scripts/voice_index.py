@@ -29,6 +29,10 @@ def write_index():
             out.append(f"    {gid}: {{")
             out.append("      lines: {")
             for lkey in LINES["lines"][gid]:
+                # New lines may exist in one language before the other is generated; the app hides those.
+                if not all((VOICES / f"{lang}/{gid}/lines/{lkey}_{h['key']}.mp3").exists() for h in LINES["honorifics"]):
+                    print(f"  skipping {lang}/{gid}/{lkey} (not generated yet)")
+                    continue
                 hons = ", ".join(
                     f"{h['key']}: {req(f'{lang}/{gid}/lines/{lkey}_{h['key']}.mp3')}" for h in LINES["honorifics"]
                 )

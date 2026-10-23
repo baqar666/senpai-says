@@ -4,14 +4,14 @@ import { AccessibilityInfo } from 'react-native';
 
 import { Honorific, Lang } from '../data/girls';
 
-type Settings = { name: string; lang: Lang; honorific: Honorific; reduceMotion: boolean };
+type Settings = { name: string; lang: Lang; honorific: Honorific; reduceMotion: boolean; dailyOn: boolean; dailyHour: number };
 type Store = Settings & { ready: boolean; update: (patch: Partial<Settings>) => void };
 
 const KEY = 'senpai-says/settings';
 const Ctx = createContext<Store | null>(null);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [s, setS] = useState<Settings>({ name: '', lang: 'jp', honorific: 'kun', reduceMotion: false });
+  const [s, setS] = useState<Settings>({ name: '', lang: 'jp', honorific: 'kun', reduceMotion: false, dailyOn: false, dailyHour: 9 });
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       // Default "reduce animations" to the phone's own accessibility setting.
       const sysReduce = await AccessibilityInfo.isReduceMotionEnabled().catch(() => false);
       const saved = await AsyncStorage.getItem(KEY).catch(() => null);
-      setS({ name: '', lang: 'jp', honorific: 'kun', reduceMotion: sysReduce, ...(saved ? JSON.parse(saved) : null) });
+      setS({ name: '', lang: 'jp', honorific: 'kun', reduceMotion: sysReduce, dailyOn: false, dailyHour: 9, ...(saved ? JSON.parse(saved) : null) });
       setReady(true);
     })();
   }, []);

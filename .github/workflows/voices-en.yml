@@ -103,7 +103,8 @@ jobs:
               parts = sorted(girl.glob("manifest-*.json"))
               if not parts:
                   continue
-              merged = {}
+              base = girl / "manifest.json"
+              merged = json.loads(base.read_text()) if base.exists() else {}
               for p in parts:
                   merged.update(json.loads(p.read_text()))
                   p.unlink()
