@@ -1,5 +1,6 @@
 import LINES from './lines.json';
 import NAMES from './names.json';
+import NAMES_JP_EXTRA from './names_jp_extra.json';
 
 export type GirlId = 'hana' | 'rei' | 'aiko' | 'yui';
 export type Emotion = 'love' | 'angry' | 'miss' | 'shy' | 'night' | 'call';
@@ -39,24 +40,41 @@ export type Honorific = 'kun' | 'chan' | 'san' | 'none' | 'senpai';
 export const HONORIFICS = LINES.honorifics as { key: Honorific; jp: string; en: string; label: string }[];
 
 export type KnownName = { id: string; kana: string };
-const NAME_INDEX = new Map<string, KnownName>();
-for (const [kana, ...spellings] of NAMES.names) {
-  for (const s of spellings) NAME_INDEX.set(s, { id: spellings[0], kana });
+type NameEntry = string[];
+
+// English has clips for names.json; Japanese also covers names_jp_extra.json.
+const NAME_LISTS: Record<Lang, NameEntry[]> = {
+  en: NAMES.names,
+  jp: [...NAMES.names, ...NAMES_JP_EXTRA.names],
+};
+
+// Hiragana → katakana, so a name typed as なると matches ナルト.
+const toKatakana = (s: string) => s.replace(/[\u3041-\u3096]/g, (c) => String.fromCharCode(c.charCodeAt(0) + 0x60));
+const normalize = (name: string) => {
+  const t = name.trim();
+  return /[\u3040-\u30ff]/.test(t) ? toKatakana(t).replace(/\s/g, '') : t.toLowerCase().replace(/[^a-z]/g, '');
+};
+
+const NAME_INDEX: Record<Lang, Map<string, KnownName>> = { en: new Map(), jp: new Map() };
+for (const lang of ['en', 'jp'] as const) {
+  for (const [kana, ...spellings] of NAME_LISTS[lang]) {
+    const entry = { id: spellings[0], kana };
+    for (const s of spellings) NAME_INDEX[lang].set(s, entry);
+    NAME_INDEX[lang].set(kana, entry);
+  }
 }
 
-const normalize = (name: string) => name.trim().toLowerCase().replace(/[^a-z]/g, '');
-
-// Names with recorded voice clips. Anyone else is called "Senpai".
-export function findName(name: string): KnownName | null {
-  return NAME_INDEX.get(normalize(name)) ?? null;
+// Names with recorded voice clips in this language. Anyone else is called "Senpai".
+export function findName(name: string, lang: Lang): KnownName | null {
+  return NAME_INDEX[lang].get(normalize(name)) ?? null;
 }
 
-export function suggestNames(name: string, limit = 4): { label: string; kana: string }[] {
+export function suggestNames(name: string, lang: Lang, limit = 4): { label: string; kana: string }[] {
   const q = normalize(name);
-  if (q.length < 2 || NAME_INDEX.has(q)) return [];
+  if (q.length < 2 || NAME_INDEX[lang].has(q)) return [];
   const out: { label: string; kana: string }[] = [];
-  for (const [kana, ...spellings] of NAMES.names) {
-    const hit = spellings.find((s) => s.startsWith(q));
+  for (const [kana, ...spellings] of NAME_LISTS[lang]) {
+    const hit = spellings.find((s) => s.startsWith(q)) ?? (kana.startsWith(q) ? spellings[0] : undefined);
     if (hit) out.push({ label: hit[0].toUpperCase() + hit.slice(1), kana });
     if (out.length >= limit) break;
   }
@@ -81,7 +99,7 @@ const stripTags = (s: string) => s.replace(/\s*<[^>]+>\s*/g, ' ').replace(/\s+([
 export function lineFor(girl: GirlId, key: LineKey, lang: Lang, name: string, honorific: Honorific): ResolvedLine {
   const l = (LINES.lines as Record<GirlId, Record<LineKey, { en: string; jp: string; tone: string }>>)[girl][key];
   const tone = l.tone === 'loud' ? 'loud' : 'soft';
-  const known = findName(name);
+  const known = findName(name, lang);
   const hon = known ? honorific : 'senpai';
   const h = HONORIFICS.find((x) => x.key === hon)!;
   const display = name.trim() || 'Senpai';

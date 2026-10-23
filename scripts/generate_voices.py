@@ -27,7 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from voicevox_core.blocking import Onnxruntime, OpenJtalk, Synthesizer, VoiceModelFile
 
-from voice_index import LEADING_PUNCT, LINES, NAMES, ROOT, VOICES, write_index
+from voice_index import LEADING_PUNCT, LINES, NAMES_JP as NAMES, ROOT, VOICES, write_index
 
 OUT = VOICES / "jp"
 MANIFEST = OUT / "manifest.json"

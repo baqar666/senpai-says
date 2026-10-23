@@ -15,11 +15,11 @@ Real voices in both languages ship inside the app as small MP3s in `assets/voice
 
 The four VOICEVOX voices allow commercial use with credit. The app shows "VOICEVOX:<name>" credits in Settings, and you must keep them (also add them to the Play Store description). Each voice's full terms are in its VOICEVOX library page. Orpheus is Apache 2.0 and built on Llama 3.2, whose community license allows commercial use with a "Built with Llama" credit (shown in Settings).
 
-How names work: each girl says the name clip (for example バーキル, or "Baqar" in English), then the rest of the line with the chosen honorific (-kun, -chan, -san, -senpai, or none). Names that aren't in `src/data/names.json` get the "senpai" version.
+How names work: each girl says the name clip (for example バーキル, or "Baqar" in English), then the rest of the line with the chosen honorific (-kun, -chan, -san, -senpai, or none). Japanese knows about 815 names (`src/data/names.json` plus `src/data/names_jp_extra.json`, including Japanese and anime names, and names typed in katakana or hiragana); English knows the 230 in `names.json`. Any other name gets the "senpai" version. To give English the extra names too, move entries from `names_jp_extra.json` into `names.json` and run the English workflow.
 
 ### Add names or change lines
 
-1. Edit `src/data/names.json` (katakana, then spellings) or `src/data/lines.json`.
+1. Edit `src/data/names.json` / `names_jp_extra.json` (katakana, then spellings) or `src/data/lines.json`.
 2. Japanese: get VOICEVOX Core. Install the wheel from the [voicevox_core releases](https://github.com/VOICEVOX/voicevox_core/releases) (`pip install voicevox_core-*.whl`), then run its `download` tool to fetch ONNX Runtime and the dictionary (it asks you to accept the terms). Download only the voice models you need from [voicevox_vvm releases](https://github.com/VOICEVOX/voicevox_vvm/releases) into `models/vvms/`: `0.vvm`, `1.vvm`, `5.vvm`, `8.vvm`, `13.vvm`, `14.vvm`, `21.vvm`.
 3. Run `python scripts/generate_voices.py --vv <download dir>` (needs ffmpeg). Only changed clips are regenerated.
 4. English: run the **Generate English voices** workflow in the GitHub Actions tab. Pick `sample` to download a few previews first, then `full` to generate every clip; it commits them and starts the Android build. (Locally: `pip install orpheus-cpp scipy` plus `llama-cpp-python==0.3.19` from the Metal wheel index, then `python scripts/generate_voices_en.py`. It needs about 3 GB of free RAM and disk.)

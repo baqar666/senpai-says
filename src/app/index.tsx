@@ -24,8 +24,8 @@ export default function GirlsScreen() {
   const pop = usePop(`${girlId}-${emotion}`, reduceMotion);
   const bob = useBob(talking, reduceMotion);
   const line = lineFor(girlId, emotion, lang, name, honorific);
-  const known = findName(name);
-  const suggestions = suggestNames(name);
+  const known = findName(name, lang);
+  const suggestions = suggestNames(name, lang);
   const hon = HONORIFICS.find((h) => h.key === honorific)!;
 
   useEffect(() => stopSpeaking, []);
@@ -80,9 +80,15 @@ export default function GirlsScreen() {
         />
       </NeuCard>
       {error ? <Text style={styles.error}>{error}</Text> : null}
-      {name.trim() && lang === 'jp' ? (
+      {name.trim() ? (
         <Text style={styles.callHint}>
-          {known ? `She calls you ${known.kana}${hon.jp}` : "This name isn't in the voice list yet, so she'll call you せんぱい (Senpai)"}
+          {lang === 'jp'
+            ? known
+              ? `She calls you ${known.kana}${hon.jp}`
+              : "This name isn't in the voice list yet, so she'll call you せんぱい (Senpai)"
+            : known
+              ? `She calls you ${name.trim()}${hon.en}`
+              : "This name isn't in the English voice list yet, so she'll call you Senpai. Try the Japanese voice."}
         </Text>
       ) : null}
       {suggestions.length > 0 && (

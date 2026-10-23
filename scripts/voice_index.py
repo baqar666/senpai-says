@@ -6,6 +6,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 LINES = json.loads((ROOT / "src/data/lines.json").read_text())
 NAMES = json.loads((ROOT / "src/data/names.json").read_text())["names"]
+# Japanese also has a larger list; English falls back to Senpai for these until generated.
+NAMES_JP = NAMES + json.loads((ROOT / "src/data/names_jp_extra.json").read_text())["names"]
+NAMES_BY_LANG = {"jp": NAMES_JP, "en": NAMES}
 VOICES = ROOT / "assets/voices"
 INDEX = ROOT / "src/data/voice-assets.ts"
 LANGS = ("jp", "en")
@@ -32,7 +35,7 @@ def write_index():
                 out.append(f"        {lkey}: {{ {hons} }},")
             out.append("      },")
             out.append("      names: {")
-            for entry in NAMES:
+            for entry in NAMES_BY_LANG[lang]:
                 tones = ", ".join(f"{t}: {req(f'{lang}/{gid}/names/{entry[1]}_{t}.mp3')}" for t in ("soft", "loud"))
                 out.append(f"        '{entry[1]}': {{ {tones} }},")
             out.append("      },")
