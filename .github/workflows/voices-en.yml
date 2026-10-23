@@ -26,8 +26,11 @@ jobs:
     timeout-minutes: 330
     strategy:
       fail-fast: false
+      max-parallel: 20
       matrix:
         girl: ${{ fromJSON(inputs.girls) }}
+        # Full mode splits each girl into 6 slices so every job stays well under GitHub's 6-hour limit.
+        shard: ${{ fromJSON(inputs.mode == 'full' && '[0,1,2,3,4,5]' || '[0]') }}
     steps:
       - uses: actions/checkout@v4
 
@@ -50,8 +53,10 @@ jobs:
           path: ~/.cache/huggingface
           key: orpheus-3b-q4km-snac-v1
 
-      - name: Generate ${{ matrix.girl }}
-        run: python scripts/generate_voices_en.py --girl ${{ matrix.girl }} ${{ inputs.mode == 'sample' && '--sample' || '' }}
+      - name: Generate ${{ matrix.girl }} (slice ${{ matrix.shard }})
+        run: >
+          python scripts/generate_voices_en.py --girl ${{ matrix.girl }}
+          ${{ inputs.mode == 'sample' && '--sample' || format('--shard {0} --shards 6', matrix.shard) }}
 
       - name: Upload samples
         if: inputs.mode == 'sample'
@@ -64,7 +69,7 @@ jobs:
         if: inputs.mode == 'full'
         uses: actions/upload-artifact@v4
         with:
-          name: voices-${{ matrix.girl }}
+          name: voices-${{ matrix.girl }}-${{ matrix.shard }}
           path: assets/voices/en/${{ matrix.girl }}/
           retention-days: 3
 
@@ -84,14 +89,27 @@ jobs:
           pattern: voices-*
           path: ${{ runner.temp }}/voices
 
-      - name: Replace English clips and rebuild the index
+      - name: Merge the slices and rebuild the index
         run: |
           mkdir -p assets/voices/en
           for dir in "$RUNNER_TEMP"/voices/voices-*; do
-            g="${dir##*/voices-}"
-            rm -rf "assets/voices/en/$g"
-            mv "$dir" "assets/voices/en/$g"
+            name="${dir##*/voices-}"; g="${name%-*}"
+            mkdir -p "assets/voices/en/$g"
+            cp -R "$dir"/. "assets/voices/en/$g/"
           done
+          python - <<'PY'
+          import json, pathlib
+          for girl in pathlib.Path("assets/voices/en").iterdir():
+              parts = sorted(girl.glob("manifest-*.json"))
+              if not parts:
+                  continue
+              merged = {}
+              for p in parts:
+                  merged.update(json.loads(p.read_text()))
+                  p.unlink()
+              (girl / "manifest.json").write_text(json.dumps(merged, indent=0, sort_keys=True) + "\n")
+              print(girl.name, len(merged), "clips")
+          PY
           python scripts/voice_index.py
 
       - name: Commit and push

@@ -130,7 +130,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--sample", action="store_true", help="Only make a few clips into .voicegen/samples/en")
     ap.add_argument("--girl", choices=list(LINES["girls"]), help="Only this girl (lets CI run girls in parallel)")
+    ap.add_argument("--shard", type=int, default=0, help="Which slice of the clips to make (with --shards)")
+    ap.add_argument("--shards", type=int, default=1, help="Split each girl's clips into this many slices")
     args = ap.parse_args()
+    sharded = args.shards > 1
 
     import llama_cpp
     import orpheus_cpp.model as om  # imported late so --help works without it
@@ -148,10 +151,10 @@ def main():
     for gid in [args.girl] if args.girl else list(LINES["girls"]):
         cfg = LINES["girls"][gid]["enOrpheus"]
         # One progress file per girl, so parallel CI jobs never clash.
-        manifest_path = OUT / gid / "manifest.json"
+        manifest_path = OUT / gid / (f"manifest-{args.shard}.json" if sharded else "manifest.json")
         manifest = {} if args.sample or not manifest_path.exists() else json.loads(manifest_path.read_text())
         keep: set[str] = set()
-        girl_jobs = list(jobs(args.sample, gid))
+        girl_jobs = [j for i, j in enumerate(jobs(args.sample, gid)) if i % args.shards == args.shard]
         print(f"{gid}: {len(girl_jobs)} clips to check", flush=True)
 
         for dest, text, tail, is_name in girl_jobs:
@@ -183,6 +186,13 @@ def main():
                 if 0.25 <= seconds <= max_seconds:
                     break
                 print(f"  retry {gid}/{rel} ({seconds:.1f}s for {words} words)", flush=True)
+            else:
+                if is_name:
+                    # Never ship the helper phrase: fall back to the bare name.
+                    bare = re.split(r"(\.\.\.|!)", text)[0] + ("..." if "..." in text else "!")
+                    rate, samples = orpheus.tts(bare, options={
+                        "voice_id": cfg["voice"], "temperature": cfg["temperature"], "max_tokens": 400})
+                    pcm = samples.squeeze()
             to_mp3(pcm, rate, dest, tail)
             manifest[rel] = sig
             made += 1
@@ -191,7 +201,7 @@ def main():
             if made % 50 == 0:
                 print(f"  {made} clips made...", flush=True)
 
-        if not args.sample:
+        if not args.sample and not sharded:
             # Remove this girl's clips that are no longer in the plan (old engines, renamed lines).
             for stale in (OUT / gid).rglob("*.mp3"):
                 if str(stale.relative_to(OUT / gid)) not in keep:
