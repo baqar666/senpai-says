@@ -6,7 +6,9 @@ export type GirlId = 'hana' | 'rei' | 'aiko' | 'yui';
 export type Emotion = 'love' | 'angry' | 'miss' | 'shy' | 'night' | 'call';
 export type ToneLine = 'call' | 'message' | 'morning';
 export type Moment = 'birthday' | 'eid' | 'luck' | 'eat' | 'gym' | 'care' | 'proud' | 'thanks';
-export type LineKey = Emotion | ToneLine | Moment;
+// Screen-time guard: a gentle first warning, then a firmer one.
+export type GuardLine = 'rest' | 'rest2';
+export type LineKey = Emotion | ToneLine | Moment | GuardLine;
 export type Lang = 'en' | 'jp';
 
 export type Girl = {

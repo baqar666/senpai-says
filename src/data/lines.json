@@ -224,6 +224,20 @@
         "tone": "soft",
         "jpContour": "shy",
         "face": "shy"
+      },
+      "rest": {
+        "en": "{n}... you've been on your phone for so long... let's rest your eyes, okay?",
+        "jp": "{n}…ずっとスマホみてるよ…ちょっとやすもう？",
+        "tone": "soft",
+        "jpContour": "sweet",
+        "face": "miss"
+      },
+      "rest2": {
+        "en": "{n}... please... put the phone down. I'm worried about you. <sigh>",
+        "jp": "{n}…おねがい…スマホおいて…しんぱいだよ…",
+        "tone": "soft",
+        "jpContour": "sad",
+        "face": "miss"
       }
     },
     "rei": {
@@ -330,6 +344,20 @@
         "tone": "soft",
         "jpContour": "cool",
         "face": "shy"
+      },
+      "rest": {
+        "en": "{n}. That's enough scrolling. Rest your eyes.",
+        "jp": "{n}。もうじゅうぶん。めをやすめて。",
+        "tone": "soft",
+        "jpContour": "cool",
+        "face": "love"
+      },
+      "rest2": {
+        "en": "{n}. I said stop. Phone down. Now.",
+        "jp": "{n}。やめてといったはず。スマホをおいて。いますぐ。",
+        "tone": "loud",
+        "jpContour": "bossy",
+        "face": "angry"
       }
     },
     "aiko": {
@@ -436,6 +464,20 @@
         "tone": "soft",
         "jpContour": "shy",
         "face": "shy"
+      },
+      "rest": {
+        "en": "{n}! How long are you gonna stare at your phone?! Take a break!",
+        "jp": "{n}！いつまでスマホみてるのよっ！やすみなさい！",
+        "tone": "loud",
+        "jpContour": "bossy",
+        "face": "angry"
+      },
+      "rest2": {
+        "en": "{n}! Again?! Put it down right now, idiot!",
+        "jp": "{n}！またみてるの？いますぐおきなさい！ばかっ！",
+        "tone": "loud",
+        "jpContour": "angry",
+        "face": "angry"
       }
     },
     "yui": {
@@ -542,6 +584,20 @@
         "tone": "loud",
         "jpContour": "excited",
         "face": "shy"
+      },
+      "rest": {
+        "en": "{n}! Phone break! Let's stretch together!",
+        "jp": "{n}！スマホきゅうけい！いっしょにストレッチしよっ！",
+        "tone": "loud",
+        "jpContour": "excited",
+        "face": "call"
+      },
+      "rest2": {
+        "en": "{n}! Hey hey, still scrolling? Come on, get up and move!",
+        "jp": "{n}！まだみてるの？ほら、たってうごこう！",
+        "tone": "loud",
+        "jpContour": "bossy",
+        "face": "angry"
       }
     }
   },

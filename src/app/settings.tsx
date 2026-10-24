@@ -1,5 +1,6 @@
 import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 
+import { GuardSettings } from '../components/GuardSettings';
 import { C, NeuButton, NeuCard } from '../components/Neu';
 import { Screen } from '../components/Screen';
 import { useToast } from '../components/Toast';
@@ -90,6 +91,8 @@ export default function SettingsScreen() {
           ))}
         </View>
       )}
+
+      <GuardSettings />
 
       <NeuCard radius={18} style={styles.row}>
         <View style={{ flex: 1 }}>

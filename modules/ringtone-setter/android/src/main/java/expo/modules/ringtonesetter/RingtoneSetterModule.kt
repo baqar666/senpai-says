@@ -50,6 +50,74 @@ class RingtoneSetterModule : Module() {
         out.delete()
       }
     }
+
+    // --- Screen-time guard (see GuardService) ---
+
+    Events("onGuard")
+
+    OnCreate {
+      GuardBus.listener = { level, pkg -> sendEvent("onGuard", mapOf("level" to level, "pkg" to pkg)) }
+    }
+
+    OnDestroy {
+      GuardBus.listener = null
+    }
+
+    Function("hasUsageAccess") {
+      GuardPrefs.hasUsageAccess(context)
+    }
+
+    Function("openUsageAccessSettings") {
+      context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    }
+
+    Function("canDrawOverlays") {
+      Settings.canDrawOverlays(context)
+    }
+
+    Function("openOverlaySettings") {
+      val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+        .setData(Uri.parse("package:" + context.packageName))
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      context.startActivity(intent)
+    }
+
+    Function("startGuard") { packages: List<String>, limitMinutes: Int ->
+      GuardPrefs.configure(context, true, packages, limitMinutes)
+      GuardService.start(context)
+    }
+
+    Function("stopGuard") {
+      GuardPrefs.setEnabled(context, false)
+      GuardService.stop(context)
+    }
+
+    Function("guardStatus") {
+      GuardPrefs.rollDay(context, System.currentTimeMillis())
+      mapOf(
+        "usedMinutes" to (GuardPrefs.usedMs(context) / 60_000).toInt(),
+        "limitMinutes" to (GuardPrefs.limitMs(context) / 60_000).toInt(),
+        "level" to GuardPrefs.level(context),
+      )
+    }
+
+    Function("takePendingGuard") {
+      val p = GuardBus.pending
+      GuardBus.pending = null
+      p?.let { mapOf("level" to it.first, "pkg" to it.second) }
+    }
+
+    // "5 more minutes": hide the app and go back to what the user was doing.
+    Function("snoozeGuard") { minutes: Int ->
+      GuardPrefs.snooze(context, System.currentTimeMillis() + minutes * 60_000L)
+      appContext.currentActivity?.moveTaskToBack(true)
+    }
+
+    // "OK, I'll rest": leave for the home screen. If they open the app again she's back in a minute.
+    Function("goHome") {
+      GuardPrefs.snooze(context, System.currentTimeMillis() + 60_000L)
+      context.startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    }
   }
 
   private fun saveAndSet(source: File, title: String, type: String): String {

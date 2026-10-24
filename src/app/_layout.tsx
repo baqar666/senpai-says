@@ -4,12 +4,14 @@ import { TabList, Tabs, TabSlot, TabTrigger, TabTriggerSlotProps } from 'expo-ro
 import * as Notifications from 'expo-notifications';
 import { StatusBar } from 'expo-status-bar';
 import { ComponentProps, useEffect } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { AppState, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { GuardOverlay } from '../components/GuardOverlay';
 import { C, NeuCard } from '../components/Neu';
 import { ToastProvider } from '../components/Toast';
 import { DailyPick, openDaily, scheduleDaily } from '../lib/daily';
+import { syncGuard } from '../lib/guard';
 import { SettingsProvider, useSettings } from '../lib/store';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
@@ -49,10 +51,23 @@ function useDailyMessages() {
   }, []);
 }
 
+// Keeps the native screen-time watcher matching the settings. Permissions are granted in system
+// screens, so it re-checks when the user comes back to the app.
+function useScreenGuard() {
+  const { ready, guardOn, guardApps, guardLimit } = useSettings();
+  useEffect(() => {
+    if (!ready) return;
+    syncGuard(guardOn, guardApps, guardLimit);
+    const sub = AppState.addEventListener('change', (s) => s === 'active' && syncGuard(guardOn, guardApps, guardLimit));
+    return () => sub.remove();
+  }, [ready, guardOn, guardApps, guardLimit]);
+}
+
 function AppTabs() {
   const insets = useSafeAreaInsets();
   const { ready } = useSettings();
   useDailyMessages();
+  useScreenGuard();
   if (!ready) return <View style={{ flex: 1, backgroundColor: C.base }} />;
   return (
     <Tabs style={{ flex: 1, backgroundColor: C.base }}>
@@ -73,6 +88,7 @@ function AppTabs() {
           </TabTrigger>
         </NeuCard>
       </TabList>
+      <GuardOverlay />
     </Tabs>
   );
 }
