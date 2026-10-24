@@ -30,22 +30,32 @@ function Warning({ trigger, onDone }: { trigger: GuardTrigger; onDone: () => voi
   const line = lineFor(girl.id, key, lang, name, honorific);
   const used = useMemo(() => RingtoneSetter?.guardStatus().usedMinutes ?? 0, []);
   const video = GUARD_VIDEOS[girl.id];
+  // The video doesn't loop by itself: each time it ends we restart it and she says her line again,
+  // so voice and animation stay in step.
   const player = useVideoPlayer(video ?? null, (p) => {
-    p.loop = true;
     p.muted = true;
     p.play();
   });
 
-  // play() in the setup can be cut off while the file is still loading, so start again once it's ready.
   useEffect(() => {
-    const sub = player.addListener('statusChange', ({ status }) => status === 'readyToPlay' && player.play());
-    return () => sub.remove();
-  }, [player]);
-
-  useEffect(() => {
-    playLine(girl, key, lang, name, honorific);
-    return stopSpeaking;
-  }, [girl, key, lang, name, honorific]);
+    const speak = () => playLine(girl, key, lang, name, honorific);
+    speak();
+    // play() in the setup can be cut off while the file is still loading, so start again once it's ready.
+    const ready = player.addListener('statusChange', ({ status }) => status === 'readyToPlay' && player.play());
+    const ended = player.addListener('playToEnd', () => {
+      player.replay();
+      player.play();
+      speak();
+    });
+    // A girl without a video repeats on the same rhythm as the 12-second animations.
+    const timer = video ? undefined : setInterval(speak, 12_000);
+    return () => {
+      ready.remove();
+      ended.remove();
+      clearInterval(timer);
+      stopSpeaking();
+    };
+  }, [player, video, girl, key, lang, name, honorific]);
 
   const rest = () => {
     stopSpeaking();
