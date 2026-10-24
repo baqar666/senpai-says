@@ -3,4 +3,8 @@
 import { Emotion, GirlId } from './girls';
 
 export const ART: Partial<Record<GirlId, Partial<Record<Emotion, number>>>> = {
+  hana: { love: require('../../assets/girls/hana_love.jpg'), angry: require('../../assets/girls/hana_angry.jpg'), miss: require('../../assets/girls/hana_miss.jpg'), shy: require('../../assets/girls/hana_shy.jpg'), night: require('../../assets/girls/hana_night.jpg'), call: require('../../assets/girls/hana_call.jpg') },
+  rei: { love: require('../../assets/girls/rei_love.jpg'), angry: require('../../assets/girls/rei_angry.jpg'), miss: require('../../assets/girls/rei_miss.jpg'), shy: require('../../assets/girls/rei_shy.jpg'), night: require('../../assets/girls/rei_night.jpg'), call: require('../../assets/girls/rei_call.jpg') },
+  aiko: { love: require('../../assets/girls/aiko_love.jpg'), angry: require('../../assets/girls/aiko_angry.jpg'), miss: require('../../assets/girls/aiko_miss.jpg'), shy: require('../../assets/girls/aiko_shy.jpg'), night: require('../../assets/girls/aiko_night.jpg'), call: require('../../assets/girls/aiko_call.jpg') },
+  yui: { love: require('../../assets/girls/yui_love.jpg'), angry: require('../../assets/girls/yui_angry.jpg'), miss: require('../../assets/girls/yui_miss.jpg'), shy: require('../../assets/girls/yui_shy.jpg'), night: require('../../assets/girls/yui_night.jpg'), call: require('../../assets/girls/yui_call.jpg') },
 };
