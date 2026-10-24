@@ -15,6 +15,10 @@ export const GUARD_APPS = [
 
 export type GuardAppId = (typeof GUARD_APPS)[number]['id'];
 export const GUARD_LIMITS = [30, 60, 120];
+
+// Seconds into each girl's animation (art/raw/video) when her mouth starts moving,
+// so her voice line lines up with it.
+export const VOICE_START: Record<GirlId, number> = { hana: 1.0, rei: 1.0, aiko: 0.5, yui: 0.3 };
 export const SNOOZE_MINUTES = 5;
 
 export const guardSupported = Platform.OS === 'android' && !!RingtoneSetter;

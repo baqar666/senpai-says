@@ -66,8 +66,9 @@ def main():
         subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "lavfi", "-i", f"color=c={bg}:s=1024x1024",
                         "-frames:v", "1", str(ROOT / "assets/android-icon-background.png")], check=True)
 
-    # Screen-time overlay animations: play forward then backward so the loop has no jump,
-    # drop the audio (she speaks with her own voice clips) and keep them small.
+    # Screen-time overlay animations: forward only (so her mouth moves when she speaks), with the
+    # last moment faded into the first frame so the loop has no jump. Audio is dropped (she speaks
+    # with her own voice clips) and the files are kept small.
     videos = []
     for gid in LINES["girls"]:
         src = RAW / "video" / f"{gid}.mp4"
@@ -75,9 +76,16 @@ def main():
             continue
         dest = ROOT / "assets/guard" / f"{gid}.mp4"
         dest.parent.mkdir(parents=True, exist_ok=True)
+        dur = float(subprocess.run(
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(src)],
+            check=True, capture_output=True, text=True,
+        ).stdout)
+        fade = 0.5
         subprocess.run(
             ["ffmpeg", "-loglevel", "error", "-y", "-i", str(src), "-filter_complex",
-             f"[0:v]{CROP},scale=480:480:flags=lanczos,fps=24,split[a][b];[b]reverse[r];[a][r]concat=n=2:v=1:a=0,format=yuv420p",
+             f"[0:v]{CROP},scale=480:480:flags=lanczos,fps=24,settb=1/24,split[a][b];"
+             f"[b]trim=end_frame=1,loop=loop={int(fade * 24) + 2}:size=1,setpts=N/24/TB[first];"
+             f"[a][first]xfade=transition=fade:duration={fade}:offset={dur - fade:.3f},format=yuv420p",
              "-an", "-c:v", "libx264", "-profile:v", "main", "-crf", "30", "-preset", "slow",
              "-movflags", "+faststart", str(dest)],
             check=True,

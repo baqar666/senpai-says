@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import RingtoneSetter, { GuardTrigger } from '../../modules/ringtone-setter';
 import { getGirl, GuardLine, lineFor } from '../data/girls';
 import { GUARD_VIDEOS } from '../data/guard-videos';
-import { appLabel, guardGirl, SNOOZE_MINUTES, useGuardTrigger } from '../lib/guard';
+import { appLabel, guardGirl, SNOOZE_MINUTES, useGuardTrigger, VOICE_START } from '../lib/guard';
 import { useSettings } from '../lib/store';
 import { lineAvailable, playLine, stopSpeaking } from '../lib/voice';
 import { Face } from './Face';
@@ -30,29 +30,42 @@ function Warning({ trigger, onDone }: { trigger: GuardTrigger; onDone: () => voi
   const line = lineFor(girl.id, key, lang, name, honorific);
   const used = useMemo(() => RingtoneSetter?.guardStatus().usedMinutes ?? 0, []);
   const video = GUARD_VIDEOS[girl.id];
-  // The video doesn't loop by itself: each time it ends we restart it and she says her line again,
-  // so voice and animation stay in step.
   const player = useVideoPlayer(video ?? null, (p) => {
     p.muted = true;
-    p.play();
   });
 
+  // The video doesn't loop by itself: every time it starts (first load, then each time it ends) we
+  // play it from the top and she speaks when her mouth starts moving in the clip.
   useEffect(() => {
-    const speak = () => playLine(girl, key, lang, name, honorific);
-    speak();
-    // play() in the setup can be cut off while the file is still loading, so start again once it's ready.
-    const ready = player.addListener('statusChange', ({ status }) => status === 'readyToPlay' && player.play());
+    // Long lines (some English ones) outlast a loop: let her finish rather than restart mid-sentence.
+    let speaking = false;
+    const speak = () => {
+      if (speaking) return;
+      speaking = true;
+      playLine(girl, key, lang, name, honorific, () => (speaking = false));
+    };
+    let voiceTimer: ReturnType<typeof setTimeout> | undefined;
+    let started = false;
+    const start = () => {
+      started = true;
+      player.play();
+      clearTimeout(voiceTimer);
+      voiceTimer = setTimeout(speak, VOICE_START[girl.id] * 1000);
+    };
+    const ready = player.addListener('statusChange', ({ status }) => status === 'readyToPlay' && !started && start());
     const ended = player.addListener('playToEnd', () => {
       player.replay();
-      player.play();
-      speak();
+      start();
     });
-    // A girl without a video repeats on the same rhythm as the 12-second animations.
-    const timer = video ? undefined : setInterval(speak, 12_000);
+    if (player.status === 'readyToPlay') start();
+    // A girl without a video repeats every 6 seconds, like the animations.
+    const interval = video ? undefined : setInterval(speak, 6_000);
+    if (!video) speak();
     return () => {
       ready.remove();
       ended.remove();
-      clearInterval(timer);
+      clearTimeout(voiceTimer);
+      clearInterval(interval);
       stopSpeaking();
     };
   }, [player, video, girl, key, lang, name, honorific]);
