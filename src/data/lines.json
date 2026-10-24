@@ -99,19 +99,19 @@
       }
     },
     "yui": {
-      "speaker": "満別花丸",
-      "nameStyle": "元気",
-      "speed": 1.1,
+      "speaker": "春日部つむぎ",
+      "nameStyle": "ノーマル",
+      "speed": 1.0,
       "pitch": 0.0,
       "styles": {
-        "love": "ぶりっ子",
+        "love": "ノーマル",
         "angry": "ノーマル",
-        "miss": "ぶりっ子",
-        "shy": "ぶりっ子",
-        "night": "ささやき",
-        "call": "元気",
-        "message": "元気",
-        "morning": "元気"
+        "miss": "ノーマル",
+        "shy": "ノーマル",
+        "night": "ノーマル",
+        "call": "ノーマル",
+        "message": "ノーマル",
+        "morning": "ノーマル"
       },
       "enOrpheus": {
         "voice": "tara",

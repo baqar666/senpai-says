@@ -27,7 +27,7 @@ Pick your favourite girl, type your name, and tap a feeling:
 • Daily message from a different girl every day
 • Works offline · no account · smooth on older phones
 
-All characters are original adults. Japanese voices: VOICEVOX:WhiteCUL, VOICEVOX:冥鳴ひまり, VOICEVOX:四国めたん, VOICEVOX:満別花丸. English voices: Orpheus TTS.
+All characters are original adults. Japanese voices: VOICEVOX:WhiteCUL, VOICEVOX:冥鳴ひまり, VOICEVOX:四国めたん, VOICEVOX:春日部つむぎ. English voices: Orpheus TTS.
 
 ## Category / tags
 - Category: Entertainment

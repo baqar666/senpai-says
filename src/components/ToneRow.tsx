@@ -5,7 +5,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { ToneType } from '../../modules/ringtone-setter';
 import { Emotion, getGirl, GirlId, LineKey, lineFor } from '../data/girls';
 import { useSettings } from '../lib/store';
-import { playLine, setTone } from '../lib/voice';
+import { playLine, setTone, stopSpeaking } from '../lib/voice';
 import { Face } from './Face';
 import { C, NeuButton, NeuCard } from './Neu';
 import { useToast } from './Toast';
@@ -14,8 +14,16 @@ export function ToneRow({ girlId, line, face, type, label }: { girlId: GirlId; l
   const { name, lang, honorific } = useSettings();
   const toast = useToast();
   const [busy, setBusy] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const girl = getGirl(girlId);
   const l = lineFor(girlId, line, lang, name, honorific);
+
+  // Starting another row stops this one, and playLine calls onEnd then too.
+  const onPlay = () => {
+    if (playing) return stopSpeaking();
+    setPlaying(true);
+    playLine(girl, line, lang, name, honorific, () => setPlaying(false));
+  };
 
   const onSet = async () => {
     setBusy(true);
@@ -40,8 +48,13 @@ export function ToneRow({ girlId, line, face, type, label }: { girlId: GirlId; l
           {l.show}
         </Text>
       </View>
-      <NeuButton onPress={() => playLine(girl, line, lang, name, honorific)} style={styles.icon} radius={14} depth={3} accessibilityLabel={`Play ${girl.name} ${label}`}>
-        <Ionicons name="play" size={16} color={C.accent} />
+      <NeuButton
+        onPress={onPlay}
+        style={styles.icon}
+        radius={14}
+        depth={3}
+        accessibilityLabel={`${playing ? 'Stop' : 'Play'} ${girl.name} ${label}`}>
+        <Ionicons name={playing ? 'stop' : 'play'} size={16} color={C.accent} />
       </NeuButton>
       <NeuButton onPress={onSet} style={styles.set} radius={14} depth={3} accessibilityLabel={`Set ${girl.name} as ${label}`}>
         {busy ? <ActivityIndicator size="small" color={C.accent} /> : <Text style={styles.setText}>Set</Text>}
