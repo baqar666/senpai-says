@@ -59,6 +59,17 @@ export function GuardSettings() {
             sub="To count your time in the picked apps"
             onAllow={() => RingtoneSetter?.openUsageAccessSettings()}
           />
+          {!perms.usage && (
+            <View style={styles.hint}>
+              <Text style={styles.hintText}>
+                Android says &quot;App was denied access&quot; or &quot;Restricted setting&quot;? That happens when the app is installed
+                from an APK file. Open App info, tap ⋮ at the top right, choose &quot;Allow restricted settings&quot;, then tap Allow again.
+              </Text>
+              <NeuButton onPress={() => RingtoneSetter?.openAppInfo()} style={styles.allow} radius={12} depth={3} accessibilityLabel="Open app info">
+                <Text style={styles.allowText}>Open app info</Text>
+              </NeuButton>
+            </View>
+          )}
           <Step
             done={perms.overlay}
             title="2. Display over other apps"
@@ -128,6 +139,8 @@ const styles = StyleSheet.create({
   stepTitle: { fontSize: 14, fontWeight: '600', color: C.text },
   allow: { height: 36, paddingHorizontal: 14 },
   allowText: { color: C.accent, fontWeight: '700', fontSize: 13 },
+  hint: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: -4, marginBottom: 14, paddingHorizontal: 4 },
+  hintText: { flex: 1, fontSize: 11, color: C.muted, lineHeight: 16 },
   label: { fontSize: 14, fontWeight: '600', color: C.text, marginBottom: 10, marginTop: 6 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 16 },
   chip: { paddingHorizontal: 12, height: 38 },

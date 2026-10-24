@@ -10,6 +10,7 @@ declare class RingtoneSetterModule extends NativeModule<{ onGuard: (e: GuardTrig
 
   hasUsageAccess(): boolean;
   openUsageAccessSettings(): void;
+  openAppInfo(): void;
   canDrawOverlays(): boolean;
   openOverlaySettings(): void;
   startGuard(packages: string[], limitMinutes: number): void;

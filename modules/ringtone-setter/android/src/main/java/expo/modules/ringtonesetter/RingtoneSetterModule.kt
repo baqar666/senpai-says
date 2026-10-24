@@ -71,6 +71,15 @@ class RingtoneSetterModule : Module() {
       context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
+    // For APK installs, Android 13+ blocks usage access until the user taps
+    // "⋮ → Allow restricted settings" on this screen.
+    Function("openAppInfo") {
+      val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        .setData(Uri.parse("package:" + context.packageName))
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      context.startActivity(intent)
+    }
+
     Function("canDrawOverlays") {
       Settings.canDrawOverlays(context)
     }
