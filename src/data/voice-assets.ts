@@ -4379,4 +4379,4 @@ export const VOICE_CLIPS = {
   },
 } as const;
 
-export const VOICE_CREDITS = ["VOICEVOX:WhiteCUL", "VOICEVOX:冥鳴ひまり", "VOICEVOX:四国めたん", "VOICEVOX:春日部つむぎ", "Orpheus TTS (English, Built with Llama)"];
+export const VOICE_CREDITS = ["VOICEVOX:WhiteCUL", "VOICEVOX:もち子(cv 明日葉よもぎ)", "VOICEVOX:四国めたん", "VOICEVOX:暁記ミタマ", "Orpheus TTS (English, Built with Llama)"];

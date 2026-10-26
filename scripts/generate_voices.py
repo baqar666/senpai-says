@@ -34,30 +34,41 @@ MANIFEST = OUT / "manifest.json"
 SAMPLES = ROOT / ".voicegen/samples/jp"
 
 
+TALK = ("talk", "streaming_talk")  # newer models label their speaking styles "streaming_talk"; s*.vvm also has singing
+
+
 def load_synth(vv: Path):
+    """One synthesizer per girl's voice, loading only the model files that contain it.
+
+    Models from different VOICEVOX releases can share a character (e.g. ずんだもん in 0.vvm and 15.vvm)
+    and refuse to load into the same synthesizer, so voices are kept apart.
+    """
     lib = next((vv / "onnxruntime/lib").glob("libvoicevox_onnxruntime.*.*"))
     ort = Onnxruntime.load_once(filename=str(lib))
     dict_dir = next((vv / "dict").glob("open_jtalk_dic_utf_8-*"))
-    synth = Synthesizer(ort, OpenJtalk(str(dict_dir)))
-    wanted = {g["speaker"] for g in LINES["girls"].values()}
+    jtalk = OpenJtalk(str(dict_dir))
+    synths: dict[str, Synthesizer] = {}
     styles: dict[tuple[str, str], int] = {}
-    for vvm in sorted((vv / "models/vvms").glob("*.vvm")):
-        with VoiceModelFile.open(str(vvm)) as model:
-            metas = model.metas
-            if not any(m.name in wanted and any(s.type == "talk" for s in m.styles) for m in metas):
-                continue
-            synth.load_voice_model(model)
-            for m in metas:
-                for s in m.styles:
-                    if s.type == "talk":  # skip singing styles in s*.vvm
-                        styles[(m.name, s.name)] = s.id
+    for speaker in sorted({g["speaker"] for g in LINES["girls"].values()}):
+        synth = Synthesizer(ort, jtalk)
+        for vvm in sorted((vv / "models/vvms").glob("*.vvm")):
+            with VoiceModelFile.open(str(vvm)) as model:
+                mine = [m for m in model.metas if m.name == speaker]
+                if not any(s.type in TALK for m in mine for s in m.styles):
+                    continue
+                synth.load_voice_model(model)
+                for m in mine:
+                    for s in m.styles:
+                        if s.type in TALK:
+                            styles.setdefault((m.name, s.name), s.id)
+        synths[speaker] = synth
     missing = [(s, st) for g in LINES["girls"].values() for s, st in
                [(g["speaker"], g["nameStyle"]), *((g["speaker"], x) for x in g["styles"].values())]
                if (s, st) not in styles]
     if missing:
         have = sorted({k for k in styles})
         sys.exit(f"Missing VOICEVOX styles: {sorted(set(missing))}\nAvailable: {have}")
-    return synth, styles
+    return synths, styles
 
 
 def _get(m, k):
@@ -116,7 +127,7 @@ def main():
     ap.add_argument("--sample", action="store_true", help="Only make a few clips into .voicegen/samples/jp")
     args = ap.parse_args()
 
-    synth, styles = load_synth(args.vv)
+    synths, styles = load_synth(args.vv)
     base = SAMPLES if args.sample else OUT
     manifest = {} if args.sample or not MANIFEST.exists() else json.loads(MANIFEST.read_text())
     new_manifest = {}
@@ -135,6 +146,7 @@ def main():
         if manifest.get(key) == sig and dest.exists():
             skipped += 1
             return
+        synth = synths[girl["speaker"]]
         q = synth.create_audio_query(text, sid)
         q.speed_scale = speed
         q.pitch_scale = pitch

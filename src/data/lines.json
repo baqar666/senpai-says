@@ -44,12 +44,12 @@
       "speed": 1.0,
       "pitch": 0.0,
       "styles": {
-        "love": "ノーマル",
+        "love": "たのしい",
         "angry": "かなしい",
-        "miss": "かなしい",
+        "miss": "びえーん",
         "shy": "ノーマル",
-        "night": "ノーマル",
-        "call": "ノーマル",
+        "night": "かなしい",
+        "call": "たのしい",
         "message": "ノーマル",
         "morning": "たのしい"
       },
@@ -59,16 +59,16 @@
       }
     },
     "rei": {
-      "speaker": "冥鳴ひまり",
+      "speaker": "暁記ミタマ",
       "nameStyle": "ノーマル",
-      "speed": 0.95,
+      "speed": 1.0,
       "pitch": -0.02,
       "styles": {
         "love": "ノーマル",
-        "angry": "ノーマル",
-        "miss": "ノーマル",
-        "shy": "ノーマル",
-        "night": "ノーマル",
+        "angry": "怒り",
+        "miss": "哀しみ",
+        "shy": "ささやき",
+        "night": "ささやき",
         "call": "ノーマル",
         "message": "ノーマル",
         "morning": "ノーマル"
@@ -99,24 +99,25 @@
       }
     },
     "yui": {
-      "speaker": "春日部つむぎ",
-      "nameStyle": "ノーマル",
+      "speaker": "もち子さん",
+      "nameStyle": "喜び",
       "speed": 1.0,
       "pitch": 0.0,
       "styles": {
-        "love": "ノーマル",
-        "angry": "ノーマル",
-        "miss": "ノーマル",
-        "shy": "ノーマル",
-        "night": "ノーマル",
-        "call": "ノーマル",
-        "message": "ノーマル",
-        "morning": "ノーマル"
+        "love": "喜び",
+        "angry": "怒り",
+        "miss": "泣き",
+        "shy": "のんびり",
+        "night": "のんびり",
+        "call": "喜び",
+        "message": "喜び",
+        "morning": "喜び"
       },
       "enOrpheus": {
         "voice": "tara",
         "temperature": 0.85
-      }
+      },
+      "credit": "もち子(cv 明日葉よもぎ)"
     }
   },
   "lines": {

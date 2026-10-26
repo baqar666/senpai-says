@@ -9,9 +9,9 @@ Real voices in both languages ship inside the app as small MP3s in `assets/voice
 | Girl | Japanese ([VOICEVOX](https://voicevox.hiroshiba.jp/)) | English ([Orpheus](https://github.com/canopyai/Orpheus-TTS)) |
 | --- | --- | --- |
 | Hana (shy) | WhiteCUL | leah |
-| Rei (cool) | 冥鳴ひまり | mia |
+| Rei (cool) | 暁記ミタマ | mia |
 | Aiko (tsundere) | 四国めたん | jess |
-| Yui (genki) | 春日部つむぎ | tara |
+| Yui (genki) | もち子さん | tara |
 
 The four VOICEVOX voices allow commercial use with credit. The app shows "VOICEVOX:<name>" credits in Settings, and you must keep them (also add them to the Play Store description). Each voice's full terms are in its VOICEVOX library page. Orpheus is Apache 2.0 and built on Llama 3.2, whose community license allows commercial use with a "Built with Llama" credit (shown in Settings).
 

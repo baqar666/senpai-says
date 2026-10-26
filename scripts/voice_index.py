@@ -47,7 +47,8 @@ def write_index():
         out.append("  },")
     out.append("} as const;")
     out.append("")
-    credits = [f"VOICEVOX:{c}" for c in sorted({g["speaker"] for g in LINES["girls"].values()})]
+    # Some voices' terms ask for a specific credit (girl "credit" in lines.json); otherwise the voice name.
+    credits = [f"VOICEVOX:{c}" for c in sorted({g.get("credit", g["speaker"]) for g in LINES["girls"].values()})]
     credits.append("Orpheus TTS (English, Built with Llama)")
     out.append(f"export const VOICE_CREDITS = {json.dumps(credits, ensure_ascii=False)};")
     out.append("")

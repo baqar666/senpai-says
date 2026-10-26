@@ -28,7 +28,7 @@ Pick your favourite girl, type your name, and tap a feeling:
 • "Stop me scrolling": scroll Instagram or TikTok too long and an animated girl pops up and tells you to take a break
 • Works offline · no account · smooth on older phones
 
-All characters are original adults. Japanese voices: VOICEVOX:WhiteCUL, VOICEVOX:冥鳴ひまり, VOICEVOX:四国めたん, VOICEVOX:春日部つむぎ. English voices: Orpheus TTS.
+All characters are original adults. Japanese voices: VOICEVOX:WhiteCUL, VOICEVOX:暁記ミタマ, VOICEVOX:四国めたん, VOICEVOX:もち子(cv 明日葉よもぎ). English voices: Orpheus TTS.
 
 ## Category / tags
 - Category: Entertainment
