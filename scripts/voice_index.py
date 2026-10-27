@@ -26,6 +26,10 @@ def write_index():
     for lang in LANGS:
         out.append(f"  {lang}: {{")
         for gid in LINES["girls"]:
+            # A new character may not be generated in this language yet; the app shows "coming soon".
+            if not (VOICES / lang / gid / "names").is_dir():
+                print(f"  skipping {lang}/{gid} (no clips yet)")
+                continue
             out.append(f"    {gid}: {{")
             out.append("      lines: {")
             for lkey in LINES["lines"][gid]:
