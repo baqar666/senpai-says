@@ -2,6 +2,7 @@ import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-nativ
 
 import { GuardSettings } from '../components/GuardSettings';
 import { C, NeuButton, NeuCard } from '../components/Neu';
+import { PassCard } from '../components/PassCard';
 import { Screen } from '../components/Screen';
 import { useToast } from '../components/Toast';
 import { HONORIFICS } from '../data/girls';
@@ -32,6 +33,7 @@ export default function SettingsScreen() {
   };
   return (
     <Screen title="Settings">
+      <PassCard />
       <Text style={styles.label}>Your name</Text>
       <NeuCard pressed radius={16} depth={6} style={styles.inputWrap}>
         <TextInput

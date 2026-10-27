@@ -30,7 +30,11 @@ jobs:
       - name: Typecheck
         run: npx tsc --noEmit
 
+      # Purchases and ads (repo secrets). Without them the app builds with Google's test AdMob IDs,
+      # no ads in release builds, and purchases switched off.
       - name: Generate native Android project
+        env:
+          ADMOB_ANDROID_APP_ID: ${{ secrets.ADMOB_ANDROID_APP_ID }}
         run: npx expo prebuild --platform android --no-install
 
       # Optional: add these repo secrets to get a Play Store-ready signed .aab.
@@ -46,6 +50,8 @@ jobs:
       - name: Build APK and AAB
         working-directory: android
         env:
+          EXPO_PUBLIC_REVENUECAT_ANDROID_KEY: ${{ secrets.REVENUECAT_ANDROID_KEY }}
+          EXPO_PUBLIC_ADMOB_REWARDED_ID: ${{ secrets.ADMOB_REWARDED_ID }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}

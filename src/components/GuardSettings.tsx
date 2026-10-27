@@ -3,13 +3,17 @@ import { useEffect, useState } from 'react';
 import { AppState, StyleSheet, Switch, Text, View } from 'react-native';
 
 import RingtoneSetter from '../../modules/ringtone-setter';
-import { GUARD_APPS, GUARD_LIMITS, guardPermissions, guardSupported } from '../lib/guard';
+import { effectiveGuard, GUARD_APPS, GUARD_LIMITS, guardPermissions, guardSupported } from '../lib/guard';
+import { FREE_GUARD_LIMIT, usePass } from '../lib/pass';
 import { useSettings } from '../lib/store';
 import { C, NeuButton, NeuCard } from './Neu';
 
 // "Stop me scrolling": the screen-time guard's settings, with the permission steps it needs.
 export function GuardSettings() {
   const { guardOn, guardLimit, guardApps, update } = useSettings();
+  const { pro, gate, openPaywall } = usePass();
+  // What the watcher actually uses: free users get one app at the 1-hour limit.
+  const { apps: activeApps, limit: activeLimit } = effectiveGuard(guardApps, guardLimit, pro);
   const [perms, setPerms] = useState(guardPermissions);
   const [used, setUsed] = useState<number | null>(null);
 
@@ -25,8 +29,15 @@ export function GuardSettings() {
   }, []);
 
   const ready = perms.usage && perms.overlay;
-  const toggleApp = (id: (typeof GUARD_APPS)[number]['id']) =>
+  // Free: tapping an app switches to it. Pass: apps toggle on and off.
+  const toggleApp = (id: (typeof GUARD_APPS)[number]['id']) => {
+    if (!pro) return update({ guardApps: [id] });
     update({ guardApps: guardApps.includes(id) ? guardApps.filter((a) => a !== id) : [...guardApps, id] });
+  };
+  const pickLimit = (m: number) =>
+    pro || m === FREE_GUARD_LIMIT
+      ? update({ guardLimit: m })
+      : gate({ title: 'Choose any daily limit', allowAd: false, action: () => update({ guardLimit: m }) });
 
   return (
     <>
@@ -80,8 +91,11 @@ export function GuardSettings() {
           <Text style={styles.label}>Daily limit</Text>
           <View style={styles.chips}>
             {GUARD_LIMITS.map((m) => (
-              <NeuButton key={m} active={guardLimit === m} onPress={() => update({ guardLimit: m })} style={styles.chip} radius={12} depth={3} accessibilityLabel={`${m} minute limit`}>
-                <Text style={[styles.chipText, guardLimit === m && { color: C.accent }]}>{m < 60 ? `${m} min` : `${m / 60} hour${m > 60 ? 's' : ''}`}</Text>
+              <NeuButton key={m} active={activeLimit === m} onPress={() => pickLimit(m)} style={styles.chip} radius={12} depth={3} accessibilityLabel={`${m} minute limit`}>
+                <Text style={[styles.chipText, activeLimit === m && { color: C.accent }]}>
+                  {!pro && m !== FREE_GUARD_LIMIT ? '🔒 ' : ''}
+                  {m < 60 ? `${m} min` : `${m / 60} hour${m > 60 ? 's' : ''}`}
+                </Text>
               </NeuButton>
             ))}
           </View>
@@ -89,7 +103,7 @@ export function GuardSettings() {
           <Text style={styles.label}>Watch these apps</Text>
           <View style={styles.chips}>
             {GUARD_APPS.map((a) => {
-              const on = guardApps.includes(a.id);
+              const on = activeApps.includes(a.id);
               return (
                 <NeuButton key={a.id} active={on} onPress={() => toggleApp(a.id)} style={styles.chip} radius={12} depth={3} accessibilityLabel={`${on ? 'Stop watching' : 'Watch'} ${a.label}`}>
                   <Text style={[styles.chipText, on && { color: C.accent }]}>{a.label}</Text>
@@ -98,12 +112,17 @@ export function GuardSettings() {
             })}
           </View>
 
+          {!pro && (
+            <Text style={styles.freeNote} onPress={() => openPaywall('Watch every app with any limit')}>
+              Free: one app at a 1-hour limit. <Text style={styles.freeLink}>Get Senpai Pass</Text> for every app and any limit.
+            </Text>
+          )}
           <Text style={styles.status}>
             {!ready
               ? 'Allow both permissions to start.'
-              : !guardApps.length
+              : !activeApps.length
                 ? 'Pick at least one app.'
-                : `On 👀  ${used ?? 0} of ${guardLimit} min used today`}
+                : `On 👀  ${used ?? 0} of ${activeLimit} min used today`}
           </Text>
         </View>
       )}
@@ -145,5 +164,7 @@ const styles = StyleSheet.create({
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 16 },
   chip: { paddingHorizontal: 12, height: 38 },
   chipText: { fontSize: 13, fontWeight: '600', color: C.text },
+  freeNote: { fontSize: 12, color: C.muted, textAlign: 'center', marginBottom: 12, lineHeight: 18 },
+  freeLink: { color: C.accent, fontWeight: '700' },
   status: { fontSize: 13, fontWeight: '600', color: C.text, textAlign: 'center' },
 });

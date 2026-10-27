@@ -18,6 +18,12 @@ Pick your favourite girl, type your name, and tap a feeling:
 🔥 **Aiko** — tsundere: "It's not like I like you… baka!"
 ☀️ **Yui** — bubbly and energetic, always cheering you on
 
+**…and the boys**
+❄️ **Kaito** — cocky, teasing, the strongest
+🌑 **Ryuga** — cold, dominant, a little scary
+🏜️ **Jin** — quiet, cold, secretly lonely
+🍃 **Haru** — gentle senpai who always has your back
+
 **Features**
 • Real voice clips in Japanese and English that say your name (800+ names, including anime names)
 • Choose how they call you: -kun, -chan, -san, -senpai, or just your name
@@ -27,8 +33,9 @@ Pick your favourite girl, type your name, and tap a feeling:
 • Daily message from a different girl every day
 • "Stop me scrolling": scroll Instagram or TikTok too long and an animated girl pops up and tells you to take a break
 • Works offline · no account · smooth on older phones
+• Free with optional rewarded ads · one-time Senpai Pass unlocks everything and removes ads
 
-All characters are original adults. Japanese voices: VOICEVOX:WhiteCUL, VOICEVOX:暁記ミタマ, VOICEVOX:四国めたん, VOICEVOX:もち子(cv 明日葉よもぎ). English voices: Orpheus TTS.
+All characters are original adults. Japanese voices: VOICEVOX:WhiteCUL, VOICEVOX:暁記ミタマ, VOICEVOX:四国めたん, VOICEVOX:もち子(cv 明日葉よもぎ), VOICEVOX:玄野武宏, VOICEVOX:青山龍星, VOICEVOX:離途, VOICEVOX:白上虎太郎. English voices: Orpheus TTS.
 
 ## Category / tags
 - Category: Entertainment
@@ -40,9 +47,23 @@ All characters are original adults. Japanese voices: VOICEVOX:WhiteCUL, VOICEVOX
 https://baqar666.github.io/privacy-policies/senpai-says/
 
 ## Data safety form
-- Data collected: **None**
-- Data shared: **None**
-- No account, no analytics, no ads (update this when adding AdMob)
+Play Console → App content. The app **contains ads** (rewarded only) and has **in-app purchases** (Senpai Pass, one-time).
+
+| Data type | Collected by | Purpose | Shared |
+| --- | --- | --- | --- |
+| Device or other IDs (advertising ID) | Google AdMob SDK | Advertising, fraud prevention | Yes, with Google |
+| Approximate location (from IP) | Google AdMob SDK | Advertising, fraud prevention | Yes, with Google |
+| App interactions, diagnostics | Google AdMob SDK | Advertising, analytics of ads | Yes, with Google |
+| Purchase history | RevenueCat (and Google Play) | App functionality (unlock and restore the Pass), fraud prevention | Processed by RevenueCat as a service provider |
+
+- Data is encrypted in transit. No account, so no account deletion flow is needed.
+- The name, settings and screen-time usage never leave the device (not collected).
+- "Other app usage" (screen-time feature) is accessed on-device only: not collected, not shared.
+- Ads declaration: **Yes, contains ads.** Also add the AD_ID permission declaration (the AdMob SDK uses the advertising ID).
+
+## In-app product (Play Console → Monetize → Products → In-app products)
+- Product ID: `senpai_pass` · type: one-time (managed) · name: "Senpai Pass" · price: about $2.99, use Play's suggested local prices (Pakistan around Rs 300–500).
+- Description: "Unlock every ringtone, message tone and alarm, all special moments, the full Stop me scrolling guard, every new character, and remove ads. One-time purchase."
 
 ## Permissions to explain in the review notes
 - **Modify system settings (WRITE_SETTINGS):** used only when the user taps "Set" to make a voice line their ringtone, notification sound or alarm sound.

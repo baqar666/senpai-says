@@ -9,9 +9,13 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 
 import { GuardOverlay } from '../components/GuardOverlay';
 import { C, NeuCard } from '../components/Neu';
+import { Paywall } from '../components/Paywall';
 import { ToastProvider } from '../components/Toast';
+import { UnlockSheet } from '../components/UnlockSheet';
+import { startAds } from '../lib/ads';
 import { DailyPick, openDaily, scheduleDaily } from '../lib/daily';
 import { syncGuard } from '../lib/guard';
+import { PassProvider, usePass } from '../lib/pass';
 import { SettingsProvider, useSettings } from '../lib/store';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
@@ -55,12 +59,21 @@ function useDailyMessages() {
 // screens, so it re-checks when the user comes back to the app.
 function useScreenGuard() {
   const { ready, guardOn, guardApps, guardLimit } = useSettings();
+  const { pro } = usePass();
   useEffect(() => {
     if (!ready) return;
-    syncGuard(guardOn, guardApps, guardLimit);
-    const sub = AppState.addEventListener('change', (s) => s === 'active' && syncGuard(guardOn, guardApps, guardLimit));
+    syncGuard(guardOn, guardApps, guardLimit, pro);
+    const sub = AppState.addEventListener('change', (s) => s === 'active' && syncGuard(guardOn, guardApps, guardLimit, pro));
     return () => sub.remove();
-  }, [ready, guardOn, guardApps, guardLimit]);
+  }, [ready, guardOn, guardApps, guardLimit, pro]);
+}
+
+// Free users may watch rewarded ads, so ask for ad consent (where required) once at launch.
+function useAdsConsent() {
+  const { ready, pro } = usePass();
+  useEffect(() => {
+    if (ready && !pro) startAds().catch(() => {});
+  }, [ready, pro]);
 }
 
 function AppTabs() {
@@ -68,6 +81,7 @@ function AppTabs() {
   const { ready } = useSettings();
   useDailyMessages();
   useScreenGuard();
+  useAdsConsent();
   if (!ready) return <View style={{ flex: 1, backgroundColor: C.base }} />;
   return (
     <Tabs style={{ flex: 1, backgroundColor: C.base }}>
@@ -89,6 +103,8 @@ function AppTabs() {
         </NeuCard>
       </TabList>
       <GuardOverlay />
+      <UnlockSheet />
+      <Paywall />
     </Tabs>
   );
 }
@@ -97,10 +113,12 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <SettingsProvider>
-        <ToastProvider>
-          <StatusBar style="dark" />
-          <AppTabs />
-        </ToastProvider>
+        <PassProvider>
+          <ToastProvider>
+            <StatusBar style="dark" />
+            <AppTabs />
+          </ToastProvider>
+        </PassProvider>
       </SettingsProvider>
     </SafeAreaProvider>
   );

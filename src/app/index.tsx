@@ -9,6 +9,7 @@ import { useToast } from '../components/Toast';
 import { CastSwitch } from '../components/CastSwitch';
 import { castMembers, EMOTIONS, faceFor, findName, getGirl, GirlId, HONORIFICS, LineKey, lineFor, MOMENTS, pronoun, suggestNames } from '../data/girls';
 import { useBob, usePop } from '../lib/motion';
+import { FREE_TONE_CHARACTERS, usePass } from '../lib/pass';
 import { useSettings } from '../lib/store';
 import { consumeDaily, onDailyOpen } from '../lib/daily';
 import { lineAvailable, playLine, setTone, shareLine, stopSpeaking } from '../lib/voice';
@@ -18,6 +19,7 @@ type IconName = ComponentProps<typeof Ionicons>['name'];
 export default function CharactersScreen() {
   const { name, lang, honorific, reduceMotion, cast, update } = useSettings();
   const toast = useToast();
+  const { pro, gate } = usePass();
   const members = castMembers(cast);
   const [pickedId, setGirlId] = useState<GirlId>('hana');
   // Switching Girls/Boys falls back to the first character of that group.
@@ -74,11 +76,17 @@ export default function CharactersScreen() {
     }
   };
 
-  const onSetRingtone = async () => {
+  const toneLocked = !pro && !FREE_TONE_CHARACTERS.includes(girlId);
+  const onSetRingtone = () => {
     if (!name.trim()) {
       setError('Enter your name first');
       return;
     }
+    if (toneLocked) gate({ title: `Set ${girl.name} as your ringtone`, allowAd: true, action: setRingtoneNow });
+    else setRingtoneNow();
+  };
+
+  const setRingtoneNow = async () => {
     try {
       const msg = await setTone(girl, lineKey, lang, name, honorific, 'ringtone', `${girl.name} - ${lineKey}`);
       if (msg) toast(msg);
@@ -184,15 +192,19 @@ export default function CharactersScreen() {
             key={m.key}
             active={m.key === lineKey}
             onPress={() => {
-              setLineKey(m.key);
-              play(girlId, m.key);
+              const open = () => {
+                setLineKey(m.key);
+                play(girlId, m.key);
+              };
+              if (pro) open();
+              else gate({ title: `Hear ${girl.name}'s "${m.label}" message`, allowAd: true, action: open });
             }}
             style={styles.moment}
             radius={14}
             depth={4}
             accessibilityLabel={m.label}
           >
-            <Ionicons name={m.icon as IconName} size={18} color={m.key === lineKey ? C.accent : C.text} />
+            <Ionicons name={(pro ? m.icon : 'lock-closed') as IconName} size={pro ? 18 : 14} color={m.key === lineKey ? C.accent : C.text} />
             <Text style={[styles.momentText, m.key === lineKey && { color: C.accent }]}>{m.label}</Text>
           </NeuButton>
         ))}
@@ -227,7 +239,7 @@ export default function CharactersScreen() {
         </NeuButton>
         <NeuButton onPress={onSetRingtone} containerStyle={{ flex: 1.6 }} style={styles.cta} radius={18} accessibilityLabel="Set this line as ringtone">
           <View style={styles.ctaRow}>
-            <Ionicons name="notifications-outline" size={18} color={C.accent} />
+            <Ionicons name={toneLocked ? 'lock-closed' : 'notifications-outline'} size={18} color={C.accent} />
             <Text style={styles.ctaText}>Set as ringtone</Text>
           </View>
         </NeuButton>

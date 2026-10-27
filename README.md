@@ -1,19 +1,23 @@
 # Senpai Says
 
-Original anime girls (Hana, Rei, Aiko, Yui) say your name with different emotions. Set their lines as your ringtone, message tone, or alarm (Android).
+Original anime girls (Hana, Rei, Aiko, Yui) and boys (Kaito, Ryuga, Jin, Haru) say your name with different emotions. Set their lines as your ringtone, message tone, or alarm (Android).
 
 ## Voices
 
 Real voices in both languages ship inside the app as small MP3s in `assets/voices/jp` and `assets/voices/en`, so they work offline.
 
-| Girl | Japanese ([VOICEVOX](https://voicevox.hiroshiba.jp/)) | English ([Orpheus](https://github.com/canopyai/Orpheus-TTS)) |
+| Character | Japanese ([VOICEVOX](https://voicevox.hiroshiba.jp/)) | English ([Orpheus](https://github.com/canopyai/Orpheus-TTS)) |
 | --- | --- | --- |
 | Hana (shy) | WhiteCUL | leah |
 | Rei (cool) | 暁記ミタマ | mia |
 | Aiko (tsundere) | 四国めたん | jess |
 | Yui (genki) | もち子さん | tara |
+| Kaito (the strongest) | 玄野武宏 | zac |
+| Ryuga (dark overlord) | 青山龍星 | dan |
+| Jin (silent one) | 離途 | leo |
+| Haru (gentle senpai) | 白上虎太郎 | leo |
 
-The four VOICEVOX voices allow commercial use with credit. The app shows "VOICEVOX:<name>" credits in Settings, and you must keep them (also add them to the Play Store description). Each voice's full terms are in its VOICEVOX library page. Orpheus is Apache 2.0 and built on Llama 3.2, whose community license allows commercial use with a "Built with Llama" credit (shown in Settings).
+These VOICEVOX voices allow commercial use with credit. The app shows "VOICEVOX:<name>" credits in Settings, and you must keep them (also add them to the Play Store description). Each voice's full terms are in its VOICEVOX library page. Orpheus is Apache 2.0 and built on Llama 3.2, whose community license allows commercial use with a "Built with Llama" credit (shown in Settings).
 
 How names work: each girl says the name clip (for example バーキル, or "Baqar" in English), then the rest of the line with the chosen honorific (-kun, -chan, -san, -senpai, or none). Japanese knows about 815 names (`src/data/names.json` plus `src/data/names_jp_extra.json`, including Japanese and anime names, and names typed in katakana or hiragana); English knows the 230 in `names.json`. Any other name gets the "senpai" version. To give English the extra names too, move entries from `names_jp_extra.json` into `names.json` and run the English workflow.
 
@@ -48,6 +52,35 @@ npx expo start --web
 
 Setting ringtones only works in the Android app, not on web or in Expo Go.
 
+## Purchases and ads
+
+**Free:** all characters and emotions, sharing, daily message, tone previews, setting Hana's or Kaito's tones, and "Stop me scrolling" for one app at a 1-hour limit. Other tones and special moments can be unlocked once by watching a rewarded ad.
+**Senpai Pass** (one-time purchase): every tone, every moment, the full screen-time guard, future characters, and no ads.
+
+Code: `src/lib/pass.tsx` (RevenueCat, cached for offline, restore, pending payments, refunds), `src/lib/ads.ts` (AdMob rewarded ads after Google's consent form), `src/components/Paywall.tsx`, `UnlockSheet.tsx`, `PassCard.tsx`. Free limits live in `FREE_TONE_CHARACTERS` and `FREE_GUARD_LIMIT`.
+
+Until the IDs below are added, builds use Google's test AdMob IDs (debug builds show test ads, release builds show no ads) and purchases are switched off. The web preview fakes both in development so the screens can be tested.
+
+### Set up (once)
+
+1. **Google Play Console** (one-time $25): create the app `com.baqar.senpaisays`, upload an AAB to **Internal testing** (purchases only work in builds installed from Play), and add your Gmail as a license tester (**Settings → License testing**) so test purchases are free.
+2. **In-app product**: Monetize → Products → In-app products → create `senpai_pass` (details in `store/STORE_LISTING.md`) and activate it.
+3. **RevenueCat** (free up to $2.5k/month): create a project and a Play Store app, connect it with a Google service account (RevenueCat's guide walks through it), then:
+   - Products: import `senpai_pass`
+   - Entitlements: create `pass` and attach `senpai_pass`
+   - Offerings: make the default offering with a **Lifetime** package containing `senpai_pass`
+   - Copy the **public Android API key** (starts with `goog_`)
+4. **AdMob**: add the app (Android), copy the **App ID** (`ca-app-pub-…~…`), create a **Rewarded** ad unit and copy its ID (`ca-app-pub-…/…`). Under **Privacy & messaging**, publish a GDPR message so the consent form appears in Europe.
+5. Add the GitHub repository secrets (**Settings → Secrets and variables → Actions**):
+
+| Secret | Value |
+| --- | --- |
+| `REVENUECAT_ANDROID_KEY` | RevenueCat public Android key (`goog_…`) |
+| `ADMOB_ANDROID_APP_ID` | AdMob App ID (`ca-app-pub-…~…`) |
+| `ADMOB_REWARDED_ID` | AdMob rewarded ad unit ID (`ca-app-pub-…/…`) |
+
+6. Also add the Play signing secrets below, then run the Android build. Never click your own real ads; use test ads or a registered test device.
+
 ## Build the Android app on GitHub (no EAS, no Expo build limits)
 
 `.github/workflows/android.yml` runs `expo prebuild` and Gradle on GitHub's own runner on every push to `main` (or from **Actions → Android build → Run workflow**).
@@ -78,7 +111,7 @@ Keep `upload.keystore` safe and never commit it. If you lose it, you can't updat
 
 ## Project layout
 
-- `src/app/`: screens (Girls, Ringtones, Alarm, Settings)
+- `src/app/`: screens (Home, Ringtones, Alarm, Settings)
 - `src/data/girls.ts`: characters and voice lines (English and Japanese)
 - `src/components/`: neumorphic UI, face art, toast
 - `src/lib/motion.ts`: light native-driver animations (turned off by "Reduce animations")
@@ -88,6 +121,5 @@ Keep `upload.keystore` safe and never commit it. If you lose it, you can't updat
 
 ## Next steps
 
-- Add the Grok character art (see Character art above)
-- Rewarded ads (AdMob) to unlock extra lines
+- Create the Play Console, RevenueCat and AdMob accounts (see Purchases and ads)
 - Optionally replace the main lines with a hired Japanese voice actor, and keep VOICEVOX for the name clips

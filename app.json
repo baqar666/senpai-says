@@ -47,7 +47,8 @@
           "color": "#D4537E"
         }
       ],
-      "expo-video"
+      "expo-video",
+      "react-native-google-mobile-ads"
     ],
     "scheme": "senpaisays",
     "backgroundColor": "#FFDEE7",

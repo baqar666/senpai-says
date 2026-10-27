@@ -4,6 +4,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { ToneType } from '../../modules/ringtone-setter';
 import { Emotion, getGirl, GirlId, LineKey, lineFor } from '../data/girls';
+import { FREE_TONE_CHARACTERS, usePass } from '../lib/pass';
 import { useSettings } from '../lib/store';
 import { playLine, setTone, stopSpeaking } from '../lib/voice';
 import { Face } from './Face';
@@ -13,6 +14,7 @@ import { useToast } from './Toast';
 export function ToneRow({ girlId, line, face, type, label }: { girlId: GirlId; line: LineKey; face: Emotion; type: ToneType; label: string }) {
   const { name, lang, honorific } = useSettings();
   const toast = useToast();
+  const { pro, gate } = usePass();
   const [busy, setBusy] = useState(false);
   const [playing, setPlaying] = useState(false);
   const girl = getGirl(girlId);
@@ -25,7 +27,11 @@ export function ToneRow({ girlId, line, face, type, label }: { girlId: GirlId; l
     playLine(girl, line, lang, name, honorific, () => setPlaying(false));
   };
 
-  const onSet = async () => {
+  const locked = !pro && !FREE_TONE_CHARACTERS.includes(girlId);
+  const onSet = () =>
+    locked ? gate({ title: `Set ${girl.name} as your ${label.toLowerCase()}`, allowAd: true, action: setNow }) : setNow();
+
+  const setNow = async () => {
     setBusy(true);
     try {
       const msg = await setTone(girl, line, lang, name, honorific, type, `${girl.name} - ${label}`);
@@ -57,7 +63,14 @@ export function ToneRow({ girlId, line, face, type, label }: { girlId: GirlId; l
         <Ionicons name={playing ? 'stop' : 'play'} size={16} color={C.accent} />
       </NeuButton>
       <NeuButton onPress={onSet} style={styles.set} radius={14} depth={3} accessibilityLabel={`Set ${girl.name} as ${label}`}>
-        {busy ? <ActivityIndicator size="small" color={C.accent} /> : <Text style={styles.setText}>Set</Text>}
+        {busy ? (
+          <ActivityIndicator size="small" color={C.accent} />
+        ) : (
+          <View style={styles.setRow}>
+            {locked && <Ionicons name="lock-closed" size={12} color={C.accent} />}
+            <Text style={styles.setText}>Set</Text>
+          </View>
+        )}
       </NeuButton>
     </NeuCard>
   );
@@ -70,5 +83,6 @@ const styles = StyleSheet.create({
   line: { fontSize: 12, color: C.muted, marginTop: 2 },
   icon: { width: 38, height: 38 },
   set: { height: 38, paddingHorizontal: 14 },
+  setRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   setText: { color: C.accent, fontWeight: '600', fontSize: 13 },
 });

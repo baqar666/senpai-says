@@ -3,6 +3,7 @@ import { AppState, Platform } from 'react-native';
 
 import RingtoneSetter, { GuardTrigger } from '../../modules/ringtone-setter';
 import { Cast, GirlId } from '../data/girls';
+import { FREE_GUARD_LIMIT } from './pass';
 
 // Apps the screen-time guard can watch. Each can have a few package names (Lite versions, regions).
 export const GUARD_APPS = [
@@ -43,9 +44,15 @@ export function guardPermissions(): GuardPermissions {
   return { usage: RingtoneSetter!.hasUsageAccess(), overlay: RingtoneSetter!.canDrawOverlays() };
 }
 
+// Free users get one app at the 1-hour limit; the Senpai Pass lifts both.
+export function effectiveGuard(apps: GuardAppId[], limit: number, pro: boolean) {
+  return pro ? { apps, limit } : { apps: apps.slice(0, 1), limit: FREE_GUARD_LIMIT };
+}
+
 // Starts or stops the native watcher to match the settings. Safe to call often.
-export function syncGuard(on: boolean, apps: GuardAppId[], limit: number) {
+export function syncGuard(on: boolean, chosenApps: GuardAppId[], chosenLimit: number, pro: boolean) {
   if (!guardSupported) return;
+  const { apps, limit } = effectiveGuard(chosenApps, chosenLimit, pro);
   const { usage, overlay } = guardPermissions();
   if (on && usage && overlay && apps.length) {
     const packages = GUARD_APPS.filter((a) => apps.includes(a.id)).flatMap((a) => [...a.packages]);
