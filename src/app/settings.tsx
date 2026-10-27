@@ -16,13 +16,13 @@ const DAILY_TIMES = [
 ];
 
 export default function SettingsScreen() {
-  const { name, lang, honorific, reduceMotion, dailyOn, dailyHour, update } = useSettings();
+  const { name, lang, honorific, reduceMotion, dailyOn, dailyHour, cast, update } = useSettings();
   const toast = useToast();
 
   const toggleDaily = async (on: boolean) => {
     update({ dailyOn: on });
     if (!on || Platform.OS === 'web') return;
-    const result = await scheduleDaily({ enabled: true, hour: dailyHour, name, lang, honorific });
+    const result = await scheduleDaily({ enabled: true, hour: dailyHour, name, lang, honorific, cast });
     if (result === 'denied') {
       update({ dailyOn: false });
       toast('Turn on notifications for Senpai Says in your phone settings first.');
@@ -44,7 +44,7 @@ export default function SettingsScreen() {
         />
       </NeuCard>
 
-      <Text style={styles.label}>She calls you</Text>
+      <Text style={styles.label}>{cast === 'boys' ? 'He calls you' : 'She calls you'}</Text>
       <View style={styles.chips}>
         {HONORIFICS.map((h) => (
           <NeuButton key={h.key} active={honorific === h.key} onPress={() => update({ honorific: h.key })} style={styles.chip} radius={12} depth={3} accessibilityLabel={h.label}>
@@ -65,7 +65,7 @@ export default function SettingsScreen() {
       <NeuCard radius={18} style={styles.row}>
         <View style={{ flex: 1 }}>
           <Text style={styles.rowTitle}>Daily message</Text>
-          <Text style={styles.rowSub}>A new line from one of the girls every day</Text>
+          <Text style={styles.rowSub}>A new line from one of the {cast} every day</Text>
         </View>
         <Switch
           value={dailyOn}
@@ -108,7 +108,7 @@ export default function SettingsScreen() {
       </NeuCard>
 
       <Text style={styles.footer}>
-        Hana, Rei, Aiko, and Yui are original characters.{'\n'}Voices: {VOICE_CREDITS.join(', ')}
+        Hana, Rei, Aiko, Yui, Kaito, Ryuga, Jin, and Haru are original characters.{'\n'}Voices: {VOICE_CREDITS.join(', ')}
       </Text>
     </Screen>
   );

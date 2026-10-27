@@ -6,7 +6,8 @@ import { Face } from '../components/Face';
 import { C, NeuButton, NeuCard } from '../components/Neu';
 import { Screen } from '../components/Screen';
 import { useToast } from '../components/Toast';
-import { EMOTIONS, faceFor, findName, getGirl, GIRLS, GirlId, HONORIFICS, LineKey, lineFor, MOMENTS, suggestNames } from '../data/girls';
+import { CastSwitch } from '../components/CastSwitch';
+import { castMembers, EMOTIONS, faceFor, findName, getGirl, GirlId, HONORIFICS, LineKey, lineFor, MOMENTS, pronoun, suggestNames } from '../data/girls';
 import { useBob, usePop } from '../lib/motion';
 import { useSettings } from '../lib/store';
 import { consumeDaily, onDailyOpen } from '../lib/daily';
@@ -14,10 +15,13 @@ import { lineAvailable, playLine, setTone, shareLine, stopSpeaking } from '../li
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
-export default function GirlsScreen() {
-  const { name, lang, honorific, reduceMotion, update } = useSettings();
+export default function CharactersScreen() {
+  const { name, lang, honorific, reduceMotion, cast, update } = useSettings();
   const toast = useToast();
-  const [girlId, setGirlId] = useState<GirlId>('hana');
+  const members = castMembers(cast);
+  const [pickedId, setGirlId] = useState<GirlId>('hana');
+  // Switching Girls/Boys falls back to the first character of that group.
+  const girlId = members.some((m) => m.id === pickedId) ? pickedId : members[0].id;
   const [selectedKey, setLineKey] = useState<LineKey>('love');
   const [talking, setTalking] = useState(false);
   const [error, setError] = useState('');
@@ -30,6 +34,7 @@ export default function GirlsScreen() {
   const known = findName(name, lang);
   const suggestions = suggestNames(name, lang);
   const hon = HONORIFICS.find((h) => h.key === honorific)!;
+  const { subject, object } = pronoun(girl);
 
   useEffect(() => stopSpeaking, []);
   // A tapped daily-message notification: show that girl and play her line.
@@ -38,13 +43,14 @@ export default function GirlsScreen() {
       onDailyOpen((p) => {
         consumeDaily();
         setGirlId(p.girl);
+        update({ cast: getGirl(p.girl).cast });
         setLineKey(p.key);
         if (name.trim()) {
           setTalking(true);
           playLine(getGirl(p.girl), p.key, lang, name, honorific, () => setTalking(false));
         }
       }),
-    [name, lang, honorific]
+    [name, lang, honorific, update]
   );
 
   const play = (g: GirlId, e: LineKey) => {
@@ -84,7 +90,7 @@ export default function GirlsScreen() {
   return (
     <Screen
       title="Senpai says"
-      subtitle="Pick a girl, then a feeling"
+      subtitle="Pick a character, then a feeling"
       right={
         <NeuButton onPress={() => update({ lang: lang === 'en' ? 'jp' : 'en' })} style={styles.lang} radius={12} depth={4} accessibilityLabel="Switch voice language">
           <Text style={styles.langText}>{lang === 'en' ? 'EN' : 'JP'}</Text>
@@ -113,11 +119,11 @@ export default function GirlsScreen() {
         <Text style={styles.callHint}>
           {lang === 'jp'
             ? known
-              ? `She calls you ${known.kana}${hon.jp}`
-              : "This name isn't in the voice list yet, so she'll call you せんぱい (Senpai)"
+              ? `${subject} calls you ${known.kana}${hon.jp}`
+              : `This name isn't in the voice list yet, so ${subject.toLowerCase()}'ll call you せんぱい (Senpai)`
             : known
-              ? `She calls you ${name.trim()}${hon.en}`
-              : "This name isn't in the English voice list yet, so she'll call you Senpai. Try the Japanese voice."}
+              ? `${subject} calls you ${name.trim()}${hon.en}`
+              : `This name isn't in the English voice list yet, so ${subject.toLowerCase()}'ll call you Senpai. Try the Japanese voice.`}
         </Text>
       ) : null}
       {suggestions.length > 0 && (
@@ -141,8 +147,16 @@ export default function GirlsScreen() {
         <Text style={[styles.who, { color: girl.fg }]}>
           {girl.name} · {girl.type}
         </Text>
-        <Text style={styles.line}>{name.trim() ? `"${line.show}"` : 'Type your name to hear her say it'}</Text>
+        <Text style={styles.line}>{name.trim() ? `"${line.show}"` : `Type your name to hear ${object} say it`}</Text>
         {line.sub && name.trim() ? <Text style={styles.sub}>{line.sub}</Text> : null}
+        {!lineAvailable(girl, 'love', lang) ? (
+          <Text style={styles.sub}>
+            {girl.name}&apos;s {lang === 'en' ? 'English' : 'Japanese'} voice is coming soon.
+            {lineAvailable(girl, 'love', lang === 'en' ? 'jp' : 'en')
+              ? ` Tap ${lang === 'en' ? 'EN' : 'JP'} at the top to hear ${object} in ${lang === 'en' ? 'Japanese' : 'English'}.`
+              : ''}
+          </Text>
+        ) : null}
       </NeuCard>
 
       <View style={styles.grid}>
@@ -184,8 +198,9 @@ export default function GirlsScreen() {
         ))}
       </ScrollView>
 
+      <CastSwitch />
       <View style={styles.girls}>
-        {GIRLS.map((g) => (
+        {members.map((g) => (
           <NeuButton
             key={g.id}
             active={g.id === girlId}

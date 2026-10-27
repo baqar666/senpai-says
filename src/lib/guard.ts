@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 
 import RingtoneSetter, { GuardTrigger } from '../../modules/ringtone-setter';
-import { GirlId } from '../data/girls';
+import { Cast, GirlId } from '../data/girls';
 
 // Apps the screen-time guard can watch. Each can have a few package names (Lite versions, regions).
 export const GUARD_APPS = [
@@ -18,7 +18,16 @@ export const GUARD_LIMITS = [30, 60, 120];
 
 // Seconds into each girl's animation (art/raw/video) when her mouth starts moving,
 // so her voice line lines up with it.
-export const VOICE_START: Record<GirlId, number> = { hana: 1.0, rei: 1.0, aiko: 0.5, yui: 0.3 };
+export const VOICE_START: Record<GirlId, number> = {
+  hana: 1.0,
+  rei: 1.0,
+  aiko: 0.5,
+  yui: 0.3,
+  kaito: 0.4,
+  ryuga: 1.0,
+  jin: 1.5,
+  haru: 0.5,
+};
 export const SNOOZE_MINUTES = 5;
 
 export const guardSupported = Platform.OS === 'android' && !!RingtoneSetter;
@@ -46,11 +55,15 @@ export function syncGuard(on: boolean, apps: GuardAppId[], limit: number) {
   }
 }
 
-// The first warning of the day comes from a sweet girl, later ones from someone stricter.
-export function guardGirl(level: number): GirlId {
+// The first warning of the day comes from someone sweet, later ones from someone stricter.
+const GUARD_ORDER: Record<Cast, { gentle: GirlId[]; strict: GirlId[] }> = {
+  girls: { gentle: ['hana', 'yui'], strict: ['aiko', 'rei'] },
+  boys: { gentle: ['haru', 'kaito'], strict: ['ryuga', 'jin'] },
+};
+
+export function guardGirl(level: number, cast: Cast): GirlId {
   const day = Math.floor(Date.now() / 86_400_000);
-  const gentle: GirlId[] = ['hana', 'yui'];
-  const strict: GirlId[] = ['aiko', 'rei'];
+  const { gentle, strict } = GUARD_ORDER[cast];
   return level <= 1 ? gentle[day % 2] : strict[(day + level) % 2];
 }
 

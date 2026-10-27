@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { AccessibilityInfo } from 'react-native';
 
-import { Honorific, Lang } from '../data/girls';
+import { Cast, Honorific, Lang } from '../data/girls';
 import { GUARD_APPS, GuardAppId } from './guard';
 
 type Settings = {
@@ -15,6 +15,7 @@ type Settings = {
   guardOn: boolean;
   guardLimit: number;
   guardApps: GuardAppId[];
+  cast: Cast;
 };
 type Store = Settings & { ready: boolean; update: (patch: Partial<Settings>) => void };
 
@@ -29,6 +30,7 @@ const DEFAULTS: Settings = {
   guardOn: false,
   guardLimit: 60,
   guardApps: GUARD_APPS.map((a) => a.id),
+  cast: 'girls',
 };
 const Ctx = createContext<Store | null>(null);
 

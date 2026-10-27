@@ -2,7 +2,9 @@ import LINES from './lines.json';
 import NAMES from './names.json';
 import NAMES_JP_EXTRA from './names_jp_extra.json';
 
-export type GirlId = 'hana' | 'rei' | 'aiko' | 'yui';
+export type GirlId = 'hana' | 'rei' | 'aiko' | 'yui' | 'kaito' | 'ryuga' | 'jin' | 'haru';
+// The app shows one group at a time (Settings `cast`); boys use the same lines, voices and art pipeline as girls.
+export type Cast = 'girls' | 'boys';
 export type Emotion = 'love' | 'angry' | 'miss' | 'shy' | 'night' | 'call';
 export type ToneLine = 'call' | 'message' | 'morning';
 export type Moment = 'birthday' | 'eid' | 'luck' | 'eat' | 'gym' | 'care' | 'proud' | 'thanks';
@@ -13,6 +15,7 @@ export type Lang = 'en' | 'jp';
 
 export type Girl = {
   id: GirlId;
+  cast: Cast;
   name: string;
   type: string;
   bg: string;
@@ -22,12 +25,26 @@ export type Girl = {
   eye: string;
 };
 
-export const GIRLS: Girl[] = [
-  { id: 'hana', name: 'Hana', type: 'Shy dandere', bg: '#FBEAF0', fg: '#72243E', hair: '#ED93B1', hairDark: '#D4537E', eye: '#993556' },
-  { id: 'rei', name: 'Rei', type: 'Cool kuudere', bg: '#EEEDFE', fg: '#3C3489', hair: '#26215C', hairDark: '#04342C', eye: '#534AB7' },
-  { id: 'aiko', name: 'Aiko', type: 'Tsundere', bg: '#FAECE7', fg: '#712B13', hair: '#D85A30', hairDark: '#993C1D', eye: '#0F6E56' },
-  { id: 'yui', name: 'Yui', type: 'Genki', bg: '#FAEEDA', fg: '#633806', hair: '#EF9F27', hairDark: '#BA7517', eye: '#185FA5' },
+export const CHARACTERS: Girl[] = [
+  { id: 'hana', cast: 'girls', name: 'Hana', type: 'Shy dandere', bg: '#FBEAF0', fg: '#72243E', hair: '#ED93B1', hairDark: '#D4537E', eye: '#993556' },
+  { id: 'rei', cast: 'girls', name: 'Rei', type: 'Cool kuudere', bg: '#EEEDFE', fg: '#3C3489', hair: '#26215C', hairDark: '#04342C', eye: '#534AB7' },
+  { id: 'aiko', cast: 'girls', name: 'Aiko', type: 'Tsundere', bg: '#FAECE7', fg: '#712B13', hair: '#D85A30', hairDark: '#993C1D', eye: '#0F6E56' },
+  { id: 'yui', cast: 'girls', name: 'Yui', type: 'Genki', bg: '#FAEEDA', fg: '#633806', hair: '#EF9F27', hairDark: '#BA7517', eye: '#185FA5' },
+  { id: 'kaito', cast: 'boys', name: 'Kaito', type: 'The strongest', bg: '#E6F1FB', fg: '#0C447C', hair: '#D8DEE4', hairDark: '#2C2C2A', eye: '#378ADD' },
+  { id: 'ryuga', cast: 'boys', name: 'Ryuga', type: 'Dark overlord', bg: '#ECE8F0', fg: '#2C1A3A', hair: '#1E1A24', hairDark: '#000000', eye: '#BA7517' },
+  { id: 'jin', cast: 'boys', name: 'Jin', type: 'Silent one', bg: '#F5EBDD', fg: '#6B2A1E', hair: '#8E2A22', hairDark: '#5C1A14', eye: '#1D9E75' },
+  { id: 'haru', cast: 'boys', name: 'Haru', type: 'Gentle senpai', bg: '#EAF3DE', fg: '#3B6D11', hair: '#8A6A4A', hairDark: '#5C4430', eye: '#639922' },
 ];
+
+export const CASTS: { key: Cast; label: string }[] = [
+  { key: 'girls', label: 'Girls' },
+  { key: 'boys', label: 'Boys' },
+];
+
+export const castMembers = (cast: Cast) => CHARACTERS.filter((c) => c.cast === cast);
+
+// "She" or "He", for hints like "She calls you Naruto-kun".
+export const pronoun = (g: Girl) => (g.cast === 'boys' ? { subject: 'He', object: 'him' } : { subject: 'She', object: 'her' });
 
 export const EMOTIONS: { key: Emotion; label: string; icon: string }[] = [
   { key: 'love', label: 'Love', icon: 'heart-outline' },
@@ -105,7 +122,7 @@ export function suggestNames(name: string, lang: Lang, limit = 4): { label: stri
 }
 
 export function getGirl(id: GirlId): Girl {
-  return GIRLS.find((g) => g.id === id)!;
+  return CHARACTERS.find((g) => g.id === id)!;
 }
 
 export type ResolvedLine = {

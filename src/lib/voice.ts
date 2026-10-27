@@ -10,21 +10,30 @@ import { VOICE_CLIPS } from '../data/voice-assets';
 
 setAudioModeAsync({ playsInSilentMode: true }).catch(() => {});
 
-// Plays the girl saying the name, then the rest of the line (Japanese: VOICEVOX, English: Kokoro).
+type CharacterClips = {
+  names: Record<string, Record<'soft' | 'loud', number>>;
+  lines: Partial<Record<LineKey, Record<Honorific, number>>>;
+};
+
+// A character's clips for a language, if generated yet (new characters can lag behind in one language).
+function voiceFor(girl: Girl, lang: Lang): CharacterClips | undefined {
+  return (VOICE_CLIPS[lang] as unknown as Partial<Record<Girl['id'], CharacterClips>>)[girl.id];
+}
+
+// Plays the character saying the name, then the rest of the line (Japanese: VOICEVOX, English: Orpheus).
 // Unknown names skip the name clip and use the "senpai" version of the line.
 function clipsFor(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific): number[] {
   const l = lineFor(girl.id, key, lang, name, honorific);
-  const lines = VOICE_CLIPS[lang][girl.id].lines as Partial<Record<LineKey, Record<Honorific, number>>>;
-  const line = lines[key];
-  if (!line) return [];
-  const clips = VOICE_CLIPS[lang][girl.id];
+  const clips = voiceFor(girl, lang);
+  const line = clips?.lines[key];
+  if (!clips || !line) return [];
   const rest = line[l.honorific];
-  return l.known ? [(clips.names as Record<string, Record<'soft' | 'loud', number>>)[l.known.id][l.tone], rest] : [rest];
+  return l.known ? [clips.names[l.known.id][l.tone], rest] : [rest];
 }
 
 // True once this line's clips are generated for the language (new lines can lag behind).
 export function lineAvailable(girl: Girl, key: LineKey, lang: Lang): boolean {
-  return key in VOICE_CLIPS[lang][girl.id].lines;
+  return !!voiceFor(girl, lang)?.lines[key];
 }
 
 let player: AudioPlayer | null = null;

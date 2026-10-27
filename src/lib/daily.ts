@@ -2,11 +2,11 @@ import * as Notifications from 'expo-notifications';
 import { AndroidImportance } from 'expo-notifications';
 import { Platform } from 'react-native';
 
-import { getGirl, GIRLS, GirlId, Honorific, Lang, LineKey, lineFor } from '../data/girls';
+import { Cast, castMembers, getGirl, GirlId, Honorific, Lang, LineKey, lineFor } from '../data/girls';
 import { lineAvailable } from './voice';
 
 export type DailyPick = { girl: GirlId; key: LineKey };
-type Settings = { enabled: boolean; hour: number; name: string; lang: Lang; honorific: Honorific };
+type Settings = { enabled: boolean; hour: number; name: string; lang: Lang; honorific: Honorific; cast: Cast };
 
 const CHANNEL = 'daily-message';
 const DAYS_AHEAD = 7;
@@ -26,10 +26,11 @@ if (Platform.OS !== 'web') {
 
 const dayNumber = (d: Date) => Math.floor(d.getTime() / 86_400_000);
 
-// Varies by day so each notification is a different girl and line.
-function pickFor(date: Date, lang: Lang): DailyPick {
+// Varies by day so each notification is a different character (from the chosen group) and line.
+function pickFor(date: Date, lang: Lang, cast: Cast): DailyPick {
   const n = dayNumber(date);
-  const girl = GIRLS[n % GIRLS.length];
+  const members = castMembers(cast);
+  const girl = members[n % members.length];
   const pool = POOL.filter((k) => lineAvailable(girl, k, lang));
   return { girl: girl.id, key: pool[(n * 7) % pool.length] };
 }
@@ -54,7 +55,7 @@ export async function scheduleDaily(s: Settings): Promise<'scheduled' | 'off' | 
   for (let d = 0; d < DAYS_AHEAD + 1; d++) {
     const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d, s.hour, 0, 0);
     if (date <= now) continue;
-    const pick = pickFor(date, s.lang);
+    const pick = pickFor(date, s.lang, s.cast);
     const girl = getGirl(pick.girl);
     await Notifications.scheduleNotificationAsync({
       content: {

@@ -29,10 +29,10 @@ function TabButton({ icon, label, isFocused, ref: _ref, ...props }: TabTriggerSl
 
 // Keeps the next week of daily messages planned and opens the tapped one on the Girls screen.
 function useDailyMessages() {
-  const { ready, dailyOn, dailyHour, name, lang, honorific } = useSettings();
+  const { ready, dailyOn, dailyHour, name, lang, honorific, cast } = useSettings();
   useEffect(() => {
-    if (ready) scheduleDaily({ enabled: dailyOn, hour: dailyHour, name, lang, honorific }).catch(() => {});
-  }, [ready, dailyOn, dailyHour, name, lang, honorific]);
+    if (ready) scheduleDaily({ enabled: dailyOn, hour: dailyHour, name, lang, honorific, cast }).catch(() => {});
+  }, [ready, dailyOn, dailyHour, name, lang, honorific, cast]);
 
   useEffect(() => {
     if (Platform.OS === 'web') return;
@@ -74,8 +74,8 @@ function AppTabs() {
       <TabSlot />
       <TabList asChild>
         <NeuCard depth={8} radius={26} style={StyleSheet.flatten([styles.bar, { bottom: insets.bottom + 12 }])}>
-          <TabTrigger name="girls" href="/" asChild>
-            <TabButton icon="heart-outline" label="Girls" />
+          <TabTrigger name="home" href="/" asChild>
+            <TabButton icon="heart-outline" label="Home" />
           </TabTrigger>
           <TabTrigger name="ringtones" href="/ringtones" asChild>
             <TabButton icon="notifications-outline" label="Ringtones" />

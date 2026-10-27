@@ -9,4 +9,8 @@ export const GUARD_VIDEOS: Partial<Record<GirlId, number>> = {
   rei: require('../../assets/guard/rei.mp4'),
   aiko: require('../../assets/guard/aiko.mp4'),
   yui: require('../../assets/guard/yui.mp4'),
+  kaito: require('../../assets/guard/kaito.mp4'),
+  ryuga: require('../../assets/guard/ryuga.mp4'),
+  jin: require('../../assets/guard/jin.mp4'),
+  haru: require('../../assets/guard/haru.mp4'),
 };

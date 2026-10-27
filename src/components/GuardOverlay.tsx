@@ -20,10 +20,10 @@ export function GuardOverlay() {
 }
 
 function Warning({ trigger, onDone }: { trigger: GuardTrigger; onDone: () => void }) {
-  const { name, lang: chosenLang, honorific } = useSettings();
+  const { name, lang: chosenLang, honorific, cast } = useSettings();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const girl = getGirl(guardGirl(trigger.level));
+  const girl = getGirl(guardGirl(trigger.level, cast));
   const key: GuardLine = trigger.level <= 1 ? 'rest' : 'rest2';
   // English clips for new lines can lag behind the Japanese ones; fall back rather than stay silent.
   const lang = lineAvailable(girl, key, chosenLang) ? chosenLang : 'jp';
