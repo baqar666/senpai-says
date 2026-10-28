@@ -1,3 +1,4 @@
+import { customKey, getCustomName } from '../lib/customNames';
 import LINES from './lines.json';
 import NAMES from './names.json';
 import NAMES_JP_EXTRA from './names_jp_extra.json';
@@ -106,8 +107,14 @@ for (const lang of ['en', 'jp'] as const) {
 
 // Names with recorded voice clips in this language. Anyone else is called "Senpai".
 export function findName(name: string, lang: Lang): KnownName | null {
-  return NAME_INDEX[lang].get(normalize(name)) ?? null;
+  const builtIn = NAME_INDEX[lang].get(normalize(name));
+  if (builtIn) return builtIn;
+  // A name the user taught the characters (Japanese voice only); see src/lib/customNames.ts.
+  const custom = lang === 'jp' && name.trim() ? getCustomName(name) : undefined;
+  return custom ? { id: `${CUSTOM_PREFIX}${customKey(name)}`, kana: custom.kana } : null;
 }
+
+export const CUSTOM_PREFIX = 'custom:';
 
 export function suggestNames(name: string, lang: Lang, limit = 4): { label: string; kana: string }[] {
   const q = normalize(name);
@@ -130,21 +137,25 @@ export type ResolvedLine = {
   sub?: string; // translation under it
   known: KnownName | null;
   honorific: Honorific; // honorific actually used (unknown names use senpai)
-  tone: 'soft' | 'loud'; // which name clip leads into this line
+  tone: 'soft' | 'loud'; // English name clip that leads into this line
+  nameMood: NameMood; // Japanese name clip: the name said in the line's own mood
 };
+
+export type NameMood = 'sweet' | 'happy' | 'angry' | 'sad';
 
 // Vocal-sound tags like <sigh> are performed by the voice, not shown on screen.
 const stripTags = (s: string) => s.replace(/\s*<[^>]+>\s*/g, ' ').replace(/\s+([!?.,])/g, '$1').replace(/\s{2,}/g, ' ').trim();
 
 export function lineFor(girl: GirlId, key: LineKey, lang: Lang, name: string, honorific: Honorific): ResolvedLine {
-  const l = (LINES.lines as Record<GirlId, Record<LineKey, { en: string; jp: string; tone: string }>>)[girl][key];
+  const l = (LINES.lines as Record<GirlId, Record<LineKey, { en: string; jp: string; tone: string; nameMood: NameMood }>>)[girl][key];
   const tone = l.tone === 'loud' ? 'loud' : 'soft';
+  const nameMood = l.nameMood;
   const known = findName(name, lang);
   const hon = known ? honorific : 'senpai';
   const h = HONORIFICS.find((x) => x.key === hon)!;
   const display = name.trim() || 'Senpai';
   const en = stripTags(l.en.replace(/\{n\}/g, known ? `${display}${h.en}` : 'Senpai'));
-  if (lang === 'en') return { show: en, known, honorific: hon, tone };
+  if (lang === 'en') return { show: en, known, honorific: hon, tone, nameMood };
   const jp = l.jp.replace('{n}', `${known ? known.kana : ''}${h.jp}`);
-  return { show: jp, sub: en, known, honorific: hon, tone };
+  return { show: jp, sub: en, known, honorific: hon, tone, nameMood };
 }

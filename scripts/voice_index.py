@@ -12,6 +12,8 @@ NAMES_BY_LANG = {"jp": NAMES_JP, "en": NAMES}
 VOICES = ROOT / "assets/voices"
 INDEX = ROOT / "src/data/voice-assets.ts"
 LANGS = ("jp", "en")
+# Japanese names come in the line's mood; English names (spoken in a carrier phrase) just soft or loud.
+NAME_VARIANTS = {"jp": [k for k in LINES["nameMoods"] if not k.startswith("_")], "en": ["soft", "loud"]}
 LEADING_PUNCT = "…。！？、!?., "
 
 
@@ -44,7 +46,7 @@ def write_index():
             out.append("      },")
             out.append("      names: {")
             for entry in NAMES_BY_LANG[lang]:
-                tones = ", ".join(f"{t}: {req(f'{lang}/{gid}/names/{entry[1]}_{t}.mp3')}" for t in ("soft", "loud"))
+                tones = ", ".join(f"{t}: {req(f'{lang}/{gid}/names/{entry[1]}_{t}.mp3')}" for t in NAME_VARIANTS[lang])
                 out.append(f"        '{entry[1]}': {{ {tones} }},")
             out.append("      },")
             out.append("    },")

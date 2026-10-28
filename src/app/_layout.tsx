@@ -13,6 +13,7 @@ import { Paywall } from '../components/Paywall';
 import { ToastProvider } from '../components/Toast';
 import { UnlockSheet } from '../components/UnlockSheet';
 import { startAds } from '../lib/ads';
+import { loadCustomNames } from '../lib/customNames';
 import { DailyPick, openDaily, scheduleDaily } from '../lib/daily';
 import { prepareGuardPack, syncGuard } from '../lib/guard';
 import { PassProvider, usePass } from '../lib/pass';
@@ -84,6 +85,13 @@ function useAdsConsent() {
   }, [ready, pro]);
 }
 
+// Names the user taught the characters, saved on the phone.
+function useCustomNames() {
+  useEffect(() => {
+    loadCustomNames().catch(() => {});
+  }, []);
+}
+
 function AppTabs() {
   const C = useColors();
   const styles = useStyles();
@@ -92,6 +100,7 @@ function AppTabs() {
   useDailyMessages();
   useScreenGuard();
   useAdsConsent();
+  useCustomNames();
   if (!ready) return <View style={{ flex: 1, backgroundColor: C.base }} />;
   return (
     <Tabs style={{ flex: 1, backgroundColor: C.base }}>

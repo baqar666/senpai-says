@@ -5,11 +5,13 @@ import { Animated, ScrollView, StyleSheet, Text, TextInput, View } from 'react-n
 import { Face } from '../components/Face';
 import { NeuButton, NeuCard } from '../components/Neu';
 import { Screen } from '../components/Screen';
+import { TeachName } from '../components/TeachName';
 import { useToast } from '../components/Toast';
 import { CastSwitch } from '../components/CastSwitch';
 import { castMembers, EMOTIONS, faceFor, findName, getGirl, GirlId, HONORIFICS, LineKey, lineFor, MOMENTS, pronoun, suggestNames } from '../data/girls';
 import { useBob, usePop } from '../lib/motion';
 import { FREE_TONE_CHARACTERS, usePass } from '../lib/pass';
+import { customNamesEnabled, onCustomNamesChange } from '../lib/customNames';
 import { useSettings } from '../lib/store';
 import { nameColor, themed, useColors, useTheme } from '../lib/theme';
 import { consumeDaily, onDailyOpen } from '../lib/daily';
@@ -37,6 +39,10 @@ export default function CharactersScreen() {
   const pop = usePop(`${girlId}-${lineKey}`, reduceMotion);
   const bob = useBob(talking, reduceMotion);
   const line = lineFor(girlId, lineKey, lang, name, honorific);
+  const [teaching, setTeaching] = useState(false);
+  // Re-check the name once the user teaches a new one.
+  const [, refresh] = useState(0);
+  useEffect(() => onCustomNamesChange(() => refresh((n) => n + 1)), []);
   const known = findName(name, lang);
   const suggestions = suggestNames(name, lang);
   const hon = HONORIFICS.find((h) => h.key === honorific)!;
@@ -138,6 +144,24 @@ export default function CharactersScreen() {
               : `This name isn't in the English voice list yet, so ${subject.toLowerCase()}'ll call you Senpai. Try the Japanese voice.`}
         </Text>
       ) : null}
+      {name.trim() && lang === 'jp' && !known && customNamesEnabled ? (
+        <NeuButton onPress={() => setTeaching(true)} style={styles.teach} radius={14} depth={4} accessibilityLabel="Teach them your name">
+          <View style={styles.teachRow}>
+            <Ionicons name="mic-outline" size={18} color={C.accent} />
+            <Text style={styles.teachText}>Teach them &ldquo;{name.trim()}&rdquo;</Text>
+          </View>
+        </NeuButton>
+      ) : null}
+      {teaching && (
+        <TeachName
+          name={name}
+          onClose={() => setTeaching(false)}
+        onTaught={() => {
+          toast(`They can say your name now 💖`);
+            play(girlId, 'love');
+          }}
+        />
+      )}
       {suggestions.length > 0 && (
         <View style={styles.suggestRow}>
           {suggestions.map((s) => (
@@ -260,6 +284,9 @@ const useStyles = themed((C) =>
   input: { flex: 1, height: 48, fontSize: 16, color: C.text },
   error: { color: C.danger, fontSize: 13, marginTop: 6 },
   callHint: { color: C.muted, fontSize: 12, marginTop: 8, marginLeft: 4 },
+  teach: { height: 44, marginTop: 12, paddingHorizontal: 14, alignSelf: 'flex-start' },
+  teachRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  teachText: { fontSize: 14, fontWeight: '700', color: C.accent },
   suggestRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 },
   suggest: { paddingHorizontal: 12, height: 34 },
   suggestText: { fontSize: 13, fontWeight: '600', color: C.text },

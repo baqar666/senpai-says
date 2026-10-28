@@ -35,7 +35,7 @@ Pick your favourite girl, type your name, and tap a feeling:
 • Works offline · no account · smooth on older phones
 • Free with optional rewarded ads · one-time Senpai Pass unlocks everything and removes ads
 
-All characters are original adults. Japanese voices: VOICEVOX:WhiteCUL, VOICEVOX:暁記ミタマ, VOICEVOX:四国めたん, VOICEVOX:もち子(cv 明日葉よもぎ), VOICEVOX:玄野武宏, VOICEVOX:青山龍星, VOICEVOX:離途, VOICEVOX:白上虎太郎. English voices: Orpheus TTS.
+All characters are original adults. Japanese voices: VOICEVOX:WhiteCUL, VOICEVOX:暁記ミタマ, VOICEVOX:四国めたん, VOICEVOX:猫使アル, VOICEVOX:玄野武宏, VOICEVOX:青山龍星, VOICEVOX:離途, VOICEVOX:白上虎太郎. English voices: Orpheus TTS.
 
 ## Category / tags
 - Category: Entertainment

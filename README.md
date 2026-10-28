@@ -11,7 +11,7 @@ Real voices in both languages ship inside the app as small MP3s in `assets/voice
 | Hana (shy) | WhiteCUL | leah |
 | Rei (cool) | 暁記ミタマ | mia |
 | Aiko (tsundere) | 四国めたん | jess |
-| Yui (genki) | もち子さん | tara |
+| Yui (genki) | 猫使アル | tara |
 | Kaito (the strongest) | 玄野武宏 | zac |
 | Ryuga (dark overlord) | 青山龍星 | dan |
 | Jin (silent one) | 離途 | leo |
@@ -51,6 +51,19 @@ npx expo start --web
 ```
 
 Setting ringtones only works in the Android app, not on web or in Expo Go.
+
+## Any name (name voice server)
+
+Names that aren't built in can be taught in the app ("Teach them your name", Japanese voice): it suggests a katakana reading
+(`src/lib/reading.ts`), the user can edit it, and `server/` records every character saying it in every mood, exactly like the
+built-in clips (both use `scripts/voicegen.py`). The 32 clips (about 150 KB) are saved on the phone and work offline.
+
+- Run locally: `VV_DIR=.voicegen/vv LINES_JSON=src/data/lines.json PYTHONPATH=scripts:server .voicegen/venv/bin/uvicorn app:app --port 7860`
+  (debug builds and the web preview use `http://127.0.0.1:7860`)
+- Release builds use `EXPO_PUBLIC_NAME_VOICE_URL`; without it the Teach button is hidden.
+- Deploy: `scripts/deploy_name_server.sh` (Hugging Face Space; needs `HF_TOKEN` in `.env.local`). Note: Docker Spaces on
+  Hugging Face's free CPU now need a PRO subscription. The image is a plain Docker container, so any host that runs one works.
+- Re-deploy after changing voices or `lines.json`, so custom names keep matching the built-in clips.
 
 ## Purchases and ads
 

@@ -5,13 +5,14 @@ import * as Sharing from 'expo-sharing';
 import { Alert, PermissionsAndroid, Platform } from 'react-native';
 
 import RingtoneSetter, { ToneType } from '../../modules/ringtone-setter';
-import { Girl, Honorific, Lang, LineKey, lineFor } from '../data/girls';
+import { CUSTOM_PREFIX, Girl, Honorific, Lang, LineKey, lineFor } from '../data/girls';
 import { VOICE_CLIPS } from '../data/voice-assets';
+import { getCustomName } from './customNames';
 
 setAudioModeAsync({ playsInSilentMode: true }).catch(() => {});
 
 type CharacterClips = {
-  names: Record<string, Record<'soft' | 'loud', number>>;
+  names: Record<string, Partial<Record<string, number>>>;
   lines: Partial<Record<LineKey, Record<Honorific, number>>>;
 };
 
@@ -20,15 +21,35 @@ function voiceFor(girl: Girl, lang: Lang): CharacterClips | undefined {
   return (VOICE_CLIPS[lang] as unknown as Partial<Record<Girl['id'], CharacterClips>>)[girl.id];
 }
 
+// A clip is a bundled asset (number) or, for names the user taught, a saved file URI (string).
+type Clip = number | string;
+
 // Plays the character saying the name, then the rest of the line (Japanese: VOICEVOX, English: Orpheus).
 // Unknown names skip the name clip and use the "senpai" version of the line.
-function clipsFor(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific): number[] {
+function clipsFor(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific): Clip[] {
   const l = lineFor(girl.id, key, lang, name, honorific);
   const clips = voiceFor(girl, lang);
   const line = clips?.lines[key];
   if (!clips || !line) return [];
   const rest = line[l.honorific];
-  return l.known ? [clips.names[l.known.id][l.tone], rest] : [rest];
+  let nameClip: Clip | undefined;
+  if (l.known?.id.startsWith(CUSTOM_PREFIX)) {
+    nameClip = getCustomName(name)?.files[girl.id]?.[l.nameMood];
+  } else if (l.known) {
+    // Japanese: the name in the line's mood (older clip sets only have soft/loud). English: soft or loud.
+    const names = clips.names[l.known.id];
+    nameClip = lang === 'jp' ? (names?.[l.nameMood] ?? names?.[l.tone]) : names?.[l.tone];
+  }
+  return nameClip !== undefined ? [nameClip, rest] : [rest];
+}
+
+const toSource = (c: Clip): AudioSource => (typeof c === 'string' ? { uri: c } : c);
+
+// File URIs for each clip (bundled assets are copied out of the app first).
+async function clipFiles(clips: Clip[]): Promise<string[]> {
+  return Promise.all(
+    clips.map(async (c) => (typeof c === 'string' ? c : (await Asset.fromModule(c).downloadAsync()).localUri ?? Asset.fromModule(c).uri))
+  );
 }
 
 // True once this line's clips are generated for the language (new lines can lag behind).
@@ -73,7 +94,7 @@ export function stopSpeaking() {
 export function playLine(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific, onEnd?: () => void) {
   stopSpeaking();
   getPlayer();
-  queue = clipsFor(girl, key, lang, name, honorific);
+  queue = clipsFor(girl, key, lang, name, honorific).map(toSource);
   onQueueEnd = onEnd;
   playNext();
 }
@@ -110,22 +131,17 @@ export async function setTone(girl: Girl, key: LineKey, lang: Lang, name: string
     if (res !== PermissionsAndroid.RESULTS.GRANTED) return null;
   }
   const safeTitle = title.replace(/[^\w\- ]+/g, '').trim() || 'Senpai tone';
-  const assets = await Promise.all(clipsFor(girl, key, lang, name, honorific).map((m) => Asset.fromModule(m).downloadAsync()));
-  await RingtoneSetter.setToneFromFilesAsync(
-    assets.map((a) => a.localUri!),
-    safeTitle,
-    type
-  );
+  await RingtoneSetter.setToneFromFilesAsync(await clipFiles(clipsFor(girl, key, lang, name, honorific)), safeTitle, type);
   return `${girl.name} is now your ${TYPE_LABEL[type]}`;
 }
 
 // Joins the name clip and the line into one MP3 (the clips are header-free CBR, so bytes concatenate cleanly).
 async function joinedClip(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific): Promise<Uint8Array> {
-  const assets = await Promise.all(clipsFor(girl, key, lang, name, honorific).map((m) => Asset.fromModule(m).downloadAsync()));
+  const files = await clipFiles(clipsFor(girl, key, lang, name, honorific));
   const parts =
     Platform.OS === 'web'
-      ? await Promise.all(assets.map(async (a) => new Uint8Array(await (await fetch(a.localUri ?? a.uri)).arrayBuffer())))
-      : await Promise.all(assets.map((a) => new File(a.localUri!).bytes()));
+      ? await Promise.all(files.map(async (f) => new Uint8Array(await (await fetch(f)).arrayBuffer())))
+      : await Promise.all(files.map((f) => new File(f).bytes()));
   const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
   let offset = 0;
   for (const p of parts) {

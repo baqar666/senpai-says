@@ -18,107 +18,17 @@ Clips whose text and voice settings haven't changed are skipped, so re-runs are 
 import argparse
 import hashlib
 import json
-import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from voicevox_core.blocking import Onnxruntime, OpenJtalk, Synthesizer, VoiceModelFile
-
 from voice_index import LEADING_PUNCT, LINES, NAMES_JP as NAMES, ROOT, VOICES, write_index
+from voicegen import NAME_POST, NAME_PRE, load_synth, name_variants, render, shape, to_mp3  # noqa: F401  (shape: used by sample scripts)
 
 OUT = VOICES / "jp"
 MANIFEST = OUT / "manifest.json"
 SAMPLES = ROOT / ".voicegen/samples/jp"
-
-
-TALK = ("talk", "streaming_talk")  # newer models label their speaking styles "streaming_talk"; s*.vvm also has singing
-
-
-def load_synth(vv: Path):
-    """One synthesizer per girl's voice, loading only the model files that contain it.
-
-    Models from different VOICEVOX releases can share a character (e.g. ずんだもん in 0.vvm and 15.vvm)
-    and refuse to load into the same synthesizer, so voices are kept apart.
-    """
-    lib = next((vv / "onnxruntime/lib").glob("libvoicevox_onnxruntime.*.*"))
-    ort = Onnxruntime.load_once(filename=str(lib))
-    dict_dir = next((vv / "dict").glob("open_jtalk_dic_utf_8-*"))
-    jtalk = OpenJtalk(str(dict_dir))
-    synths: dict[str, Synthesizer] = {}
-    styles: dict[tuple[str, str], int] = {}
-    for speaker in sorted({g["speaker"] for g in LINES["girls"].values()}):
-        synth = Synthesizer(ort, jtalk)
-        for vvm in sorted((vv / "models/vvms").glob("*.vvm")):
-            with VoiceModelFile.open(str(vvm)) as model:
-                mine = [m for m in model.metas if m.name == speaker]
-                if not any(s.type in TALK for m in mine for s in m.styles):
-                    continue
-                synth.load_voice_model(model)
-                for m in mine:
-                    for s in m.styles:
-                        if s.type in TALK:
-                            styles.setdefault((m.name, s.name), s.id)
-        synths[speaker] = synth
-    missing = [(s, st) for g in LINES["girls"].values() for s, st in
-               [(g["speaker"], g["nameStyle"]), *((g["speaker"], x) for x in g["styles"].values())]
-               if (s, st) not in styles]
-    if missing:
-        have = sorted({k for k in styles})
-        sys.exit(f"Missing VOICEVOX styles: {sorted(set(missing))}\nAvailable: {have}")
-    return synths, styles
-
-
-def _get(m, k):
-    return m[k] if isinstance(m, dict) else getattr(m, k)
-
-
-def _set(m, k, v):
-    if isinstance(m, dict):
-        m[k] = v
-    else:
-        setattr(m, k, v)
-
-
-def shape(q, tune: dict):
-    """Bends VOICEVOX's per-syllable pitch and timing into an emotion contour."""
-    phrases = q.accent_phrases
-    moras = [m for ap in phrases for m in _get(ap, "moras")]
-    voiced = [m for m in moras if _get(m, "pitch") > 0]
-    for m in moras:
-        _set(m, "vowel_length", _get(m, "vowel_length") * tune.get("vowelScale", 1.0))
-    for ap in phrases:
-        pause = _get(ap, "pause_mora")
-        if pause:
-            # Some styles insert ~1s pauses at every comma; cap them so lines don't drag.
-            length = _get(pause, "vowel_length") * tune.get("pauseScale", 1.0)
-            _set(pause, "vowel_length", min(length, tune.get("pauseMax", 0.4)))
-        boost = tune.get("accentBoost", 0.0)
-        ap_moras, accent = _get(ap, "moras"), _get(ap, "accent")
-        if boost and 0 < accent <= len(ap_moras) and _get(ap_moras[accent - 1], "pitch") > 0:
-            _set(ap_moras[accent - 1], "pitch", _get(ap_moras[accent - 1], "pitch") + boost)
-    for m in voiced[:2]:
-        _set(m, "pitch", _get(m, "pitch") + tune.get("startPitch", 0.0))
-    end = tune.get("endPitch", [])
-    for m, delta in zip(voiced[-len(end):] if end else [], end):
-        _set(m, "pitch", _get(m, "pitch") + delta)
-    if moras:
-        _set(moras[-1], "vowel_length", _get(moras[-1], "vowel_length") * tune.get("endLength", 1.0))
-
-
-def to_mp3(wav: bytes, dest: Path):
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(suffix=".wav") as tmp:
-        tmp.write(wav)
-        tmp.flush()
-        # CBR, no ID3/Xing headers: clips can be byte-joined into one ringtone file.
-        subprocess.run(
-            ["ffmpeg", "-loglevel", "error", "-y", "-i", tmp.name, "-ac", "1", "-ar", "24000", "-b:a", "48k",
-             "-map_metadata", "-1", "-id3v2_version", "0", "-write_xing", "0", str(dest)],
-            check=True,
-        )
 
 
 def main():
@@ -127,7 +37,7 @@ def main():
     ap.add_argument("--sample", action="store_true", help="Only make a few clips into .voicegen/samples/jp")
     args = ap.parse_args()
 
-    synths, styles = load_synth(args.vv)
+    synths, styles = load_synth(args.vv, LINES["girls"])
     base = SAMPLES if args.sample else OUT
     manifest = {} if args.sample or not MANIFEST.exists() else json.loads(MANIFEST.read_text())
     new_manifest = {}
@@ -137,28 +47,18 @@ def main():
         nonlocal made, skipped
         sid = styles[(girl["speaker"], style)]
         key = str(dest.relative_to(base))
-        speed = girl["speed"] * tune.get("speed", 1.0)
-        pitch = girl["pitch"] + tune.get("pitch", 0.0)
-        inton = tune.get("intonation", 1.0)
-        volume = tune.get("volume", 1.0)
         sig = hashlib.sha1(json.dumps([text, sid, girl["speed"], girl["pitch"], tune, pre, post]).encode()).hexdigest()
         new_manifest[key] = sig
         if manifest.get(key) == sig and dest.exists():
             skipped += 1
             return
-        synth = synths[girl["speaker"]]
-        q = synth.create_audio_query(text, sid)
-        q.speed_scale = speed
-        q.pitch_scale = pitch
-        q.intonation_scale = inton
-        q.volume_scale = volume
-        q.pre_phoneme_length = pre
-        q.post_phoneme_length = post
-        shape(q, tune)
-        to_mp3(synth.synthesis(q, sid), dest)
+        to_mp3(render(synths[girl["speaker"]], sid, girl, text, tune, pre, post), dest)
         made += 1
         if made % 50 == 0:
             print(f"  {made} clips made...", flush=True)
+        # Save progress now and then, so a stopped run picks up where it left off.
+        if made % 200 == 0 and not args.sample:
+            MANIFEST.write_text(json.dumps({**manifest, **new_manifest}, indent=0, sort_keys=True) + "\n")
 
     hons = [h for h in LINES["honorifics"] if not args.sample or h["key"] == "kun"]
     names = [e for e in NAMES if not args.sample or e[1] == "baqar"]
@@ -177,10 +77,10 @@ def main():
                      LINES["jpContours"][line["jpContour"]], 0.02, 0.15)
         for entry in names:
             kana, ident = entry[0], entry[1]
-            # Soft or loud name, matching the line it leads into.
-            for tone, punct in (("soft", "…"), ("loud", "！")):
-                clip(base / gid / "names" / f"{ident}_{tone}.mp3", kana + punct, girl["nameStyle"], girl,
-                     LINES["jpNameTune"][tone], 0.05, 0.02)
+            # The name in each mood (sweet/happy/angry/sad), in the voice style of the matching emotion,
+            # so an angry line starts with an angry name (lines.json nameMoods, line nameMood).
+            for mood, text, style, tune in name_variants(LINES, girl, kana):
+                clip(base / gid / "names" / f"{ident}_{mood}.mp3", text, style, girl, tune, NAME_PRE, NAME_POST)
 
     if args.sample:
         print(f"Samples in {base}")

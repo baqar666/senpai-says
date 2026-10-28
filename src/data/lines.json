@@ -99,25 +99,24 @@
       }
     },
     "yui": {
-      "speaker": "もち子さん",
-      "nameStyle": "喜び",
+      "speaker": "猫使アル",
+      "nameStyle": "うきうき",
       "speed": 1.0,
       "pitch": 0.0,
       "styles": {
-        "love": "喜び",
-        "angry": "怒り",
-        "miss": "泣き",
-        "shy": "のんびり",
-        "night": "のんびり",
-        "call": "喜び",
-        "message": "喜び",
-        "morning": "喜び"
+        "love": "うきうき",
+        "angry": "つよつよ",
+        "miss": "へろへろ",
+        "shy": "おちつき",
+        "night": "おちつき",
+        "call": "うきうき",
+        "message": "うきうき",
+        "morning": "うきうき"
       },
       "enOrpheus": {
         "voice": "tara",
         "temperature": 0.85
-      },
-      "credit": "もち子(cv 明日葉よもぎ)"
+      }
     },
     "kaito": {
       "speaker": "玄野武宏",
@@ -206,119 +205,137 @@
         "en": "{n}... <breath> I... I really like you...",
         "jp": "{n}…あの、す、すき…です",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sweet"
       },
       "angry": {
         "en": "{n}... that was mean... <whimper>",
         "jp": "{n}…ひどいよ、ぐすっ",
         "tone": "soft",
-        "jpContour": "sad"
+        "jpContour": "sad",
+        "nameMood": "sad"
       },
       "miss": {
         "en": "{n}... <sigh> I missed you so much...",
         "jp": "{n}…ずっと、あいたかった",
         "tone": "soft",
-        "jpContour": "sad"
+        "jpContour": "sad",
+        "nameMood": "sad"
       },
       "shy": {
         "en": "{n}... d-don't look at me like that... <giggle>",
         "jp": "{n}…み、みないでぇ、はずかしいよ",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sweet"
       },
       "night": {
         "en": "{n}... <yawn> good night... sweet dreams...",
         "jp": "{n}…おやすみなさい",
         "tone": "soft",
-        "jpContour": "sleepy"
+        "jpContour": "sleepy",
+        "nameMood": "sweet"
       },
       "call": {
         "en": "{n}... someone is calling you...",
         "jp": "{n}、でんわなってるよ",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sweet"
       },
       "message": {
         "en": "{n}... you have a message...",
         "jp": "{n}、メッセージきてるよ",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sweet"
       },
       "morning": {
         "en": "{n}... g-good morning... <short pause> time to wake up...",
         "jp": "{n}…お、おはよう、おきて",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sweet"
       },
       "birthday": {
         "en": "{n}... h-happy birthday... <giggle> I made you a little cake...",
         "jp": "{n}…お、おたんじょうび、おめでとう…ケーキ、つくったの…",
         "tone": "soft",
         "jpContour": "shy",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "eid": {
         "en": "{n}... Eid Mubarak... I hope your day is full of happiness...",
         "jp": "{n}…イード・ムバラク…しあわせな一日になりますように…",
         "tone": "soft",
         "jpContour": "sweet",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "luck": {
         "en": "{n}... good luck on your exam... I believe in you...",
         "jp": "{n}…しけん、がんばってね…しんじてるよ…",
         "tone": "soft",
         "jpContour": "shy",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "eat": {
         "en": "{n}... did you eat yet? Please don't skip meals...",
         "jp": "{n}…ごはん、たべた？ちゃんとたべてね…",
         "tone": "soft",
         "jpContour": "sweet",
-        "face": "shy"
+        "face": "shy",
+        "nameMood": "sad"
       },
       "gym": {
         "en": "{n}... you're working so hard... I'll cheer for you...",
         "jp": "{n}…がんばってるね…おうえんしてるよ…",
         "tone": "soft",
         "jpContour": "shy",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "care": {
         "en": "{n}... please take care of yourself, okay?",
         "jp": "{n}…むりしないでね…",
         "tone": "soft",
         "jpContour": "sweet",
-        "face": "miss"
+        "face": "miss",
+        "nameMood": "sweet"
       },
       "proud": {
         "en": "{n}... I'm really proud of you... <breath> really...",
         "jp": "{n}…ほんとうに、すごいよ…じまんだよ…",
         "tone": "soft",
         "jpContour": "shy",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "thanks": {
         "en": "{n}... thank you... for always being there...",
         "jp": "{n}…いつも、ありがとう…",
         "tone": "soft",
         "jpContour": "shy",
-        "face": "shy"
+        "face": "shy",
+        "nameMood": "sweet"
       },
       "rest": {
         "en": "{n}... you've been on your phone for so long... let's rest your eyes, okay?",
         "jp": "{n}…ずっとスマホみてるよ…ちょっとやすもう？",
         "tone": "soft",
         "jpContour": "sweet",
-        "face": "miss"
+        "face": "miss",
+        "nameMood": "sweet"
       },
       "rest2": {
         "en": "{n}... please... put the phone down. I'm worried about you. <sigh>",
         "jp": "{n}…おねがい…スマホおいて…しんぱいだよ…",
         "tone": "soft",
         "jpContour": "sad",
-        "face": "miss"
+        "face": "miss",
+        "nameMood": "sad"
       }
     },
     "rei": {
@@ -326,119 +343,137 @@
         "en": "{n}. I will always protect you.",
         "jp": "{n}。…わたしが、まもる。",
         "tone": "soft",
-        "jpContour": "cool"
+        "jpContour": "cool",
+        "nameMood": "sweet"
       },
       "angry": {
         "en": "{n}. <tsk> Don't do that again.",
         "jp": "{n}。…ちっ。もう、やめて。",
         "tone": "loud",
-        "jpContour": "cool"
+        "jpContour": "cool",
+        "nameMood": "angry"
       },
       "miss": {
         "en": "{n}... <sigh> come back to me.",
         "jp": "{n}…はぁ…もどってきて。",
         "tone": "soft",
-        "jpContour": "sad"
+        "jpContour": "sad",
+        "nameMood": "sad"
       },
       "shy": {
         "en": "{n}... it's not... a big deal.",
         "jp": "{n}…べ、べつに…なんでもない。",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sweet"
       },
       "night": {
         "en": "{n}. Sleep. I'll keep watch.",
         "jp": "{n}。おやすみ。…そばにいる。",
         "tone": "soft",
-        "jpContour": "sleepy"
+        "jpContour": "sleepy",
+        "nameMood": "sweet"
       },
       "call": {
         "en": "{n}. Your phone. Answer it.",
         "jp": "{n}。でんわ。はやく、でて。",
         "tone": "loud",
-        "jpContour": "cool"
+        "jpContour": "cool",
+        "nameMood": "happy"
       },
       "message": {
         "en": "{n}. New message.",
         "jp": "{n}。メッセージ。",
         "tone": "soft",
-        "jpContour": "cool"
+        "jpContour": "cool",
+        "nameMood": "sweet"
       },
       "morning": {
         "en": "{n}. Wake up. <short pause> ...Good morning.",
         "jp": "{n}。おきて。…おはよう。",
         "tone": "soft",
-        "jpContour": "cool"
+        "jpContour": "cool",
+        "nameMood": "sweet"
       },
       "birthday": {
         "en": "{n}. Happy birthday. ...I got you something.",
         "jp": "{n}。たんじょうび、おめでとう。…プレゼント、ある。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "eid": {
         "en": "{n}. Eid Mubarak. May peace be with you.",
         "jp": "{n}。イード・ムバラク。へいわがありますように。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "luck": {
         "en": "{n}. You'll pass. I know it.",
         "jp": "{n}。だいじょうぶ。あなたならできる。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "eat": {
         "en": "{n}. Eat something. Now.",
         "jp": "{n}。ちゃんとたべて。いますぐ。",
         "tone": "loud",
         "jpContour": "cool",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "angry"
       },
       "gym": {
         "en": "{n}. One more set. Don't give up.",
         "jp": "{n}。あと一回。あきらめないで。",
         "tone": "loud",
         "jpContour": "cool",
-        "face": "call"
+        "face": "call",
+        "nameMood": "happy"
       },
       "care": {
         "en": "{n}. Be careful out there.",
         "jp": "{n}。きをつけて。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "miss"
+        "face": "miss",
+        "nameMood": "sweet"
       },
       "proud": {
         "en": "{n}. ...I'm proud of you.",
         "jp": "{n}。…よくやった。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "shy"
+        "face": "shy",
+        "nameMood": "sweet"
       },
       "thanks": {
         "en": "{n}. Thank you. ...I mean it.",
         "jp": "{n}。ありがとう。…ほんとうに。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "shy"
+        "face": "shy",
+        "nameMood": "sweet"
       },
       "rest": {
         "en": "{n}. That's enough scrolling. Rest your eyes.",
         "jp": "{n}。もうじゅうぶん。めをやすめて。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "rest2": {
         "en": "{n}. I said stop. Phone down. Now.",
         "jp": "{n}。やめてといったはず。スマホをおいて。いますぐ。",
         "tone": "loud",
         "jpContour": "bossy",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "angry"
       }
     },
     "aiko": {
@@ -446,119 +481,137 @@
         "en": "{n}! It's not like I like you or anything... <pff> baka!",
         "jp": "{n}！べ、べつにすきじゃないんだからねっ！ばかっ！",
         "tone": "loud",
-        "jpContour": "bossy"
+        "jpContour": "bossy",
+        "nameMood": "happy"
       },
       "angry": {
         "en": "{n}! You IDIOT! <grr>",
         "jp": "{n}のばかぁっ！ふんっ！",
         "tone": "loud",
-        "jpContour": "angry"
+        "jpContour": "angry",
+        "nameMood": "angry"
       },
       "miss": {
         "en": "{n}... I did NOT miss you. <short pause> Okay... maybe a little.",
         "jp": "{n}…さ、さびしくなんか…ないんだから…",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sad"
       },
       "shy": {
         "en": "{n}! W-what are you staring at?!",
         "jp": "{n}！な、なにじろじろみてるのよっ！",
         "tone": "loud",
-        "jpContour": "angry"
+        "jpContour": "angry",
+        "nameMood": "angry"
       },
       "night": {
         "en": "{n}... good night. Not that I care! <pff>",
         "jp": "{n}…お、おやすみ…ふんっ！",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sweet"
       },
       "call": {
         "en": "{n}! Pick up the phone already! <tsk>",
         "jp": "{n}！はやくでなさいよっ！もうっ！",
         "tone": "loud",
-        "jpContour": "angry"
+        "jpContour": "angry",
+        "nameMood": "angry"
       },
       "message": {
         "en": "{n}! Read your message! Hurry up!",
         "jp": "{n}！メッセージよっ！はやくよみなさいっ！",
         "tone": "loud",
-        "jpContour": "bossy"
+        "jpContour": "bossy",
+        "nameMood": "happy"
       },
       "morning": {
         "en": "{n}! Wake up! I'm NOT waiting for you!",
         "jp": "{n}！おきなさいっ！まってあげないんだからっ！",
         "tone": "loud",
-        "jpContour": "bossy"
+        "jpContour": "bossy",
+        "nameMood": "happy"
       },
       "birthday": {
         "en": "{n}! Happy birthday! I didn't buy you a gift or anything... <pff> okay, maybe I did!",
         "jp": "{n}！たんじょうびおめでとう！べ、べつにプレゼントなんか…よういしたけど！",
         "tone": "loud",
         "jpContour": "bossy",
-        "face": "shy"
+        "face": "shy",
+        "nameMood": "happy"
       },
       "eid": {
         "en": "{n}! Eid Mubarak! Don't eat too many sweets, okay?",
         "jp": "{n}！イード・ムバラク！あまいもの、たべすぎないでよね！",
         "tone": "loud",
         "jpContour": "bossy",
-        "face": "love"
+        "face": "love",
+        "nameMood": "happy"
       },
       "luck": {
         "en": "{n}! You better pass that exam! I'm not worried or anything!",
         "jp": "{n}！しけん、ぜったいごうかくしなさいよ！しんぱいなんかしてないんだから！",
         "tone": "loud",
         "jpContour": "bossy",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "happy"
       },
       "eat": {
         "en": "{n}! Did you skip lunch again?! Go eat, idiot!",
         "jp": "{n}！またごはんぬいたの？はやくたべなさい！ばか！",
         "tone": "loud",
         "jpContour": "angry",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "angry"
       },
       "gym": {
         "en": "{n}! Is that all you've got? Come on, push harder!",
         "jp": "{n}！それだけ？もっとがんばりなさいよ！",
         "tone": "loud",
         "jpContour": "bossy",
-        "face": "call"
+        "face": "call",
+        "nameMood": "happy"
       },
       "care": {
         "en": "{n}... take care, okay? It's not like I'd miss you...",
         "jp": "{n}…きをつけてね。べつに、さびしくなんかないけど…",
         "tone": "soft",
         "jpContour": "shy",
-        "face": "miss"
+        "face": "miss",
+        "nameMood": "sweet"
       },
       "proud": {
         "en": "{n}... hmph. You did good. Just this once.",
         "jp": "{n}…ふん。まあ、よくやったじゃない。こんかいだけね。",
         "tone": "soft",
         "jpContour": "shy",
-        "face": "shy"
+        "face": "shy",
+        "nameMood": "sweet"
       },
       "thanks": {
         "en": "{n}... th-thanks. Don't make it weird!",
         "jp": "{n}…あ、ありがと。かんちがいしないでよね！",
         "tone": "soft",
         "jpContour": "shy",
-        "face": "shy"
+        "face": "shy",
+        "nameMood": "sweet"
       },
       "rest": {
         "en": "{n}! How long are you gonna stare at your phone?! Take a break!",
         "jp": "{n}！いつまでスマホみてるのよっ！やすみなさい！",
         "tone": "loud",
         "jpContour": "bossy",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "happy"
       },
       "rest2": {
         "en": "{n}! Again?! Put it down right now, idiot!",
         "jp": "{n}！またみてるの？いますぐおきなさい！ばかっ！",
         "tone": "loud",
         "jpContour": "angry",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "angry"
       }
     },
     "yui": {
@@ -566,119 +619,137 @@
         "en": "{n}! I love you SO much! <giggle>",
         "jp": "{n}！だーいすきっ！",
         "tone": "loud",
-        "jpContour": "excited"
+        "jpContour": "excited",
+        "nameMood": "happy"
       },
       "angry": {
         "en": "{n}! <grr> I'm so mad at you!",
         "jp": "{n}！もぉーっ！おこったよっ！",
         "tone": "loud",
-        "jpContour": "angry"
+        "jpContour": "angry",
+        "nameMood": "angry"
       },
       "miss": {
         "en": "{n}! Where were you?! I missed you! <whimper>",
         "jp": "{n}！どこいってたのー！あいたかったよぉ！",
         "tone": "loud",
-        "jpContour": "sweet"
+        "jpContour": "sweet",
+        "nameMood": "sad"
       },
       "shy": {
         "en": "{n}, <giggle> you're making me blush!",
         "jp": "{n}、えへへ…はずかしいよぉ！",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sweet"
       },
       "night": {
         "en": "{n}! <yawn> Night night! See you tomorrow!",
         "jp": "{n}！ふぁぁ…おやすみぃ！またあしたね！",
         "tone": "soft",
-        "jpContour": "sleepy"
+        "jpContour": "sleepy",
+        "nameMood": "sweet"
       },
       "call": {
         "en": "{n}! Phone! Phone! Pick it up! <laugh>",
         "jp": "{n}！でんわだよっ！でんわでんわーっ！",
         "tone": "loud",
-        "jpContour": "excited"
+        "jpContour": "excited",
+        "nameMood": "happy"
       },
       "message": {
         "en": "{n}! You got a message! Yay!",
         "jp": "{n}！メッセージきたよー！やったぁ！",
         "tone": "loud",
-        "jpContour": "excited"
+        "jpContour": "excited",
+        "nameMood": "happy"
       },
       "morning": {
         "en": "{n}! Good morning! Let's GO! <cheer>",
         "jp": "{n}！おっはよー！いっくよー！",
         "tone": "loud",
-        "jpContour": "excited"
+        "jpContour": "excited",
+        "nameMood": "happy"
       },
       "birthday": {
         "en": "{n}! Happy birthday! <cheer> Let's party all day!",
         "jp": "{n}！おたんじょうびおめでとう！きょうはいっぱいあそぼう！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "love"
+        "face": "love",
+        "nameMood": "happy"
       },
       "eid": {
         "en": "{n}! Eid Mubarak! <laugh> Let's eat all the sweets!",
         "jp": "{n}！イード・ムバラク！あまいもの、いっぱいたべよう！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "love"
+        "face": "love",
+        "nameMood": "happy"
       },
       "luck": {
         "en": "{n}! You've got this! Fighting! Fighting!",
         "jp": "{n}！ファイト！ファイト！ぜったいだいじょうぶ！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "call"
+        "face": "call",
+        "nameMood": "happy"
       },
       "eat": {
         "en": "{n}! Snack time! Let's eat something yummy!",
         "jp": "{n}！おやつのじかんだよ！なにかおいしいものたべよう！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "love"
+        "face": "love",
+        "nameMood": "angry"
       },
       "gym": {
         "en": "{n}! Go go go! You're so strong! <cheer>",
         "jp": "{n}！いけいけ！つよい！かっこいい！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "call"
+        "face": "call",
+        "nameMood": "happy"
       },
       "care": {
         "en": "{n}! Stay safe out there, okay? Promise me!",
         "jp": "{n}！きをつけてね！やくそくだよ！",
         "tone": "loud",
         "jpContour": "sweet",
-        "face": "miss"
+        "face": "miss",
+        "nameMood": "happy"
       },
       "proud": {
         "en": "{n}! You're amazing! I'm so proud of you! <giggle>",
         "jp": "{n}！すごいすごい！ほんとうにじまんだよ！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "love"
+        "face": "love",
+        "nameMood": "happy"
       },
       "thanks": {
         "en": "{n}! Thank you so much! You're the best!",
         "jp": "{n}！ほんとうにありがとう！だいすき！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "shy"
+        "face": "shy",
+        "nameMood": "happy"
       },
       "rest": {
         "en": "{n}! Phone break! Let's stretch together!",
         "jp": "{n}！スマホきゅうけい！いっしょにストレッチしよっ！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "call"
+        "face": "call",
+        "nameMood": "happy"
       },
       "rest2": {
         "en": "{n}! Hey hey, still scrolling? Come on, get up and move!",
         "jp": "{n}！まだみてるの？ほら、たってうごこう！",
         "tone": "loud",
         "jpContour": "bossy",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "angry"
       }
     },
     "kaito": {
@@ -686,119 +757,137 @@
         "en": "{n}~ you're seriously cute, you know that? Stay by my side.",
         "jp": "{n}〜、お前ほんとかわいいな。ずっと俺のそばにいろよ。",
         "tone": "soft",
-        "jpContour": "sweet"
+        "jpContour": "sweet",
+        "nameMood": "sweet"
       },
       "angry": {
         "en": "{n}, hey. Making me mad? That's pretty bold of you.",
         "jp": "{n}、おい。俺を怒らせるなんて、いい度胸じゃん。",
         "tone": "loud",
-        "jpContour": "bossy"
+        "jpContour": "bossy",
+        "nameMood": "angry"
       },
       "miss": {
         "en": "{n}... without you around, I'm bored to death. <sigh>",
         "jp": "{n}…お前がいないと、退屈で死にそうなんだけど。",
         "tone": "soft",
-        "jpContour": "sad"
+        "jpContour": "sad",
+        "nameMood": "sad"
       },
       "shy": {
         "en": "{n}... I'm not blushing. Okay, maybe a little.",
         "jp": "{n}…いや、別に照れてねーし。…ちょっとだけな。",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sweet"
       },
       "night": {
         "en": "{n}, go to sleep. I'll protect you, even in your dreams.",
         "jp": "{n}、もう寝ろ。夢の中でも、俺が守ってやるから。",
         "tone": "soft",
-        "jpContour": "sleepy"
+        "jpContour": "sleepy",
+        "nameMood": "sweet"
       },
       "call": {
         "en": "{n}~! Phone's ringing! Don't you dare ignore my call!",
         "jp": "{n}〜！電話だぞ！俺からの呼び出し、無視すんなよ？",
         "tone": "loud",
-        "jpContour": "excited"
+        "jpContour": "excited",
+        "nameMood": "happy"
       },
       "message": {
         "en": "{n}! You got a message. Read it, come on.",
         "jp": "{n}！メッセージ来てるぞ。早く読めよ。",
         "tone": "loud",
-        "jpContour": "excited"
+        "jpContour": "excited",
+        "nameMood": "happy"
       },
       "morning": {
         "en": "{n}~ morning! Get up, the strongest is waiting for you.",
         "jp": "{n}〜、おはよ！起きろよ、俺が待ってんだから。",
         "tone": "loud",
-        "jpContour": "excited"
+        "jpContour": "excited",
+        "nameMood": "happy"
       },
       "birthday": {
         "en": "{n}! Happy birthday! Today, I'm all yours. <laugh>",
         "jp": "{n}！誕生日おめでとう！今日だけは、俺を独り占めしていいぞ。",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "love"
+        "face": "love",
+        "nameMood": "happy"
       },
       "eid": {
         "en": "{n}! Eid Mubarak! Eat well and have fun today.",
         "jp": "{n}！イード・ムバラク！今日はいっぱい食べて、楽しめよ。",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "love"
+        "face": "love",
+        "nameMood": "happy"
       },
       "luck": {
         "en": "{n}, relax. You've got this exam. I believe in you.",
         "jp": "{n}、大丈夫。試験なんて余裕だろ。俺が信じてるから。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "eat": {
         "en": "{n}, did you skip a meal? Go eat. That's an order.",
         "jp": "{n}、またごはん抜いたのか？早く食べろ。命令な。",
         "tone": "loud",
         "jpContour": "bossy",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "angry"
       },
       "gym": {
         "en": "{n}! One more rep! You're stronger than you think!",
         "jp": "{n}！あと一回！お前は思ってるより強いぞ！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "call"
+        "face": "call",
+        "nameMood": "happy"
       },
       "care": {
         "en": "{n}, take care, okay? Don't make me worry.",
         "jp": "{n}、気をつけろよ。俺を心配させんな。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "miss"
+        "face": "miss",
+        "nameMood": "sweet"
       },
       "proud": {
         "en": "{n}, you did great. Not bad at all. I'm proud of you.",
         "jp": "{n}、よくやったな。さすがだよ。誇りに思う。",
         "tone": "soft",
         "jpContour": "sweet",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "thanks": {
         "en": "{n}... thanks. Seriously. <chuckle>",
         "jp": "{n}…ありがとな。マジで。",
         "tone": "soft",
         "jpContour": "shy",
-        "face": "shy"
+        "face": "shy",
+        "nameMood": "sweet"
       },
       "rest": {
         "en": "{n}~ you've been on your phone forever. Take a break, okay?",
         "jp": "{n}〜、ずっとスマホ見てんじゃん。ちょっと休めよ。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "miss"
+        "face": "miss",
+        "nameMood": "sweet"
       },
       "rest2": {
         "en": "{n}. I said put it down. Don't make me come over there.",
         "jp": "{n}。置けって言ったよな？俺を本気にさせんなよ。",
         "tone": "loud",
         "jpContour": "bossy",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "angry"
       }
     },
     "ryuga": {
@@ -806,119 +895,137 @@
         "en": "{n}... you belong to me. I won't hand you over to anyone.",
         "jp": "{n}…お前は俺のものだ。誰にも渡さん。",
         "tone": "soft",
-        "jpContour": "cool"
+        "jpContour": "cool",
+        "nameMood": "sweet"
       },
       "angry": {
         "en": "{n}... you dare ignore me? How bold.",
         "jp": "{n}…この俺を無視するとは、いい度胸だ。",
         "tone": "loud",
-        "jpContour": "angry"
+        "jpContour": "angry",
+        "nameMood": "angry"
       },
       "miss": {
         "en": "{n}... a world without you is nothing but boring.",
         "jp": "{n}…お前のいない世界など、退屈なだけだ。",
         "tone": "soft",
-        "jpContour": "sad"
+        "jpContour": "sad",
+        "nameMood": "sad"
       },
       "shy": {
         "en": "{n}... don't misunderstand. It's not for you. Only a little.",
         "jp": "{n}…勘違いするな。お前のためではない。…少しだけだ。",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sweet"
       },
       "night": {
         "en": "{n}, sleep. Even in the darkness, I am by your side.",
         "jp": "{n}、眠れ。闇の中でも、俺がそばにいる。",
         "tone": "soft",
-        "jpContour": "sleepy"
+        "jpContour": "sleepy",
+        "nameMood": "sweet"
       },
       "call": {
         "en": "{n}! I am calling you. Answer. Now.",
         "jp": "{n}！この俺が呼んでいる。早く出ろ。",
         "tone": "loud",
-        "jpContour": "bossy"
+        "jpContour": "bossy",
+        "nameMood": "happy"
       },
       "message": {
         "en": "{n}. A message has arrived. Read it.",
         "jp": "{n}。メッセージだ。読め。",
         "tone": "soft",
-        "jpContour": "cool"
+        "jpContour": "cool",
+        "nameMood": "sweet"
       },
       "morning": {
         "en": "{n}. Rise. The day will not wait for you, and neither will I.",
         "jp": "{n}。起きろ。今日という日は、お前を待たない。",
         "tone": "soft",
-        "jpContour": "cool"
+        "jpContour": "cool",
+        "nameMood": "sweet"
       },
       "birthday": {
         "en": "{n}. Happy birthday. Today, I will grant you anything you wish.",
         "jp": "{n}。誕生日おめでとう。今日だけは、お前の望みを叶えてやろう。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "eid": {
         "en": "{n}. Eid Mubarak. May this day bring you peace.",
         "jp": "{n}。イード・ムバラク。今日という日が、お前に安らぎをもたらすように。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "luck": {
         "en": "{n}. You will not lose. Not while I am watching.",
         "jp": "{n}。お前は負けない。この俺が見ているのだからな。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "eat": {
         "en": "{n}. You skipped your meal? Eat. I will not repeat myself.",
         "jp": "{n}。食事を抜いただと？食べろ。二度は言わん。",
         "tone": "loud",
         "jpContour": "angry",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "angry"
       },
       "gym": {
         "en": "{n}! Is that your limit? Surpass it!",
         "jp": "{n}！それがお前の限界か？超えてみせろ！",
         "tone": "loud",
         "jpContour": "bossy",
-        "face": "call"
+        "face": "call",
+        "nameMood": "happy"
       },
       "care": {
         "en": "{n}... take care. Do not get hurt without my permission.",
         "jp": "{n}…気をつけろ。俺の許可なく、傷つくな。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "miss"
+        "face": "miss",
+        "nameMood": "sweet"
       },
       "proud": {
         "en": "{n}... impressive. As expected of the one I chose.",
         "jp": "{n}…見事だ。さすが、俺が選んだ者だ。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "thanks": {
         "en": "{n}... I am grateful. Remember that.",
         "jp": "{n}…感謝する。覚えておけ。",
         "tone": "soft",
         "jpContour": "shy",
-        "face": "shy"
+        "face": "shy",
+        "nameMood": "sweet"
       },
       "rest": {
         "en": "{n}. Enough of that screen. Rest your eyes.",
         "jp": "{n}。その画面はもう十分だ。目を休めろ。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "rest2": {
         "en": "{n}! You defy me again? Put it down. Now.",
         "jp": "{n}！また俺に逆らうか？今すぐ置け。",
         "tone": "loud",
         "jpContour": "angry",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "angry"
       }
     },
     "jin": {
@@ -926,119 +1033,137 @@
         "en": "{n}... only you... don't leave me.",
         "jp": "{n}…お前だけは…俺から、離れるな。",
         "tone": "soft",
-        "jpContour": "cool"
+        "jpContour": "cool",
+        "nameMood": "sweet"
       },
       "angry": {
         "en": "{n}... don't make me angry. You will regret it.",
         "jp": "{n}…俺を怒らせるな。…後悔することになる。",
         "tone": "soft",
-        "jpContour": "cool"
+        "jpContour": "cool",
+        "nameMood": "sweet"
       },
       "miss": {
         "en": "{n}... I was always alone. Without you... I'm alone again.",
         "jp": "{n}…ずっと、ひとりだった。…お前がいないと、また、ひとりだ。",
         "tone": "soft",
-        "jpContour": "sad"
+        "jpContour": "sad",
+        "nameMood": "sad"
       },
       "shy": {
         "en": "{n}... I'm not used to this. But... it's not bad.",
         "jp": "{n}…こういうのは…慣れていない。…でも、悪くない。",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sweet"
       },
       "night": {
         "en": "{n}... I don't sleep. So you can sleep safely.",
         "jp": "{n}…俺は、眠らない。…だから、お前は安心して眠れ。",
         "tone": "soft",
-        "jpContour": "sleepy"
+        "jpContour": "sleepy",
+        "nameMood": "sweet"
       },
       "call": {
         "en": "{n}. Answer. I'm calling you.",
         "jp": "{n}。…出ろ。俺が呼んでいる。",
         "tone": "soft",
-        "jpContour": "cool"
+        "jpContour": "cool",
+        "nameMood": "sweet"
       },
       "message": {
         "en": "{n}. A message. ...Read it.",
         "jp": "{n}。…メッセージだ。読め。",
         "tone": "soft",
-        "jpContour": "cool"
+        "jpContour": "cool",
+        "nameMood": "sweet"
       },
       "morning": {
         "en": "{n}... morning. You're awake. Good.",
         "jp": "{n}…朝だ。…起きたか。…そうか。",
         "tone": "soft",
-        "jpContour": "sleepy"
+        "jpContour": "sleepy",
+        "nameMood": "sweet"
       },
       "birthday": {
         "en": "{n}... happy birthday. I'm glad... you were born.",
         "jp": "{n}…誕生日、おめでとう。…お前が生まれてきて、よかった。",
         "tone": "soft",
         "jpContour": "sweet",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "eid": {
         "en": "{n}... Eid Mubarak. I'll spend this day with you.",
         "jp": "{n}…イード・ムバラク。…今日は、お前のそばにいる。",
         "tone": "soft",
         "jpContour": "sweet",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "luck": {
         "en": "{n}... you'll pass. I know it.",
         "jp": "{n}…お前なら、受かる。…わかっている。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "eat": {
         "en": "{n}. Eat. Or I'll make you.",
         "jp": "{n}。…食え。…でないと、無理やり食わせる。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "sweet"
       },
       "gym": {
         "en": "{n}. Again. You can go further.",
         "jp": "{n}。…もう一度だ。…お前は、もっといける。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "call"
+        "face": "call",
+        "nameMood": "sweet"
       },
       "care": {
         "en": "{n}... be careful. Don't get hurt.",
         "jp": "{n}…気をつけろ。…傷つくな。",
         "tone": "soft",
         "jpContour": "sad",
-        "face": "miss"
+        "face": "miss",
+        "nameMood": "sad"
       },
       "proud": {
         "en": "{n}... you did well. ...I'm proud.",
         "jp": "{n}…よくやった。…誇りに思う。",
         "tone": "soft",
         "jpContour": "sweet",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "thanks": {
         "en": "{n}... thank you. ...For staying.",
         "jp": "{n}…ありがとう。…そばにいてくれて。",
         "tone": "soft",
         "jpContour": "shy",
-        "face": "shy"
+        "face": "shy",
+        "nameMood": "sweet"
       },
       "rest": {
         "en": "{n}... that screen again. Close it. Rest.",
         "jp": "{n}…また、その画面か。…閉じろ。休め。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "love"
+        "face": "love",
+        "nameMood": "sweet"
       },
       "rest2": {
         "en": "{n}. I told you. ...Don't make me say it a third time.",
         "jp": "{n}。…言ったはずだ。…三度目は、ない。",
         "tone": "soft",
         "jpContour": "cool",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "sweet"
       }
     },
     "haru": {
@@ -1046,119 +1171,137 @@
         "en": "{n}, thank you for always being you. I really like you.",
         "jp": "{n}、いつもありがとう。大好きだよ。",
         "tone": "soft",
-        "jpContour": "sweet"
+        "jpContour": "sweet",
+        "nameMood": "sweet"
       },
       "angry": {
         "en": "{n}, hey... I told you not to push yourself. I'll get mad, you know?",
         "jp": "{n}、もう…無理しちゃだめって言ったでしょ？怒るよ？",
         "tone": "soft",
-        "jpContour": "bossy"
+        "jpContour": "bossy",
+        "nameMood": "sad"
       },
       "miss": {
         "en": "{n}... I miss you. Come back soon, okay?",
         "jp": "{n}…会いたいな。早く帰ってきてね。",
         "tone": "soft",
-        "jpContour": "sad"
+        "jpContour": "sad",
+        "nameMood": "sad"
       },
       "shy": {
         "en": "{n}... if you stare like that, I'll get embarrassed...",
         "jp": "{n}…そんなに見られると、照れちゃうよ…",
         "tone": "soft",
-        "jpContour": "shy"
+        "jpContour": "shy",
+        "nameMood": "sweet"
       },
       "night": {
         "en": "{n}, good night. You did your best today.",
         "jp": "{n}、おやすみ。今日もがんばったね。",
         "tone": "soft",
-        "jpContour": "sleepy"
+        "jpContour": "sleepy",
+        "nameMood": "sweet"
       },
       "call": {
         "en": "{n}! It's a call! Pick up, pick up~!",
         "jp": "{n}！電話だよ！早く出て〜！",
         "tone": "loud",
-        "jpContour": "excited"
+        "jpContour": "excited",
+        "nameMood": "happy"
       },
       "message": {
         "en": "{n}, you've got a message! Go check it~",
         "jp": "{n}、メッセージ来てるよ！見てみて〜",
         "tone": "loud",
-        "jpContour": "excited"
+        "jpContour": "excited",
+        "nameMood": "happy"
       },
       "morning": {
         "en": "{n}, good morning! Let's make today a good day!",
         "jp": "{n}、おはよう！今日もいい日にしようね！",
         "tone": "loud",
-        "jpContour": "excited"
+        "jpContour": "excited",
+        "nameMood": "happy"
       },
       "birthday": {
         "en": "{n}! Happy birthday! I'm so happy you exist! <laugh>",
         "jp": "{n}！お誕生日おめでとう！生まれてきてくれて、ありがとう！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "love"
+        "face": "love",
+        "nameMood": "happy"
       },
       "eid": {
         "en": "{n}! Eid Mubarak! I hope today is full of happy things.",
         "jp": "{n}！イード・ムバラク！今日がしあわせでいっぱいになりますように。",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "love"
+        "face": "love",
+        "nameMood": "happy"
       },
       "luck": {
         "en": "{n}, good luck on your exam! I'll be cheering for you!",
         "jp": "{n}、試験がんばってね！ずっと応援してるよ！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "call"
+        "face": "call",
+        "nameMood": "happy"
       },
       "eat": {
         "en": "{n}, did you eat properly? Please don't skip meals, okay?",
         "jp": "{n}、ちゃんとごはん食べた？抜いちゃだめだよ？",
         "tone": "soft",
         "jpContour": "bossy",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "sad"
       },
       "gym": {
         "en": "{n}, you're doing amazing! Just a little more!",
         "jp": "{n}、すごいよ！あと少し、がんばろう！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "call"
+        "face": "call",
+        "nameMood": "happy"
       },
       "care": {
         "en": "{n}, take care of yourself, okay? Don't overdo it.",
         "jp": "{n}、体に気をつけてね。無理しないで。",
         "tone": "soft",
         "jpContour": "sweet",
-        "face": "miss"
+        "face": "miss",
+        "nameMood": "sweet"
       },
       "proud": {
         "en": "{n}, you did it! I'm so proud of you!",
         "jp": "{n}、やったね！すごく誇らしいよ！",
         "tone": "loud",
         "jpContour": "excited",
-        "face": "love"
+        "face": "love",
+        "nameMood": "happy"
       },
       "thanks": {
         "en": "{n}, thank you. You always make me smile.",
         "jp": "{n}、ありがとう。いつも笑顔にしてくれるね。",
         "tone": "soft",
         "jpContour": "sweet",
-        "face": "shy"
+        "face": "shy",
+        "nameMood": "sweet"
       },
       "rest": {
         "en": "{n}, you've been on your phone a while. Want to rest a bit?",
         "jp": "{n}、ずっとスマホ見てるね。ちょっと休もっか？",
         "tone": "soft",
         "jpContour": "sweet",
-        "face": "miss"
+        "face": "miss",
+        "nameMood": "sweet"
       },
       "rest2": {
         "en": "{n}... still scrolling? Please, put it down for me.",
         "jp": "{n}…まだ見てるの？おねがい、ぼくのためにやめて？",
         "tone": "soft",
         "jpContour": "sad",
-        "face": "angry"
+        "face": "angry",
+        "nameMood": "sad"
       }
     }
   },
@@ -1266,6 +1409,25 @@
         -0.1
       ],
       "endLength": 1.15
+    }
+  },
+  "nameMoods": {
+    "_note": "Each line says the name in its own mood (line nameMood), in the voice style of the emotion named by styleFrom.",
+    "sweet": {
+      "tone": "soft",
+      "styleFrom": "love"
+    },
+    "happy": {
+      "tone": "loud",
+      "styleFrom": "call"
+    },
+    "angry": {
+      "tone": "loud",
+      "styleFrom": "angry"
+    },
+    "sad": {
+      "tone": "soft",
+      "styleFrom": "miss"
     }
   }
 }
