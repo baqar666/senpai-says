@@ -61,8 +61,9 @@ built-in clips (both use `scripts/voicegen.py`). The 32 clips (about 150 KB) are
 - Run locally: `VV_DIR=.voicegen/vv LINES_JSON=src/data/lines.json PYTHONPATH=scripts:server .voicegen/venv/bin/uvicorn app:app --port 7860`
   (debug builds and the web preview use `http://127.0.0.1:7860`)
 - Release builds use `EXPO_PUBLIC_NAME_VOICE_URL`; without it the Teach button is hidden.
-- Deploy: `scripts/deploy_name_server.sh` (Hugging Face Space; needs `HF_TOKEN` in `.env.local`). Note: Docker Spaces on
-  Hugging Face's free CPU now need a PRO subscription. The image is a plain Docker container, so any host that runs one works.
+- Deploy: `scripts/deploy_cloud_run.sh` (Google Cloud Run, free tier; needs `gcloud auth login`), then put the printed URL in
+  the GitHub secret `NAME_VOICE_URL`. `scripts/deploy_name_server.sh` deploys to a Hugging Face Space instead (needs PRO for
+  Docker Spaces).
 - Re-deploy after changing voices or `lines.json`, so custom names keep matching the built-in clips.
 
 ## Purchases and ads
