@@ -19,6 +19,9 @@ declare class RingtoneSetterModule extends NativeModule<{ onGuard: (e: GuardTrig
   takePendingGuard(): GuardTrigger | null;
   snoozeGuard(minutes: number): void;
   goHome(): void;
+  setGuardPack(json: string): void;
+  isIgnoringBatteryOptimizations(): boolean;
+  openBatterySettings(): void;
 }
 
 // Null in Expo Go and on iOS, where apps can't change system tones.

@@ -4,6 +4,7 @@ import android.app.AppOpsManager
 import android.content.Context
 import android.os.Build
 import android.os.Process
+import org.json.JSONObject
 import java.util.Calendar
 
 // Screen-time guard state, shared by the module (JS side), the service and the boot receiver.
@@ -31,6 +32,10 @@ object GuardPrefs {
   fun addUsed(c: Context, ms: Long): Long = (usedMs(c) + ms).also { setUsed(c, it) }
   fun nextLevel(c: Context): Int = (level(c) + 1).also { p(c).edit().putInt("level", it).apply() }
   fun snooze(c: Context, until: Long) = p(c).edit().putLong("snooze", until).apply()
+
+  // What the overlay shows, prepared by the app (src/lib/guard.ts prepareGuardPack).
+  fun setPack(c: Context, json: String) = p(c).edit().putString("pack", json).apply()
+  fun pack(c: Context): JSONObject? = p(c).getString("pack", null)?.let { runCatching { JSONObject(it) }.getOrNull() }
 
   // A new day starts with a clean slate: no time used, no warnings given.
   fun rollDay(c: Context, now: Long) {

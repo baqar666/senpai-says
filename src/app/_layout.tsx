@@ -14,7 +14,7 @@ import { ToastProvider } from '../components/Toast';
 import { UnlockSheet } from '../components/UnlockSheet';
 import { startAds } from '../lib/ads';
 import { DailyPick, openDaily, scheduleDaily } from '../lib/daily';
-import { syncGuard } from '../lib/guard';
+import { prepareGuardPack, syncGuard } from '../lib/guard';
 import { PassProvider, usePass } from '../lib/pass';
 import { SettingsProvider, useSettings } from '../lib/store';
 
@@ -58,7 +58,7 @@ function useDailyMessages() {
 // Keeps the native screen-time watcher matching the settings. Permissions are granted in system
 // screens, so it re-checks when the user comes back to the app.
 function useScreenGuard() {
-  const { ready, guardOn, guardApps, guardLimit } = useSettings();
+  const { ready, guardOn, guardApps, guardLimit, cast, name, lang, honorific } = useSettings();
   const { pro } = usePass();
   useEffect(() => {
     if (!ready) return;
@@ -66,6 +66,11 @@ function useScreenGuard() {
     const sub = AppState.addEventListener('change', (s) => s === 'active' && syncGuard(guardOn, guardApps, guardLimit, pro));
     return () => sub.remove();
   }, [ready, guardOn, guardApps, guardLimit, pro]);
+
+  // The watcher draws the warning itself, so give it this user's voice lines, animations and text.
+  useEffect(() => {
+    if (ready && guardOn) prepareGuardPack(cast, name, lang, honorific).catch(() => {});
+  }, [ready, guardOn, cast, name, lang, honorific]);
 }
 
 // Free users may watch rewarded ads, so ask for ad consent (where required) once at launch.

@@ -135,6 +135,17 @@ async function joinedClip(girl: Girl, key: LineKey, lang: Lang, name: string, ho
   return out;
 }
 
+// Saves the line (name + rest) as an MP3 in the app's documents folder and returns its file URI.
+// Used by the screen-time overlay, which plays it natively while the app isn't running.
+export async function saveLineFile(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific, fileName: string): Promise<string> {
+  const bytes = await joinedClip(girl, key, lang, name, honorific);
+  const file = new File(Paths.document, fileName);
+  if (file.exists) file.delete();
+  file.create();
+  await file.write(bytes);
+  return file.uri;
+}
+
 // Shares the voice line as an MP3 (WhatsApp, TikTok, Instagram…). On web it downloads instead.
 export async function shareLine(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific): Promise<boolean> {
   const bytes = await joinedClip(girl, key, lang, name, honorific);

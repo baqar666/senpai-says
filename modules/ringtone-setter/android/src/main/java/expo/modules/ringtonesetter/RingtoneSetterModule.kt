@@ -7,6 +7,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.PowerManager
 import android.provider.MediaStore
 import android.provider.Settings
 import expo.modules.kotlin.exception.Exceptions
@@ -78,6 +79,23 @@ class RingtoneSetterModule : Module() {
         .setData(Uri.parse("package:" + context.packageName))
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       context.startActivity(intent)
+    }
+
+    Function("setGuardPack") { json: String ->
+      GuardPrefs.setPack(context, json)
+    }
+
+    // Xiaomi, Oppo, Vivo etc. stop background services unless the app may use battery freely.
+    Function("isIgnoringBatteryOptimizations") {
+      context.getSystemService(PowerManager::class.java)?.isIgnoringBatteryOptimizations(context.packageName) ?: true
+    }
+
+    Function("openBatterySettings") {
+      val list = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      val appInfo = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        .setData(Uri.parse("package:" + context.packageName))
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      runCatching { context.startActivity(list) }.onFailure { context.startActivity(appInfo) }
     }
 
     Function("canDrawOverlays") {

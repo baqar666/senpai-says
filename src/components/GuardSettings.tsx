@@ -88,6 +88,13 @@ export function GuardSettings() {
             onAllow={() => RingtoneSetter?.openOverlaySettings()}
           />
 
+          <Step
+            done={perms.battery}
+            title="3. Keep it running (recommended)"
+            sub="Set battery to Unrestricted. On Xiaomi, Oppo and Vivo also turn on Autostart in App info"
+            onAllow={() => RingtoneSetter?.openBatterySettings()}
+          />
+
           <Text style={styles.label}>Daily limit</Text>
           <View style={styles.chips}>
             {GUARD_LIMITS.map((m) => (

@@ -23,6 +23,7 @@ class GuardService : Service() {
   private var current: String? = null
   private var lastQuery = 0L
   private var lastTick = 0L
+  private val overlay by lazy { GuardOverlay(this) }
 
   private val tick = object : Runnable {
     override fun run() {
@@ -55,6 +56,7 @@ class GuardService : Service() {
 
   override fun onDestroy() {
     handler.removeCallbacks(tick)
+    overlay.hide()
     super.onDestroy()
   }
 
@@ -68,6 +70,8 @@ class GuardService : Service() {
     updateForeground(now)
     val elapsed = (now - lastTick).coerceIn(0, TICK_MS * 3)
     lastTick = now
+    // The app underneath stays "in front" while the warning covers it; don't count that time.
+    if (overlay.showing) return
 
     val screenOn = getSystemService(PowerManager::class.java)?.isInteractive ?: true
     val pkg = current ?: return
@@ -81,12 +85,25 @@ class GuardService : Service() {
 
   private fun trigger(pkg: String, now: Long) {
     val level = GuardPrefs.nextLevel(this)
-    // Don't fire again while the warning is on screen; JS sets the real snooze from the buttons.
     GuardPrefs.snooze(this, now + 90_000)
+    val minutes = GuardPrefs.usedMs(this) / 60_000
+    val shown = overlay.show(
+      level,
+      pkg,
+      minutes,
+      onRest = {
+        // Leaving for the home screen is allowed while our overlay is visible. Back in a minute if they return.
+        GuardPrefs.snooze(this, System.currentTimeMillis() + 60_000)
+        startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+      },
+      onSnooze = { m -> GuardPrefs.snooze(this, System.currentTimeMillis() + m * 60_000L) }
+    )
+    if (shown) return
+    // No pack prepared yet (app not opened since installing): open the app's own warning instead.
+    // Android 15 may block this from the background, which is why the overlay above is preferred.
     GuardBus.pending = level to pkg
     GuardBus.listener?.invoke(level, pkg)
-    // Allowed from the background because the user granted "display over other apps".
-    launchIntent()?.let { startActivity(it) }
+    launchIntent()?.let { runCatching { startActivity(it) } }
   }
 
   // Follows which app is in front from the system's activity events since the last tick.
