@@ -65,6 +65,12 @@ def main():
                         str(ROOT / "assets/android-icon-foreground.png")], check=True)
         subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "lavfi", "-i", f"color=c={bg}:s=1024x1024",
                         "-frames:v", "1", str(ROOT / "assets/android-icon-background.png")], check=True)
+        # Splash: the icon cut to a circle on a transparent background, so it sits on either the light
+        # (icon pink) or dark splash colour (app.json expo-splash-screen).
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(icon), "-vf",
+                        f"{CROP},scale=1024:1024:flags=lanczos,format=rgba,"
+                        "geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='if(lte(hypot(X-W/2,Y-H/2),W*0.47),255,0)'",
+                        str(ROOT / "assets/splash-icon.png")], check=True)
 
     # Screen-time overlay animations: forward only (so her mouth moves when she speaks), with the
     # last moment faded into the first frame so the loop has no jump. Audio is dropped (she speaks

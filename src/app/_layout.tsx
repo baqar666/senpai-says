@@ -2,6 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { TabList, Tabs, TabSlot, TabTrigger, TabTriggerSlotProps } from 'expo-router/ui';
 import * as Notifications from 'expo-notifications';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { ComponentProps, useEffect } from 'react';
 import { AppState, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -21,6 +22,10 @@ import { SettingsProvider, useSettings } from '../lib/store';
 import { ThemeProvider, themed, useColors, useTheme } from '../lib/theme';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
+
+// Keep the splash up until saved settings (name, theme, Pass) have loaded, then fade it out.
+SplashScreen.preventAutoHideAsync().catch(() => {});
+SplashScreen.setOptions({ duration: 350, fade: true });
 
 function TabButton({ icon, label, isFocused, ref: _ref, ...props }: TabTriggerSlotProps & { icon: IconName; label: string }) {
   const C = useColors();
@@ -101,6 +106,9 @@ function AppTabs() {
   useScreenGuard();
   useAdsConsent();
   useCustomNames();
+  useEffect(() => {
+    if (ready) SplashScreen.hideAsync().catch(() => {});
+  }, [ready]);
   if (!ready) return <View style={{ flex: 1, backgroundColor: C.base }} />;
   return (
     <Tabs style={{ flex: 1, backgroundColor: C.base }}>

@@ -48,7 +48,20 @@
         }
       ],
       "expo-video",
-      "react-native-google-mobile-ads"
+      "react-native-google-mobile-ads",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#FFDEE7",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#24202D"
+          }
+        }
+      ]
     ],
     "scheme": "senpaisays",
     "backgroundColor": "#FFDEE7",
