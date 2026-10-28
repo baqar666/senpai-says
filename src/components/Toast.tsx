@@ -3,11 +3,13 @@ import { Animated, StyleSheet, Text } from 'react-native';
 
 import { useAnimatedValue } from '../lib/motion';
 import { useSettings } from '../lib/store';
-import { C, NeuCard } from './Neu';
+import { themed } from '../lib/theme';
+import { NeuCard } from './Neu';
 
 const Ctx = createContext<(msg: string) => void>(() => {});
 
 export function ToastProvider({ children }: { children: ReactNode }) {
+  const styles = useStyles();
   const { reduceMotion } = useSettings();
   const [msg, setMsg] = useState<string | null>(null);
   const v = useAnimatedValue(0);
@@ -47,8 +49,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
 export const useToast = () => useContext(Ctx);
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   wrap: { position: 'absolute', left: 24, right: 24, bottom: 110, alignItems: 'center' },
   card: { paddingVertical: 12, paddingHorizontal: 18 },
   text: { color: C.text, fontSize: 14, fontWeight: '500', textAlign: 'center' },
-});
+})
+);

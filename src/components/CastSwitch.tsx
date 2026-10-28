@@ -2,10 +2,13 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { CASTS } from '../data/girls';
 import { useSettings } from '../lib/store';
-import { C, NeuButton } from './Neu';
+import { themed, useColors } from '../lib/theme';
+import { NeuButton } from './Neu';
 
 // Girls / Boys: which group the app shows. Shared by the character, ringtone and alarm screens.
 export function CastSwitch() {
+  const C = useColors();
+  const styles = useStyles();
   const { cast, update } = useSettings();
   return (
     <View style={styles.row} accessibilityRole="tablist">
@@ -27,8 +30,10 @@ export function CastSwitch() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   row: { flexDirection: 'row', gap: 14, marginBottom: 18 },
   btn: { height: 42 },
   text: { fontSize: 14, fontWeight: '700', color: C.text },
-});
+})
+);

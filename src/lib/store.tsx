@@ -16,6 +16,7 @@ type Settings = {
   guardLimit: number;
   guardApps: GuardAppId[];
   cast: Cast;
+  theme: 'system' | 'light' | 'dark';
 };
 type Store = Settings & { ready: boolean; update: (patch: Partial<Settings>) => void };
 
@@ -31,6 +32,7 @@ const DEFAULTS: Settings = {
   guardLimit: 60,
   guardApps: GUARD_APPS.map((a) => a.id),
   cast: 'girls',
+  theme: 'system',
 };
 const Ctx = createContext<Store | null>(null);
 

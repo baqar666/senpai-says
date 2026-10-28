@@ -6,9 +6,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { castMembers, getGirl } from '../data/girls';
 import { usePass } from '../lib/pass';
 import { useSettings } from '../lib/store';
+import { themed, useColors } from '../lib/theme';
 import { playLine } from '../lib/voice';
 import { Face } from './Face';
-import { C, NeuButton, NeuCard } from './Neu';
+import { NeuButton, NeuCard } from './Neu';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -32,6 +33,8 @@ const MESSAGE: Record<string, string> = {
 
 // The Senpai Pass screen: what it unlocks, the real Play price, buy, restore.
 export function Paywall() {
+  const C = useColors();
+  const styles = useStyles();
   const { paywall, closePaywall, pro, price, available, buy, restore, ready } = usePass();
   const { name, lang, honorific, cast } = useSettings();
   const insets = useSafeAreaInsets();
@@ -144,7 +147,8 @@ export function Paywall() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   wrap: { flex: 1, backgroundColor: C.base, paddingHorizontal: 20 },
   close: { width: 40, height: 40, alignSelf: 'flex-end' },
   body: { alignItems: 'center', paddingBottom: 12 },
@@ -163,4 +167,5 @@ const styles = StyleSheet.create({
   restoreText: { fontSize: 14, fontWeight: '600', color: C.muted },
   fine: { fontSize: 11, color: C.muted, textAlign: 'center', marginTop: 16, lineHeight: 16 },
   link: { color: C.accent, textDecorationLine: 'underline' },
-});
+})
+);

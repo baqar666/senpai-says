@@ -6,10 +6,13 @@ import RingtoneSetter from '../../modules/ringtone-setter';
 import { effectiveGuard, GUARD_APPS, GUARD_LIMITS, guardPermissions, guardSupported } from '../lib/guard';
 import { FREE_GUARD_LIMIT, usePass } from '../lib/pass';
 import { useSettings } from '../lib/store';
-import { C, NeuButton, NeuCard } from './Neu';
+import { themed, useColors } from '../lib/theme';
+import { NeuButton, NeuCard } from './Neu';
 
 // "Stop me scrolling": the screen-time guard's settings, with the permission steps it needs.
 export function GuardSettings() {
+  const C = useColors();
+  const styles = useStyles();
   const { guardOn, guardLimit, guardApps, update } = useSettings();
   const { pro, gate, openPaywall } = usePass();
   // What the watcher actually uses: free users get one app at the 1-hour limit.
@@ -52,7 +55,7 @@ export function GuardSettings() {
           value={guardOn}
           disabled={!guardSupported}
           onValueChange={(v) => update({ guardOn: v })}
-          trackColor={{ false: C.dark, true: '#ED93B1' }}
+          trackColor={{ false: C.dark, true: C.track }}
           thumbColor={guardOn ? C.accent : '#fff'}
         />
       </NeuCard>
@@ -138,6 +141,7 @@ export function GuardSettings() {
 }
 
 function Step({ done, title, sub, onAllow }: { done: boolean; title: string; sub: string; onAllow: () => void }) {
+  const styles = useStyles();
   return (
     <NeuCard radius={16} style={styles.step}>
       <View style={{ flex: 1 }}>
@@ -155,7 +159,8 @@ function Step({ done, title, sub, onAllow }: { done: boolean; title: string; sub
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', padding: 16, marginBottom: 24 },
   rowTitle: { fontSize: 15, fontWeight: '600', color: C.text },
   rowSub: { fontSize: 12, color: C.muted, marginTop: 2 },
@@ -174,4 +179,5 @@ const styles = StyleSheet.create({
   freeNote: { fontSize: 12, color: C.muted, textAlign: 'center', marginBottom: 12, lineHeight: 18 },
   freeLink: { color: C.accent, fontWeight: '700' },
   status: { fontSize: 13, fontWeight: '600', color: C.text, textAlign: 'center' },
-});
+})
+);

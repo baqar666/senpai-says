@@ -1,13 +1,14 @@
 import { StyleSheet, Text } from 'react-native';
 
 import { CastSwitch } from '../components/CastSwitch';
-import { C } from '../components/Neu';
 import { Screen } from '../components/Screen';
 import { ToneRow } from '../components/ToneRow';
 import { castMembers } from '../data/girls';
 import { useSettings } from '../lib/store';
+import { themed } from '../lib/theme';
 
 export default function AlarmScreen() {
+  const styles = useStyles();
   const members = castMembers(useSettings().cast);
   return (
     <Screen title="Alarm" subtitle="Wake up to a voice saying your name">
@@ -20,6 +21,8 @@ export default function AlarmScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   note: { fontSize: 13, color: C.muted, marginBottom: 16 },
-});
+})
+);

@@ -8,15 +8,20 @@ import { getGirl, GuardLine, lineFor } from '../data/girls';
 import { GUARD_VIDEOS } from '../data/guard-videos';
 import { appLabel, guardGirl, SNOOZE_MINUTES, useGuardTrigger, VOICE_START } from '../lib/guard';
 import { useSettings } from '../lib/store';
+import { ForceLight, LIGHT as C } from '../lib/theme';
 import { lineAvailable, playLine, stopSpeaking } from '../lib/voice';
 import { Face } from './Face';
-import { C, NeuButton, NeuCard } from './Neu';
+import { NeuButton, NeuCard } from './Neu';
 
 // Shown when the screen-time guard brings the app over Instagram & co.
 export function GuardOverlay() {
   const [trigger, clear] = useGuardTrigger();
   if (!trigger) return null;
-  return <Warning key={`${trigger.level}-${trigger.pkg}`} trigger={trigger} onDone={clear} />;
+  return (
+    <ForceLight>
+      <Warning key={`${trigger.level}-${trigger.pkg}`} trigger={trigger} onDone={clear} />
+    </ForceLight>
+  );
 }
 
 function Warning({ trigger, onDone }: { trigger: GuardTrigger; onDone: () => void }) {

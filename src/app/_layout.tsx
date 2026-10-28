@@ -8,7 +8,7 @@ import { AppState, Platform, Pressable, StyleSheet, Text, View } from 'react-nat
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { GuardOverlay } from '../components/GuardOverlay';
-import { C, NeuCard } from '../components/Neu';
+import { NeuCard } from '../components/Neu';
 import { Paywall } from '../components/Paywall';
 import { ToastProvider } from '../components/Toast';
 import { UnlockSheet } from '../components/UnlockSheet';
@@ -17,10 +17,13 @@ import { DailyPick, openDaily, scheduleDaily } from '../lib/daily';
 import { prepareGuardPack, syncGuard } from '../lib/guard';
 import { PassProvider, usePass } from '../lib/pass';
 import { SettingsProvider, useSettings } from '../lib/store';
+import { ThemeProvider, themed, useColors, useTheme } from '../lib/theme';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
 function TabButton({ icon, label, isFocused, ref: _ref, ...props }: TabTriggerSlotProps & { icon: IconName; label: string }) {
+  const C = useColors();
+  const styles = useStyles();
   return (
     <Pressable {...props} style={styles.tab} accessibilityRole="tab" accessibilityState={{ selected: isFocused }}>
       <NeuCard pressed={isFocused} depth={isFocused ? 6 : 0} radius={14} style={styles.tabIcon}>
@@ -82,6 +85,8 @@ function useAdsConsent() {
 }
 
 function AppTabs() {
+  const C = useColors();
+  const styles = useStyles();
   const insets = useSafeAreaInsets();
   const { ready } = useSettings();
   useDailyMessages();
@@ -114,24 +119,32 @@ function AppTabs() {
   );
 }
 
+function ThemedStatusBar() {
+  return <StatusBar style={useTheme().dark ? 'light' : 'dark'} />;
+}
+
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <SettingsProvider>
-        <PassProvider>
-          <ToastProvider>
-            <StatusBar style="dark" />
-            <AppTabs />
-          </ToastProvider>
-        </PassProvider>
+        <ThemeProvider>
+          <PassProvider>
+            <ToastProvider>
+              <ThemedStatusBar />
+              <AppTabs />
+            </ToastProvider>
+          </PassProvider>
+        </ThemeProvider>
       </SettingsProvider>
     </SafeAreaProvider>
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   bar: { position: 'absolute', left: 16, right: 16, flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 6 },
   tab: { flex: 1, alignItems: 'center', gap: 4 },
   tabIcon: { width: 44, height: 36, alignItems: 'center', justifyContent: 'center' },
   tabLabel: { fontSize: 11, color: C.muted, fontWeight: '500' },
-});
+})
+);

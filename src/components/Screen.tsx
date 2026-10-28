@@ -4,9 +4,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useEnter } from '../lib/motion';
 import { useSettings } from '../lib/store';
-import { C } from './Neu';
+import { themed } from '../lib/theme';
 
 export function Screen({ title, subtitle, right, children }: { title: string; subtitle?: string; right?: ReactNode; children: ReactNode }) {
+  const styles = useStyles();
   const { reduceMotion } = useSettings();
   const enter = useEnter(reduceMotion);
   const insets = useSafeAreaInsets();
@@ -26,10 +27,12 @@ export function Screen({ title, subtitle, right, children }: { title: string; su
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   root: { flex: 1, backgroundColor: C.base },
   content: { paddingHorizontal: 20, paddingBottom: 130 },
   header: { flexDirection: 'row', alignItems: 'center', marginBottom: 18 },
   title: { fontSize: 26, fontWeight: '700', color: C.text },
   subtitle: { fontSize: 14, color: C.muted, marginTop: 2 },
-});
+})
+);

@@ -3,7 +3,7 @@ import { ComponentProps, useEffect, useState } from 'react';
 import { Animated, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Face } from '../components/Face';
-import { C, NeuButton, NeuCard } from '../components/Neu';
+import { NeuButton, NeuCard } from '../components/Neu';
 import { Screen } from '../components/Screen';
 import { useToast } from '../components/Toast';
 import { CastSwitch } from '../components/CastSwitch';
@@ -11,12 +11,16 @@ import { castMembers, EMOTIONS, faceFor, findName, getGirl, GirlId, HONORIFICS, 
 import { useBob, usePop } from '../lib/motion';
 import { FREE_TONE_CHARACTERS, usePass } from '../lib/pass';
 import { useSettings } from '../lib/store';
+import { nameColor, themed, useColors, useTheme } from '../lib/theme';
 import { consumeDaily, onDailyOpen } from '../lib/daily';
 import { lineAvailable, playLine, setTone, shareLine, stopSpeaking } from '../lib/voice';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
 export default function CharactersScreen() {
+  const C = useColors();
+  const styles = useStyles();
+  const { dark } = useTheme();
   const { name, lang, honorific, reduceMotion, cast, update } = useSettings();
   const toast = useToast();
   const { pro, gate } = usePass();
@@ -152,7 +156,7 @@ export default function CharactersScreen() {
             <Face girl={girl} emotion={faceFor(girlId, lineKey)} size={150} />
           </View>
         </Animated.View>
-        <Text style={[styles.who, { color: girl.fg }]}>
+        <Text style={[styles.who, { color: nameColor(girl, dark) }]}>
           {girl.name} · {girl.type}
         </Text>
         <Text style={styles.line}>{name.trim() ? `"${line.show}"` : `Type your name to hear ${object} say it`}</Text>
@@ -225,7 +229,7 @@ export default function CharactersScreen() {
             accessibilityLabel={`${g.name}, ${g.type}`}
           >
             <Face girl={g} emotion="love" size={50} />
-            <Text style={[styles.girlName, g.id === girlId && { color: g.fg }]}>{g.name}</Text>
+            <Text style={[styles.girlName, g.id === girlId && { color: nameColor(g, dark) }]}>{g.name}</Text>
           </NeuButton>
         ))}
       </View>
@@ -248,7 +252,8 @@ export default function CharactersScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   lang: { width: 48, height: 40 },
   langText: { fontWeight: '700', color: C.accent },
   inputWrap: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, gap: 8 },
@@ -280,4 +285,5 @@ const styles = StyleSheet.create({
   cta: { height: 54 },
   ctaRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   ctaText: { color: C.accent, fontWeight: '700', fontSize: 15 },
-});
+})
+);

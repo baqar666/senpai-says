@@ -6,12 +6,15 @@ import { ToneType } from '../../modules/ringtone-setter';
 import { Emotion, getGirl, GirlId, LineKey, lineFor } from '../data/girls';
 import { FREE_TONE_CHARACTERS, usePass } from '../lib/pass';
 import { useSettings } from '../lib/store';
+import { themed, useColors } from '../lib/theme';
 import { playLine, setTone, stopSpeaking } from '../lib/voice';
 import { Face } from './Face';
-import { C, NeuButton, NeuCard } from './Neu';
+import { NeuButton, NeuCard } from './Neu';
 import { useToast } from './Toast';
 
 export function ToneRow({ girlId, line, face, type, label }: { girlId: GirlId; line: LineKey; face: Emotion; type: ToneType; label: string }) {
+  const C = useColors();
+  const styles = useStyles();
   const { name, lang, honorific } = useSettings();
   const toast = useToast();
   const { pro, gate } = usePass();
@@ -76,7 +79,8 @@ export function ToneRow({ girlId, line, face, type, label }: { girlId: GirlId; l
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', padding: 12, gap: 10, marginBottom: 16 },
   mid: { flex: 1, minWidth: 0 },
   title: { fontSize: 14, fontWeight: '600', color: C.text },
@@ -85,4 +89,5 @@ const styles = StyleSheet.create({
   set: { height: 38, paddingHorizontal: 14 },
   setRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   setText: { color: C.accent, fontWeight: '600', fontSize: 13 },
-});
+})
+);

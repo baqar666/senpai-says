@@ -1,7 +1,7 @@
 import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 
 import { GuardSettings } from '../components/GuardSettings';
-import { C, NeuButton, NeuCard } from '../components/Neu';
+import { NeuButton, NeuCard } from '../components/Neu';
 import { PassCard } from '../components/PassCard';
 import { Screen } from '../components/Screen';
 import { useToast } from '../components/Toast';
@@ -9,6 +9,13 @@ import { HONORIFICS } from '../data/girls';
 import { VOICE_CREDITS } from '../data/voice-assets';
 import { scheduleDaily } from '../lib/daily';
 import { useSettings } from '../lib/store';
+import { themed, useColors } from '../lib/theme';
+
+const THEMES = [
+  { key: 'system', label: 'System' },
+  { key: 'light', label: 'Light' },
+  { key: 'dark', label: 'Dark' },
+] as const;
 
 const DAILY_TIMES = [
   { hour: 8, label: 'Morning' },
@@ -17,7 +24,9 @@ const DAILY_TIMES = [
 ];
 
 export default function SettingsScreen() {
-  const { name, lang, honorific, reduceMotion, dailyOn, dailyHour, cast, update } = useSettings();
+  const C = useColors();
+  const styles = useStyles();
+  const { name, lang, honorific, reduceMotion, dailyOn, dailyHour, cast, theme, update } = useSettings();
   const toast = useToast();
 
   const toggleDaily = async (on: boolean) => {
@@ -55,6 +64,15 @@ export default function SettingsScreen() {
         ))}
       </View>
 
+      <Text style={styles.label}>Appearance</Text>
+      <View style={styles.seg}>
+        {THEMES.map((t) => (
+          <NeuButton key={t.key} active={theme === t.key} onPress={() => update({ theme: t.key })} containerStyle={{ flex: 1 }} style={styles.segBtn} accessibilityLabel={`${t.label} appearance`}>
+            <Text style={[styles.segText, theme === t.key && { color: C.accent }]}>{t.label}</Text>
+          </NeuButton>
+        ))}
+      </View>
+
       <Text style={styles.label}>Voice</Text>
       <View style={styles.seg}>
         {(['en', 'jp'] as const).map((l) => (
@@ -72,7 +90,7 @@ export default function SettingsScreen() {
         <Switch
           value={dailyOn}
           onValueChange={toggleDaily}
-          trackColor={{ false: C.dark, true: '#ED93B1' }}
+          trackColor={{ false: C.dark, true: C.track }}
           thumbColor={dailyOn ? C.accent : '#fff'}
         />
       </NeuCard>
@@ -104,7 +122,7 @@ export default function SettingsScreen() {
         <Switch
           value={reduceMotion}
           onValueChange={(v) => update({ reduceMotion: v })}
-          trackColor={{ false: C.dark, true: '#ED93B1' }}
+          trackColor={{ false: C.dark, true: C.track }}
           thumbColor={reduceMotion ? C.accent : '#fff'}
         />
       </NeuCard>
@@ -116,7 +134,8 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   label: { fontSize: 14, fontWeight: '600', color: C.text, marginBottom: 10, marginTop: 8 },
   inputWrap: { paddingHorizontal: 14, marginBottom: 20 },
   input: { height: 48, fontSize: 16, color: C.text },
@@ -130,4 +149,5 @@ const styles = StyleSheet.create({
   rowTitle: { fontSize: 15, fontWeight: '600', color: C.text },
   rowSub: { fontSize: 12, color: C.muted, marginTop: 2 },
   footer: { fontSize: 12, color: C.muted, textAlign: 'center', lineHeight: 18 },
-});
+})
+);

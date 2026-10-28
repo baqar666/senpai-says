@@ -1,22 +1,13 @@
 import { ReactNode, useState } from 'react';
 import { Animated, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { useSettings } from '../lib/store';
 import { usePressScale } from '../lib/motion';
+import { useSettings } from '../lib/store';
+import { Palette, useColors } from '../lib/theme';
 
-export const C = {
-  base: '#ECE8F3',
-  light: '#FFFFFF',
-  dark: '#C9C2D8',
-  text: '#3D3650',
-  muted: '#7D7591',
-  accent: '#D4537E',
-  danger: '#A32D2D',
-};
-
-// Soft neumorphic shadows: a light one up-left, a dark one down-right.
-const raised = (d: number) => `-${d}px -${d}px ${d * 2}px ${C.light}, ${d}px ${d}px ${d * 2}px ${C.dark}`;
-const inset = (d: number) => `inset ${d}px ${d}px ${d * 2}px ${C.dark}, inset -${d}px -${d}px ${d * 2}px ${C.light}`;
+// Soft neumorphic shadows: a light one up-left, a dark one down-right (colours from the theme).
+const raised = (c: Palette, d: number) => `-${d}px -${d}px ${d * 2}px ${c.light}, ${d}px ${d}px ${d * 2}px ${c.dark}`;
+const inset = (c: Palette, d: number) => `inset ${d}px ${d}px ${d * 2}px ${c.dark}, inset -${d}px -${d}px ${d * 2}px ${c.light}`;
 
 export function NeuCard({
   children,
@@ -31,8 +22,9 @@ export function NeuCard({
   radius?: number;
   style?: StyleProp<ViewStyle>;
 }) {
+  const c = useColors();
   return (
-    <View style={[{ backgroundColor: C.base, borderRadius: radius, boxShadow: pressed ? inset(depth / 2) : raised(depth) }, style]}>
+    <View style={[{ backgroundColor: c.base, borderRadius: radius, boxShadow: pressed ? inset(c, depth / 2) : raised(c, depth) }, style]}>
       {children}
     </View>
   );
@@ -59,6 +51,7 @@ export function NeuButton({
   accessibilityLabel?: string;
 }) {
   const { reduceMotion } = useSettings();
+  const c = useColors();
   const { scale, onPressIn, onPressOut } = usePressScale(reduceMotion);
   const [down, setDown] = useState(false);
   return (
@@ -80,7 +73,7 @@ export function NeuButton({
       <Animated.View
         style={[
           styles.btn,
-          { borderRadius: radius, boxShadow: down || active ? inset(depth / 2) : raised(depth), transform: [{ scale }] },
+          { backgroundColor: c.base, borderRadius: radius, boxShadow: down || active ? inset(c, depth / 2) : raised(c, depth), transform: [{ scale }] },
           style,
         ]}
       >
@@ -91,5 +84,5 @@ export function NeuButton({
 }
 
 const styles = StyleSheet.create({
-  btn: { backgroundColor: C.base, alignItems: 'center', justifyContent: 'center' },
+  btn: { alignItems: 'center', justifyContent: 'center' },
 });

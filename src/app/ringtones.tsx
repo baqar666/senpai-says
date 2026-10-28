@@ -1,13 +1,14 @@
 import { StyleSheet, Text } from 'react-native';
 
 import { CastSwitch } from '../components/CastSwitch';
-import { C } from '../components/Neu';
 import { Screen } from '../components/Screen';
 import { ToneRow } from '../components/ToneRow';
 import { castMembers } from '../data/girls';
 import { useSettings } from '../lib/store';
+import { themed } from '../lib/theme';
 
 export default function RingtonesScreen() {
+  const styles = useStyles();
   const members = castMembers(useSettings().cast);
   return (
     <Screen title="Ringtones" subtitle="Call and message tones with your name">
@@ -24,6 +25,8 @@ export default function RingtonesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   section: { fontSize: 15, fontWeight: '700', color: C.text, marginBottom: 12, marginTop: 4 },
-});
+})
+);

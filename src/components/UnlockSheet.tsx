@@ -5,10 +5,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { adsEnabled, showRewardedAd } from '../lib/ads';
 import { usePass } from '../lib/pass';
-import { C, NeuButton } from './Neu';
+import { themed, useColors } from '../lib/theme';
+import { NeuButton } from './Neu';
 
 // Shown when a free user taps something in the Senpai Pass: watch an ad to do it once, or get the Pass.
 export function UnlockSheet() {
+  const C = useColors();
+  const styles = useStyles();
   const { unlockRequest: req, closeUnlock, openPaywall, price } = usePass();
   const insets = useSafeAreaInsets();
   const [watching, setWatching] = useState(false);
@@ -79,7 +82,8 @@ export function UnlockSheet() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(30,24,44,0.35)', justifyContent: 'flex-end' },
   sheet: { backgroundColor: C.base, borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 22, gap: 14 },
   lockRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
@@ -91,4 +95,5 @@ const styles = StyleSheet.create({
   btnText: { fontSize: 15, fontWeight: '700', color: C.accent },
   later: { height: 42 },
   laterText: { fontSize: 14, fontWeight: '600', color: C.muted },
-});
+})
+);

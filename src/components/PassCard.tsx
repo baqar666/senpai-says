@@ -4,11 +4,14 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { privacyOptionsRequired, showPrivacyOptions } from '../lib/ads';
 import { usePass } from '../lib/pass';
-import { C, NeuButton, NeuCard } from './Neu';
+import { themed, useColors } from '../lib/theme';
+import { NeuButton, NeuCard } from './Neu';
 import { useToast } from './Toast';
 
 // Settings: Senpai Pass status, buy, restore, and (where required) ad privacy choices.
 export function PassCard() {
+  const C = useColors();
+  const styles = useStyles();
   const { pro, price, openPaywall, restore } = usePass();
   const toast = useToast();
   const [restoring, setRestoring] = useState(false);
@@ -55,7 +58,8 @@ export function PassCard() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = themed((C) =>
+  StyleSheet.create({
   card: { padding: 16, gap: 12, marginBottom: 24 },
   head: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   title: { fontSize: 15, fontWeight: '700', color: C.text },
@@ -65,4 +69,5 @@ const styles = StyleSheet.create({
   restore: { height: 38 },
   restoreText: { fontSize: 13, fontWeight: '600', color: C.muted },
   adChoices: { height: 42, marginTop: -12, marginBottom: 24 },
-});
+})
+);
