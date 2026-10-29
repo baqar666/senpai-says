@@ -12,8 +12,11 @@ NAMES_BY_LANG = {"jp": NAMES_JP, "en": NAMES}
 VOICES = ROOT / "assets/voices"
 INDEX = ROOT / "src/data/voice-assets.ts"
 LANGS = ("jp", "en")
-# Japanese names come in the line's mood; English names (spoken in a carrier phrase) just soft or loud.
-NAME_VARIANTS = {"jp": [k for k in LINES["nameMoods"] if not k.startswith("_")], "en": ["soft", "loud"]}
+# Names come in the line's mood (sweet, happy, angry, sad) in both languages.
+NAME_MOODS = [k for k in LINES["nameMoods"] if not k.startswith("_")]
+NAME_VARIANTS = {"jp": NAME_MOODS, "en": NAME_MOODS}
+# English has no honorifics, so only the plain version of each line exists.
+HONORIFICS_BY_LANG = {"jp": LINES["honorifics"], "en": [h for h in LINES["honorifics"] if h["key"] == "none"]}
 LEADING_PUNCT = "…。！？、!?., "
 
 
@@ -36,11 +39,11 @@ def write_index():
             out.append("      lines: {")
             for lkey in LINES["lines"][gid]:
                 # New lines may exist in one language before the other is generated; the app hides those.
-                if not all((VOICES / f"{lang}/{gid}/lines/{lkey}_{h['key']}.mp3").exists() for h in LINES["honorifics"]):
+                if not all((VOICES / f"{lang}/{gid}/lines/{lkey}_{h['key']}.mp3").exists() for h in HONORIFICS_BY_LANG[lang]):
                     print(f"  skipping {lang}/{gid}/{lkey} (not generated yet)")
                     continue
                 hons = ", ".join(
-                    f"{h['key']}: {req(f'{lang}/{gid}/lines/{lkey}_{h['key']}.mp3')}" for h in LINES["honorifics"]
+                    f"{h['key']}: {req(f'{lang}/{gid}/lines/{lkey}_{h['key']}.mp3')}" for h in HONORIFICS_BY_LANG[lang]
                 )
                 out.append(f"        {lkey}: {{ {hons} }},")
             out.append("      },")

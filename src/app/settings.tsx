@@ -55,7 +55,7 @@ export default function SettingsScreen() {
         />
       </NeuCard>
 
-      <Text style={styles.label}>{cast === 'boys' ? 'He calls you' : 'She calls you'}</Text>
+      <Text style={styles.label}>{cast === 'boys' ? 'He calls you' : 'She calls you'} (Japanese)</Text>
       <View style={styles.chips}>
         {HONORIFICS.map((h) => (
           <NeuButton key={h.key} active={honorific === h.key} onPress={() => update({ honorific: h.key })} style={styles.chip} radius={12} depth={3} accessibilityLabel={h.label}>

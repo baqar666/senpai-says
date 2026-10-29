@@ -13,7 +13,7 @@ setAudioModeAsync({ playsInSilentMode: true }).catch(() => {});
 
 type CharacterClips = {
   names: Record<string, Partial<Record<string, number>>>;
-  lines: Partial<Record<LineKey, Record<Honorific, number>>>;
+  lines: Partial<Record<LineKey, Partial<Record<Honorific, number>>>>; // English: only 'none'
 };
 
 // A character's clips for a language, if generated yet (new characters can lag behind in one language).
@@ -25,20 +25,20 @@ function voiceFor(girl: Girl, lang: Lang): CharacterClips | undefined {
 type Clip = number | string;
 
 // Plays the character saying the name, then the rest of the line (Japanese: VOICEVOX, English: Orpheus).
-// Unknown names skip the name clip and use the "senpai" version of the line.
+// Unknown names skip the name clip (Japanese uses the "senpai" version of the line).
 function clipsFor(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific): Clip[] {
   const l = lineFor(girl.id, key, lang, name, honorific);
   const clips = voiceFor(girl, lang);
   const line = clips?.lines[key];
   if (!clips || !line) return [];
   const rest = line[l.honorific];
+  if (rest === undefined) return [];
   let nameClip: Clip | undefined;
   if (l.known?.id.startsWith(CUSTOM_PREFIX)) {
     nameClip = getCustomName(name)?.files[girl.id]?.[l.nameMood];
   } else if (l.known) {
-    // Japanese: the name in the line's mood (older clip sets only have soft/loud). English: soft or loud.
-    const names = clips.names[l.known.id];
-    nameClip = lang === 'jp' ? (names?.[l.nameMood] ?? names?.[l.tone]) : names?.[l.tone];
+    // The name in the line's own mood, so it matches the feeling of the sentence.
+    nameClip = clips.names[l.known.id]?.[l.nameMood];
   }
   return nameClip !== undefined ? [nameClip, rest] : [rest];
 }

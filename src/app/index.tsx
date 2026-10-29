@@ -140,8 +140,8 @@ export default function CharactersScreen() {
               ? `${subject} calls you ${known.kana}${hon.jp}`
               : `This name isn't in the voice list yet, so ${subject.toLowerCase()}'ll call you せんぱい (Senpai)`
             : known
-              ? `${subject} calls you ${name.trim()}${hon.en}`
-              : `This name isn't in the English voice list yet, so ${subject.toLowerCase()}'ll call you Senpai. Try the Japanese voice.`}
+              ? `${subject} calls you ${name.trim()}`
+              : `This name isn't in the English voice list yet, so ${subject.toLowerCase()}'ll skip your name. Try the Japanese voice.`}
         </Text>
       ) : null}
       {name.trim() && lang === 'jp' && !known && customNamesEnabled ? (

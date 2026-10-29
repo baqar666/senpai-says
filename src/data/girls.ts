@@ -136,9 +136,8 @@ export type ResolvedLine = {
   show: string; // main text on screen
   sub?: string; // translation under it
   known: KnownName | null;
-  honorific: Honorific; // honorific actually used (unknown names use senpai)
-  tone: 'soft' | 'loud'; // English name clip that leads into this line
-  nameMood: NameMood; // Japanese name clip: the name said in the line's own mood
+  honorific: Honorific; // honorific actually used (unknown names use senpai; English never has one)
+  nameMood: NameMood; // name clip that leads into this line: the name said in the line's own mood
 };
 
 export type NameMood = 'sweet' | 'happy' | 'angry' | 'sad';
@@ -147,15 +146,18 @@ export type NameMood = 'sweet' | 'happy' | 'angry' | 'sad';
 const stripTags = (s: string) => s.replace(/\s*<[^>]+>\s*/g, ' ').replace(/\s+([!?.,])/g, '$1').replace(/\s{2,}/g, ' ').trim();
 
 export function lineFor(girl: GirlId, key: LineKey, lang: Lang, name: string, honorific: Honorific): ResolvedLine {
-  const l = (LINES.lines as Record<GirlId, Record<LineKey, { en: string; jp: string; tone: string; nameMood: NameMood }>>)[girl][key];
-  const tone = l.tone === 'loud' ? 'loud' : 'soft';
+  const l = (LINES.lines as Record<GirlId, Record<LineKey, { en: string; jp: string; nameMood: NameMood }>>)[girl][key];
   const nameMood = l.nameMood;
   const known = findName(name, lang);
   const hon = known ? honorific : 'senpai';
   const h = HONORIFICS.find((x) => x.key === hon)!;
   const display = name.trim() || 'Senpai';
   const en = stripTags(l.en.replace(/\{n\}/g, known ? `${display}${h.en}` : 'Senpai'));
-  if (lang === 'en') return { show: en, known, honorific: hon, tone, nameMood };
+  if (lang === 'en') {
+    // English has no honorifics: just the name, or no name at all when it isn't in the voice list.
+    const plain = stripTags(l.en.replace(/\{n\}/g, known ? display : '')).replace(/^[…~!?.,\s]+/, '');
+    return { show: plain.charAt(0).toUpperCase() + plain.slice(1), known, honorific: 'none', nameMood };
+  }
   const jp = l.jp.replace('{n}', `${known ? known.kana : ''}${h.jp}`);
-  return { show: jp, sub: en, known, honorific: hon, tone, nameMood };
+  return { show: jp, sub: en, known, honorific: hon, nameMood };
 }

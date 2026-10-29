@@ -14,7 +14,7 @@ on:
       girls:
         description: 'Which girls, as a JSON list (for example ["rei"])'
         type: string
-        default: '["hana","rei","aiko","yui"]'
+        default: '["hana","rei","aiko","yui","kaito","ryuga","jin","haru"]'
 
 permissions:
   contents: write
@@ -29,8 +29,8 @@ jobs:
       max-parallel: 20
       matrix:
         girl: ${{ fromJSON(inputs.girls) }}
-        # Full mode splits each girl into 6 slices so every job stays well under GitHub's 6-hour limit.
-        shard: ${{ fromJSON(inputs.mode == 'full' && '[0,1,2,3,4,5]' || '[0]') }}
+        # Full mode splits each character into 8 slices so every job stays well under GitHub's 6-hour limit.
+        shard: ${{ fromJSON(inputs.mode == 'full' && '[0,1,2,3,4,5,6,7]' || '[0]') }}
     steps:
       - uses: actions/checkout@v4
 
@@ -56,7 +56,7 @@ jobs:
       - name: Generate ${{ matrix.girl }} (slice ${{ matrix.shard }})
         run: >
           python scripts/generate_voices_en.py --girl ${{ matrix.girl }}
-          ${{ inputs.mode == 'sample' && '--sample' || format('--shard {0} --shards 6', matrix.shard) }}
+          ${{ inputs.mode == 'sample' && '--sample' || format('--shard {0} --shards 8', matrix.shard) }}
 
       - name: Upload samples
         if: inputs.mode == 'sample'
@@ -111,7 +111,7 @@ jobs:
               (girl / "manifest.json").write_text(json.dumps(merged, indent=0, sort_keys=True) + "\n")
               print(girl.name, len(merged), "clips")
           PY
-          python scripts/voice_index.py
+          python scripts/generate_voices_en.py --prune
 
       - name: Commit and push
         run: |
