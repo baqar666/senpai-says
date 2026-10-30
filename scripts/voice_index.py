@@ -18,6 +18,8 @@ NAME_VARIANTS = {"jp": NAME_MOODS, "en": NAME_MOODS}
 # English has no honorifics, so only the plain version of each line exists.
 HONORIFICS_BY_LANG = {"jp": LINES["honorifics"], "en": [h for h in LINES["honorifics"] if h["key"] == "none"]}
 LEADING_PUNCT = "…。！？、!?., "
+# Not bundled in the free launch (src/data/launch.ts). Their clips stay in the repo for later.
+HIDDEN_CHARACTERS = {"kaito", "ryuga", "jin", "haru"}
 
 
 def write_index():
@@ -31,6 +33,8 @@ def write_index():
     for lang in LANGS:
         out.append(f"  {lang}: {{")
         for gid in LINES["girls"]:
+            if gid in HIDDEN_CHARACTERS:
+                continue
             # A new character may not be generated in this language yet; the app shows "coming soon".
             if not (VOICES / lang / gid / "names").is_dir():
                 print(f"  skipping {lang}/{gid} (no clips yet)")
@@ -57,7 +61,7 @@ def write_index():
     out.append("} as const;")
     out.append("")
     # Some voices' terms ask for a specific credit (girl "credit" in lines.json); otherwise the voice name.
-    credits = [f"VOICEVOX:{c}" for c in sorted({g.get("credit", g["speaker"]) for g in LINES["girls"].values()})]
+    credits = [f"VOICEVOX:{c}" for c in sorted({g.get("credit", g["speaker"]) for gid, g in LINES["girls"].items() if gid not in HIDDEN_CHARACTERS})]
     credits.append("Orpheus TTS (English, Built with Llama)")
     out.append(f"export const VOICE_CREDITS = {json.dumps(credits, ensure_ascii=False)};")
     out.append("")

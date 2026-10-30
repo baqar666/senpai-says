@@ -14,7 +14,7 @@ on:
       girls:
         description: 'Which girls, as a JSON list (for example ["rei"])'
         type: string
-        default: '["hana","rei","aiko","yui","kaito","ryuga","jin","haru"]'
+        default: '["hana","rei","aiko","yui"]'
 
 permissions:
   contents: write

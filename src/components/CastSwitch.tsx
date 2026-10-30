@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { CASTS } from '../data/girls';
+import { FREE_LAUNCH } from '../data/launch';
 import { useSettings } from '../lib/store';
 import { themed, useColors } from '../lib/theme';
 import { NeuButton } from './Neu';
@@ -10,6 +11,7 @@ export function CastSwitch() {
   const C = useColors();
   const styles = useStyles();
   const { cast, update } = useSettings();
+  if (FREE_LAUNCH) return null;
   return (
     <View style={styles.row} accessibilityRole="tablist">
       {CASTS.map((c) => (

@@ -4,10 +4,11 @@ import { Platform } from 'react-native';
 import Purchases, { CustomerInfo, PURCHASES_ERROR_CODE, PurchasesPackage } from 'react-native-purchases';
 
 import { GirlId } from '../data/girls';
+import { FREE_LAUNCH } from '../data/launch';
 
 // Senpai Pass: a one-time Google Play purchase, checked by RevenueCat (which validates every
 // receipt with Google, so a modified APK can't unlock it). See README "Purchases and ads".
-const API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY ?? '';
+const API_KEY = FREE_LAUNCH ? '' : (process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY ?? '');
 const ENTITLEMENT = 'pass';
 const CACHE_KEY = 'senpai-says/pass';
 // On web in development there is no store; a fake Pass lets the screens be tested.
@@ -125,10 +126,11 @@ export function PassProvider({ children }: { children: ReactNode }) {
     }
   }, [pro, setPro]);
 
+  const unlocked = FREE_LAUNCH || pro;
   const value = useMemo<Pass>(
     () => ({
       ready,
-      pro,
+      pro: unlocked,
       available: DEV_MOCK || !!pkg,
       price: DEV_MOCK ? '$2.99' : (pkg?.product.priceString ?? null),
       buy,
@@ -137,10 +139,10 @@ export function PassProvider({ children }: { children: ReactNode }) {
       openPaywall: (reason) => setPaywall({ open: true, reason }),
       closePaywall: () => setPaywall({ open: false }),
       unlockRequest,
-      gate: (request) => (pro ? request.action() : setUnlockRequest(request)),
+      gate: (request) => (unlocked ? request.action() : setUnlockRequest(request)),
       closeUnlock: () => setUnlockRequest(null),
     }),
-    [ready, pro, pkg, buy, restore, paywall, unlockRequest]
+    [ready, unlocked, pkg, buy, restore, paywall, unlockRequest]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

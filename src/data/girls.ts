@@ -1,4 +1,5 @@
 import { customKey, getCustomName } from '../lib/customNames';
+import { FREE_LAUNCH } from './launch';
 import LINES from './lines.json';
 import NAMES from './names.json';
 import NAMES_JP_EXTRA from './names_jp_extra.json';
@@ -42,7 +43,7 @@ export const CASTS: { key: Cast; label: string }[] = [
   { key: 'boys', label: 'Boys' },
 ];
 
-export const castMembers = (cast: Cast) => CHARACTERS.filter((c) => c.cast === cast);
+export const castMembers = (cast: Cast) => CHARACTERS.filter((c) => c.cast === (FREE_LAUNCH ? 'girls' : cast));
 
 // "She" or "He", for hints like "She calls you Naruto-kun".
 export const pronoun = (g: Girl) => (g.cast === 'boys' ? { subject: 'He', object: 'him' } : { subject: 'She', object: 'her' });
