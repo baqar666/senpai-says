@@ -1,7 +1,7 @@
 # Play Store listing — Senpai Says
 
 ## App name (max 30)
-Senpai Says: Anime Voice Names
+Senpai Says: Anime Name Voice
 
 ## Short description (max 80)
 Cute anime girls say YOUR name — set their voice as your ringtone or alarm 💌
@@ -54,12 +54,7 @@ Play Console → App content. First release: **no ads** and **no in-app purchase
 ## Permissions to explain in the review notes
 - **Modify system settings (WRITE_SETTINGS):** used only when the user taps "Set" to make a voice line their ringtone, notification sound or alarm sound.
 - **Notifications:** optional daily message the user turns on in Settings.
-- **Usage access (PACKAGE_USAGE_STATS):** only for the optional "Stop me scrolling" screen-time reminder. Counts today's time in the apps the user picks (Instagram, TikTok, YouTube, Facebook, Snapchat) against the limit they set. Processed on-device only, never uploaded. Shown with a full explanation in Settings before the user grants it.
-- **Display over other apps (SYSTEM_ALERT_WINDOW):** same feature. Brings the break reminder (an animated character with a voice line and "OK, I'll rest" / "5 more minutes" buttons) on top of the app the user is scrolling when they pass their limit.
-- **Foreground service (specialUse):** keeps the screen-time counter running while the feature is on, with an ongoing notification. Subtype: "Screen-time reminders: counts time spent in apps the user picked and shows a break reminder when their own daily limit is reached." Stops as soon as the user turns the feature off.
-- **Run at startup (RECEIVE_BOOT_COMPLETED):** restarts that counter after a reboot, only if the user had it on.
-
-Data safety form note for this feature: app activity ("Other app usage") is accessed but **not collected or shared**, because it never leaves the device.
+- **Run at startup (RECEIVE_BOOT_COMPLETED):** keeps the optional daily message scheduled after a reboot.
 
 ## Screenshots to take (phone, 1080×1920 or larger)
 1. Girls screen with Hana, name filled in, Love selected
