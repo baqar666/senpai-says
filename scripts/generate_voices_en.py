@@ -170,6 +170,8 @@ def main():
 
     # orpheus-cpp asks llama.cpp for the model's full 131K context (n_ctx=0), which reserves ~15 GB.
     # One short line needs a tiny fraction of that.
+    from onnxruntime.capi.onnxruntime_pybind11_state import InvalidArgument
+
     llama_init = llama_cpp.Llama.__init__
 
     def small_ctx_init(self, *a, **kw):
@@ -202,14 +204,20 @@ def main():
             # Orpheus samples randomly and sometimes rambles or cuts off; retry when the length looks wrong.
             words = max(1, len(re.sub(r"<[^>]+>", "", text).split()))
             max_seconds = 1.5 + words * 0.75
+            pcm = None
             for attempt in range(4):
                 # llama.cpp's seed is fixed, so without this every retry would give the same take.
                 orpheus._llm.set_seed(int(sig[:8], 16) + attempt)
-                rate, samples = orpheus.tts(text, options={
-                    "voice_id": cfg["voice"], "temperature": cfg["temperature"],
-                    # Orpheus emits ~85 audio tokens per second; stop runaway takes early instead of at 2048 tokens.
-                    "max_tokens": int(max_seconds * 100) + 100,
-                })
+                try:
+                    rate, samples = orpheus.tts(text, options={
+                        "voice_id": cfg["voice"], "temperature": cfg["temperature"],
+                        # Orpheus emits ~85 audio tokens per second; stop runaway takes early instead of at 2048 tokens.
+                        "max_tokens": int(max_seconds * 100) + 100,
+                    })
+                except InvalidArgument as e:
+                    # A rare take contains an audio token the decoder can't read; that take is lost, the job isn't.
+                    print(f"  retry {gid}/{rel} (bad take: {str(e)[-70:]})", flush=True)
+                    continue
                 pcm = samples.squeeze()
                 if is_name:
                     name_only = cut_at_first_pause(pcm, rate)
@@ -230,6 +238,8 @@ def main():
                     rate, samples = orpheus.tts(bare, options={
                         "voice_id": cfg["voice"], "temperature": cfg["temperature"], "max_tokens": 400})
                     pcm = samples.squeeze()
+                elif pcm is None:
+                    raise RuntimeError(f"every take failed for {gid}/{rel}")
             to_mp3(pcm, rate, dest, tail)
             manifest[rel] = sig
             made += 1

@@ -15,6 +15,14 @@ on:
         description: 'Which girls, as a JSON list (for example ["rei"])'
         type: string
         default: '["hana","rei","aiko","yui"]'
+      shards:
+        description: 'Full mode: which slices, as a JSON list (for example [5])'
+        type: string
+        default: "[0,1,2,3,4,5,6,7]"
+      reuse_run:
+        description: "Full mode: id of a failed run whose finished slices should be merged too (artifacts last 3 days)"
+        type: string
+        default: ""
 
 permissions:
   contents: write
@@ -30,7 +38,7 @@ jobs:
       matrix:
         girl: ${{ fromJSON(inputs.girls) }}
         # Full mode splits each character into 8 slices so every job stays well under GitHub's 6-hour limit.
-        shard: ${{ fromJSON(inputs.mode == 'full' && '[0,1,2,3,4,5,6,7]' || '[0]') }}
+        shard: ${{ fromJSON(inputs.mode == 'full' && inputs.shards || '[0]') }}
     steps:
       - uses: actions/checkout@v4
 
@@ -83,6 +91,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Download finished slices from the earlier run
+        if: inputs.reuse_run != ''
+        uses: actions/download-artifact@v4
+        with:
+          pattern: voices-*
+          path: ${{ runner.temp }}/voices
+          run-id: ${{ inputs.reuse_run }}
+          github-token: ${{ github.token }}
 
       - uses: actions/download-artifact@v4
         with:
