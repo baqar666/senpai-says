@@ -77,6 +77,9 @@ def to_mp3(pcm, rate: int, dest: Path, tail: float):
         )
 
 
+# Respellings for names Orpheus gets wrong; only these names' clips change.
+SPELLINGS = json.loads((ROOT / "scripts/name_spellings_en.json").read_text())
+
 # A single word on its own comes out flat and robotic. Names are spoken inside a short phrase
 # for natural intonation, then cut at the pause right after the name. One phrase per name mood
 # (lines.json nameMoods), so the name already carries the feeling of the line that follows it.
@@ -128,7 +131,7 @@ def jobs(sample: bool, gid: str):
                 text = text[0].upper() + text[1:]
             yield base / gid / "lines" / f"{lkey}_{hon['key']}.mp3", orpheus_text(text), 0.15, False
     for entry in names:
-        spelling = entry[1].capitalize()
+        spelling = SPELLINGS.get(entry[1], entry[1].capitalize())
         for mood, phrase in NAME_PHRASE.items():
             yield base / gid / "names" / f"{entry[1]}_{mood}.mp3", phrase.format(name=spelling), 0.04, True
 
