@@ -109,10 +109,16 @@ jobs:
       - name: Merge the slices and rebuild the index
         run: |
           mkdir -p assets/voices/en
+          # Every slice also uploads the old clips it skipped, so copy only what it changed.
+          cp -R assets/voices/en "$RUNNER_TEMP/base"
           for dir in "$RUNNER_TEMP"/voices/voices-*; do
             name="${dir##*/voices-}"; g="${name%-*}"
             mkdir -p "assets/voices/en/$g"
-            cp -R "$dir"/. "assets/voices/en/$g/"
+            (cd "$dir" && find . -type f) | while read -r f; do
+              cmp -s "$dir/$f" "$RUNNER_TEMP/base/$g/$f" && continue
+              mkdir -p "assets/voices/en/$g/$(dirname "$f")"
+              cp "$dir/$f" "assets/voices/en/$g/$f"
+            done
           done
           python - <<'PY'
           import json, pathlib
