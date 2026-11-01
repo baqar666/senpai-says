@@ -4,7 +4,7 @@
 Senpai Says: Anime Name Voice
 
 ## Short description (max 80)
-Cute anime girls say YOUR name — set their voice as your ringtone or alarm 💌
+Cute anime girls say YOUR name. Set their voice as your ringtone or alarm.
 
 ## Full description
 Hear an anime girl call **your name** — in real Japanese anime voices or expressive English.
@@ -26,7 +26,7 @@ Pick your favourite girl, type your name, and tap a feeling:
 • Share voice clips to WhatsApp, TikTok and Instagram
 • Daily message from a different girl every day
 • Works offline · no account · smooth on older phones
-• Completely free · no ads · no purchases
+• No ads · no purchases
 
 All characters are original adults. Japanese voices: VOICEVOX:WhiteCUL, VOICEVOX:暁記ミタマ, VOICEVOX:四国めたん, VOICEVOX:猫使アル. English voices: Orpheus TTS.
 
