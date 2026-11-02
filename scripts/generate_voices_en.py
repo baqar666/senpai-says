@@ -208,7 +208,7 @@ def main():
             words = max(1, len(re.sub(r"<[^>]+>", "", text).split()))
             max_seconds = 1.0 + words * 0.55
             pcm = None
-            for attempt in range(4):
+            for attempt in range(8):
                 # llama.cpp's seed is fixed, so without this every retry would give the same take.
                 orpheus._llm.set_seed(int(sig[:8], 16) + attempt)
                 try:
@@ -239,7 +239,7 @@ def main():
                     # Never ship the helper phrase: fall back to the bare name.
                     bare = re.split(r"(\.\.\.|!)", text)[0] + ("..." if "..." in text else "!")
                     rate, samples = orpheus.tts(bare, options={
-                        "voice_id": cfg["voice"], "temperature": cfg["temperature"], "max_tokens": 400})
+                        "voice_id": cfg["voice"], "temperature": cfg["temperature"], "max_tokens": 200})
                     pcm = samples.squeeze()
                 elif pcm is None:
                     raise RuntimeError(f"every take failed for {gid}/{rel}")
