@@ -5,9 +5,10 @@ import * as Sharing from 'expo-sharing';
 import { Alert, PermissionsAndroid, Platform } from 'react-native';
 
 import RingtoneSetter, { ToneType } from '../../modules/ringtone-setter';
-import { CUSTOM_PREFIX, Girl, Honorific, Lang, LineKey, lineFor } from '../data/girls';
+import { CUSTOM_PREFIX, findName, Girl, Honorific, Lang, LineKey, lineFor } from '../data/girls';
 import { VOICE_CLIPS } from '../data/voice-assets';
 import { getCustomName } from './customNames';
+import { ensureNamePack, packClip } from './namePacks';
 
 setAudioModeAsync({ playsInSilentMode: true }).catch(() => {});
 
@@ -38,10 +39,21 @@ function clipsFor(girl: Girl, key: LineKey, lang: Lang, name: string, honorific:
     nameClip = getCustomName(name)?.files[girl.id]?.[l.nameMood];
   } else if (l.known) {
     // The name in the line's own mood, so it matches the feeling of the sentence.
-    nameClip = clips.names[l.known.id]?.[l.nameMood];
+    nameClip = clips.names[l.known.id]?.[l.nameMood] ?? packClip(lang, l.known.id, girl.id, l.nameMood);
+    // Not downloaded yet and no internet: say the line with Senpai instead (nothing in English).
+    if (nameClip === undefined) return [line.senpai ?? rest];
   }
   return nameClip !== undefined ? [nameClip, rest] : [rest];
 }
+
+// Makes sure this name's clips are on the phone. False if they're needed but can't be fetched right now.
+export async function nameVoiceReady(girl: Girl, lang: Lang, name: string): Promise<boolean> {
+  const known = findName(name, lang);
+  if (!known || known.id.startsWith(CUSTOM_PREFIX) || voiceFor(girl, lang)?.names[known.id]) return true;
+  return (await ensureNamePack(lang, known.id)) === 'ok';
+}
+
+const NEEDS_INTERNET = 'Connect to the internet once to download your name, then it works offline.';
 
 const toSource = (c: Clip): AudioSource => (typeof c === 'string' ? { uri: c } : c);
 
@@ -60,6 +72,7 @@ export function lineAvailable(girl: Girl, key: LineKey, lang: Lang): boolean {
 let player: AudioPlayer | null = null;
 let queue: AudioSource[] = [];
 let onQueueEnd: (() => void) | undefined;
+let playRequest = 0;
 
 function playNext() {
   const src = queue.shift();
@@ -84,6 +97,7 @@ function getPlayer() {
 }
 
 export function stopSpeaking() {
+  playRequest++;
   queue = [];
   const cb = onQueueEnd;
   onQueueEnd = undefined;
@@ -94,9 +108,13 @@ export function stopSpeaking() {
 export function playLine(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific, onEnd?: () => void) {
   stopSpeaking();
   getPlayer();
-  queue = clipsFor(girl, key, lang, name, honorific).map(toSource);
   onQueueEnd = onEnd;
-  playNext();
+  const request = ++playRequest;
+  nameVoiceReady(girl, lang, name).then(() => {
+    if (request !== playRequest) return; // stopped, or another line started, while the name downloaded
+    queue = clipsFor(girl, key, lang, name, honorific).map(toSource);
+    playNext();
+  });
 }
 
 const TYPE_LABEL: Record<ToneType, string> = {
@@ -129,6 +147,10 @@ export async function setTone(girl: Girl, key: LineKey, lang: Lang, name: string
   if (Number(Platform.Version) < 29) {
     const res = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
     if (res !== PermissionsAndroid.RESULTS.GRANTED) return null;
+  }
+  if (!(await nameVoiceReady(girl, lang, name))) {
+    Alert.alert('No internet', NEEDS_INTERNET);
+    return null;
   }
   const safeTitle = title.replace(/[^\w\- ]+/g, '').trim() || 'Senpai tone';
   await RingtoneSetter.setToneFromFilesAsync(await clipFiles(clipsFor(girl, key, lang, name, honorific)), safeTitle, type);
@@ -164,6 +186,10 @@ export async function saveLineFile(girl: Girl, key: LineKey, lang: Lang, name: s
 
 // Shares the voice line as an MP3 (WhatsApp, TikTok, Instagram…). On web it downloads instead.
 export async function shareLine(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific): Promise<boolean> {
+  if (!(await nameVoiceReady(girl, lang, name))) {
+    Alert.alert('No internet', NEEDS_INTERNET);
+    return false;
+  }
   const bytes = await joinedClip(girl, key, lang, name, honorific);
   const fileName = `${girl.name}-says-${(name.trim() || 'senpai').replace(/[^\w-]+/g, '')}-${key}.mp3`;
   if (Platform.OS === 'web') {

@@ -25,7 +25,7 @@ Pick your favourite girl, type your name, and tap a feeling:
 • Set any line as your **phone ringtone**, **message tone** or **alarm sound**
 • Share voice clips to WhatsApp, TikTok and Instagram
 • Daily message from a different girl every day
-• Works offline · no account · smooth on older phones
+• No account · smooth on older phones · your name downloads once, then works offline
 • No ads · no purchases
 
 All characters are original adults. Japanese voices: VOICEVOX:WhiteCUL, VOICEVOX:暁記ミタマ, VOICEVOX:四国めたん, VOICEVOX:猫使アル. English voices: Orpheus TTS.
@@ -43,7 +43,7 @@ https://baqar666.github.io/privacy-policies/senpai-says/
 Play Console → App content. First release: **no ads** and **no in-app purchases**.
 
 - Ads declaration: **No, doesn't contain ads.**
-- Data collected or shared: none. The name and settings never leave the device, and there is no account.
+- Data collected or shared: none stored by us. Names outside the 10 built-in ones are downloaded once from GitHub Pages (https://baqar666.github.io), which sees the requested name file and the phone's IP address. Settings stay on the device, and there is no account.
 
 (When ads and the Senpai Pass come back, this section must list AdMob and RevenueCat again. See git history.)
 

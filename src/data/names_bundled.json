@@ -1,0 +1,15 @@
+{
+  "_note": "Clip ids shipped inside the app, so the commonest names work offline at once. Every other name downloads on first use (src/lib/namePacks.ts). Re-run scripts/voice_index.py after changing this.",
+  "names": [
+    "ali",
+    "ahmed",
+    "muhammad",
+    "hassan",
+    "hussain",
+    "ayesha",
+    "fatima",
+    "zainab",
+    "maryam",
+    "sara"
+  ]
+}

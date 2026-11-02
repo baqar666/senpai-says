@@ -15,7 +15,7 @@ import { customNamesEnabled, onCustomNamesChange } from '../lib/customNames';
 import { useSettings } from '../lib/store';
 import { nameColor, themed, useColors, useTheme } from '../lib/theme';
 import { consumeDaily, onDailyOpen } from '../lib/daily';
-import { lineAvailable, playLine, setTone, shareLine, stopSpeaking } from '../lib/voice';
+import { lineAvailable, nameVoiceReady, playLine, setTone, shareLine, stopSpeaking } from '../lib/voice';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -47,6 +47,20 @@ export default function CharactersScreen() {
   const suggestions = suggestNames(name, lang);
   const hon = HONORIFICS.find((h) => h.key === honorific)!;
   const { subject, object } = pronoun(girl);
+  // Fetch the name's voice as soon as it's typed, so the first tap plays straight away.
+  const [nameOffline, setNameOffline] = useState(false);
+  useEffect(() => {
+    setNameOffline(false);
+    if (!known) return;
+    let current = true;
+    const timer = setTimeout(() => {
+      nameVoiceReady(girl, lang, name).then((ok) => current && setNameOffline(!ok));
+    }, 500);
+    return () => {
+      current = false;
+      clearTimeout(timer);
+    };
+  }, [known?.id, lang]);
 
   useEffect(() => stopSpeaking, []);
   // A tapped daily-message notification: show that girl and play her line.
@@ -72,6 +86,7 @@ export default function CharactersScreen() {
     }
     setTalking(true);
     playLine(getGirl(g), e, lang, name, honorific, () => setTalking(false));
+    nameVoiceReady(getGirl(g), lang, name).then((ok) => setNameOffline(!ok));
   };
 
   const onShare = async () => {
@@ -144,6 +159,7 @@ export default function CharactersScreen() {
               : `This name isn't in the English voice list yet, so ${subject.toLowerCase()}'ll skip your name. Try the Japanese voice.`}
         </Text>
       ) : null}
+      {nameOffline ? <Text style={styles.callHint}>Connect to the internet once to download your name, then it works offline.</Text> : null}
       {name.trim() && lang === 'jp' && !known && customNamesEnabled ? (
         <NeuButton onPress={() => setTeaching(true)} style={styles.teach} radius={14} depth={4} accessibilityLabel="Teach them your name">
           <View style={styles.teachRow}>

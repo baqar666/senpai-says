@@ -1,0 +1,35 @@
+name: Publish name packs
+
+# The name clips the app downloads on first use, served from GitHub Pages.
+on:
+  push:
+    branches: [main]
+    paths:
+      - assets/voices/*/*/names/**
+      - src/data/names_bundled.json
+      - scripts/build_name_packs.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build the packs
+        run: python scripts/build_name_packs.py --out _site/packs/v1
+
+      - uses: actions/upload-pages-artifact@v3
+
+      - uses: actions/deploy-pages@v4

@@ -9,6 +9,8 @@ NAMES = json.loads((ROOT / "src/data/names.json").read_text())["names"]
 # Japanese also has a larger list; English falls back to Senpai for these until generated.
 NAMES_JP = NAMES + json.loads((ROOT / "src/data/names_jp_extra.json").read_text())["names"]
 NAMES_BY_LANG = {"jp": NAMES_JP, "en": NAMES}
+# Only these ship inside the app; the rest download on first use (scripts/build_name_packs.py).
+BUNDLED_NAMES = set(json.loads((ROOT / "src/data/names_bundled.json").read_text())["names"])
 VOICES = ROOT / "assets/voices"
 INDEX = ROOT / "src/data/voice-assets.ts"
 LANGS = ("jp", "en")
@@ -53,6 +55,8 @@ def write_index():
             out.append("      },")
             out.append("      names: {")
             for entry in NAMES_BY_LANG[lang]:
+                if entry[1] not in BUNDLED_NAMES:
+                    continue
                 tones = ", ".join(f"{t}: {req(f'{lang}/{gid}/names/{entry[1]}_{t}.mp3')}" for t in NAME_VARIANTS[lang])
                 out.append(f"        '{entry[1]}': {{ {tones} }},")
             out.append("      },")
