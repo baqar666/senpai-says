@@ -8,7 +8,7 @@ export type GirlId = 'hana' | 'rei' | 'aiko' | 'yui' | 'kaito' | 'ryuga' | 'jin'
 // The app shows one group at a time (Settings `cast`); boys use the same lines, voices and art pipeline as girls.
 export type Cast = 'girls' | 'boys';
 export type Emotion = 'love' | 'angry' | 'miss' | 'shy' | 'night' | 'call';
-export type ToneLine = 'call' | 'message' | 'morning';
+export type ToneLine = 'call' | 'message' | 'morning' | 'morning2' | 'morning3';
 export type Moment = 'birthday' | 'eid' | 'luck' | 'eat' | 'gym' | 'care' | 'proud' | 'thanks';
 // Screen-time guard: a gentle first warning, then a firmer one.
 export type GuardLine = 'rest' | 'rest2';
@@ -147,7 +147,7 @@ export type NameMood = 'sweet' | 'happy' | 'angry' | 'sad';
 const stripTags = (s: string) => s.replace(/\s*<[^>]+>\s*/g, ' ').replace(/\s+([!?.,])/g, '$1').replace(/\s{2,}/g, ' ').trim();
 
 export function lineFor(girl: GirlId, key: LineKey, lang: Lang, name: string, honorific: Honorific): ResolvedLine {
-  const l = (LINES.lines as Record<GirlId, Record<LineKey, { en: string; jp: string; nameMood: NameMood }>>)[girl][key];
+  const l = (LINES.lines as unknown as Record<GirlId, Record<LineKey, { en: string; jp: string; nameMood: NameMood }>>)[girl][key];
   const nameMood = l.nameMood;
   const known = findName(name, lang);
   const hon = known ? honorific : 'senpai';

@@ -257,6 +257,20 @@
         "jpContour": "shy",
         "nameMood": "sweet"
       },
+      "morning2": {
+        "en": "{n}... it's morning... did you sleep well?",
+        "jp": "{n}…おはよ…よくねむれた？",
+        "tone": "soft",
+        "jpContour": "shy",
+        "nameMood": "sweet"
+      },
+      "morning3": {
+        "en": "{n}... um, breakfast is ready... please wake up...",
+        "jp": "{n}…あ、あさごはん、できたよ…おきて…",
+        "tone": "soft",
+        "jpContour": "shy",
+        "nameMood": "sweet"
+      },
       "birthday": {
         "en": "{n}... h-happy birthday... <giggle> I made you a little cake...",
         "jp": "{n}…お、おたんじょうび、おめでとう…ケーキ、つくったの…",
@@ -266,7 +280,7 @@
         "nameMood": "sweet"
       },
       "eid": {
-        "en": "{n}... Eid Mubarak... I hope your day is full of happiness...",
+        "en": "{n}... Eid Mubarak! I hope your day is full of happiness...",
         "jp": "{n}…イード・ムバラク…しあわせな一日になりますように…",
         "tone": "soft",
         "jpContour": "sweet",
@@ -306,7 +320,7 @@
         "nameMood": "sweet"
       },
       "proud": {
-        "en": "{n}... I'm really proud of you... <breath> really...",
+        "en": "{n}... I'm really proud of you...",
         "jp": "{n}…ほんとうに、すごいよ…じまんだよ…",
         "tone": "soft",
         "jpContour": "shy",
@@ -368,7 +382,7 @@
         "nameMood": "sweet"
       },
       "night": {
-        "en": "{n}. Sleep. I'll keep watch.",
+        "en": "{n}. Sleep now. I'll keep watch.",
         "jp": "{n}。おやすみ。…そばにいる。",
         "tone": "soft",
         "jpContour": "sleepy",
@@ -391,6 +405,20 @@
       "morning": {
         "en": "{n}. Wake up. <short pause> ...Good morning.",
         "jp": "{n}。おきて。…おはよう。",
+        "tone": "soft",
+        "jpContour": "cool",
+        "nameMood": "sweet"
+      },
+      "morning2": {
+        "en": "{n}. It's morning. Get up.",
+        "jp": "{n}。あさだ。おきろ。",
+        "tone": "soft",
+        "jpContour": "cool",
+        "nameMood": "sweet"
+      },
+      "morning3": {
+        "en": "{n}. A new day. I'm with you.",
+        "jp": "{n}。きょうもいくぞ。…そばにいる。",
         "tone": "soft",
         "jpContour": "cool",
         "nameMood": "sweet"
@@ -444,7 +472,7 @@
         "nameMood": "sweet"
       },
       "proud": {
-        "en": "{n}. ...I'm proud of you.",
+        "en": "{n}. I'm proud of you.",
         "jp": "{n}。…よくやった。",
         "tone": "soft",
         "jpContour": "cool",
@@ -485,7 +513,7 @@
         "nameMood": "happy"
       },
       "angry": {
-        "en": "{n}! You IDIOT! <grr>",
+        "en": "{n}! You IDIOT!",
         "jp": "{n}のばかぁっ！ふんっ！",
         "tone": "loud",
         "jpContour": "angry",
@@ -529,6 +557,20 @@
       "morning": {
         "en": "{n}! Wake up! I'm NOT waiting for you!",
         "jp": "{n}！おきなさいっ！まってあげないんだからっ！",
+        "tone": "loud",
+        "jpContour": "bossy",
+        "nameMood": "happy"
+      },
+      "morning2": {
+        "en": "{n}! It's already morning! Get up, lazy!",
+        "jp": "{n}！もうあさよっ！はやくおきなさいよっ！",
+        "tone": "loud",
+        "jpContour": "bossy",
+        "nameMood": "happy"
+      },
+      "morning3": {
+        "en": "{n}! I made breakfast... n-not for you!",
+        "jp": "{n}！あさごはん、つくったわよ…べ、べつにあんたのためじゃないからっ！",
         "tone": "loud",
         "jpContour": "bossy",
         "nameMood": "happy"
@@ -590,7 +632,7 @@
         "nameMood": "sweet"
       },
       "thanks": {
-        "en": "{n}... th-thanks. Don't make it weird!",
+        "en": "{n}... thanks. Don't make it weird!",
         "jp": "{n}…あ、ありがと。かんちがいしないでよね！",
         "tone": "soft",
         "jpContour": "shy",
@@ -644,7 +686,7 @@
         "nameMood": "sweet"
       },
       "night": {
-        "en": "{n}! <yawn> Night night! See you tomorrow!",
+        "en": "{n}! Night night! See you tomorrow!",
         "jp": "{n}！ふぁぁ…おやすみぃ！またあしたね！",
         "tone": "soft",
         "jpContour": "sleepy",
@@ -667,6 +709,20 @@
       "morning": {
         "en": "{n}! Good morning! Let's GO! <cheer>",
         "jp": "{n}！おっはよー！いっくよー！",
+        "tone": "loud",
+        "jpContour": "excited",
+        "nameMood": "happy"
+      },
+      "morning2": {
+        "en": "{n}! Rise and shine! Today is gonna be great!",
+        "jp": "{n}！あさだよー！きょうもがんばろっ！",
+        "tone": "loud",
+        "jpContour": "excited",
+        "nameMood": "happy"
+      },
+      "morning3": {
+        "en": "{n}! Wake up, wake up! The sun is out!",
+        "jp": "{n}！おきておきて！いいてんきだよー！",
         "tone": "loud",
         "jpContour": "excited",
         "nameMood": "happy"

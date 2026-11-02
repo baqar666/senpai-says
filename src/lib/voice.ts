@@ -12,6 +12,9 @@ import { ensureNamePack, packClip } from './namePacks';
 
 setAudioModeAsync({ playsInSilentMode: true }).catch(() => {});
 
+// Android loops a ringtone until the call is answered; this gives each repeat a breath.
+const RINGTONE_GAP = require('../../assets/voices/silence_1s.mp3');
+
 type CharacterClips = {
   names: Record<string, Partial<Record<string, number>>>;
   lines: Partial<Record<LineKey, Partial<Record<Honorific, number>>>>; // English: only 'none'
@@ -153,7 +156,8 @@ export async function setTone(girl: Girl, key: LineKey, lang: Lang, name: string
     return null;
   }
   const safeTitle = title.replace(/[^\w\- ]+/g, '').trim() || 'Senpai tone';
-  await RingtoneSetter.setToneFromFilesAsync(await clipFiles(clipsFor(girl, key, lang, name, honorific)), safeTitle, type);
+  const clips = clipsFor(girl, key, lang, name, honorific);
+  await RingtoneSetter.setToneFromFilesAsync(await clipFiles(type === 'ringtone' ? [...clips, RINGTONE_GAP] : clips), safeTitle, type);
   return `${girl.name} is now your ${TYPE_LABEL[type]}`;
 }
 
@@ -176,6 +180,7 @@ async function joinedClip(girl: Girl, key: LineKey, lang: Lang, name: string, ho
 // Saves the line (name + rest) as an MP3 in the app's documents folder and returns its file URI.
 // Used by the screen-time overlay, which plays it natively while the app isn't running.
 export async function saveLineFile(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific, fileName: string): Promise<string> {
+  if (!(await nameVoiceReady(girl, lang, name))) throw new Error('name voice not downloaded');
   const bytes = await joinedClip(girl, key, lang, name, honorific);
   const file = new File(Paths.document, fileName);
   if (file.exists) file.delete();

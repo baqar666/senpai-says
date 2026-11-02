@@ -7,6 +7,7 @@ import { AppState, Platform } from 'react-native';
 import RingtoneSetter, { GuardTrigger } from '../../modules/ringtone-setter';
 import { Cast, getGirl, GirlId, GuardLine, Honorific, Lang, lineFor } from '../data/girls';
 import { GUARD_VIDEOS } from '../data/guard-videos';
+import { FREE_LAUNCH } from '../data/launch';
 import { FREE_GUARD_LIMIT } from './pass';
 import { lineAvailable, saveLineFile } from './voice';
 
@@ -53,9 +54,9 @@ export function guardPermissions(): GuardPermissions {
   };
 }
 
-// Free users get one app at the 1-hour limit; the Senpai Pass lifts both.
+// Free users get the 30-minute limit, on one app once the Senpai Pass is back; the Pass lifts both.
 export function effectiveGuard(apps: GuardAppId[], limit: number, pro: boolean) {
-  return pro ? { apps, limit } : { apps: apps.slice(0, 1), limit: FREE_GUARD_LIMIT };
+  return pro ? { apps, limit } : { apps: FREE_LAUNCH ? apps : apps.slice(0, 1), limit: FREE_GUARD_LIMIT };
 }
 
 // Starts or stops the native watcher to match the settings. Safe to call often.

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { AppState, StyleSheet, Switch, Text, View } from 'react-native';
 
 import RingtoneSetter from '../../modules/ringtone-setter';
+import { FREE_LAUNCH } from '../data/launch';
 import { effectiveGuard, GUARD_APPS, GUARD_LIMITS, guardPermissions, guardSupported } from '../lib/guard';
 import { FREE_GUARD_LIMIT, usePass } from '../lib/pass';
 import { useSettings } from '../lib/store';
@@ -34,7 +35,7 @@ export function GuardSettings() {
   const ready = perms.usage && perms.overlay;
   // Free: tapping an app switches to it. Pass: apps toggle on and off.
   const toggleApp = (id: (typeof GUARD_APPS)[number]['id']) => {
-    if (!pro) return update({ guardApps: [id] });
+    if (!pro && !FREE_LAUNCH) return update({ guardApps: [id] });
     update({ guardApps: guardApps.includes(id) ? guardApps.filter((a) => a !== id) : [...guardApps, id] });
   };
   const pickLimit = (m: number) =>
@@ -98,8 +99,8 @@ export function GuardSettings() {
             onAllow={() => RingtoneSetter?.openBatterySettings()}
           />
 
-          <Text style={styles.label}>Daily limit</Text>
-          <View style={styles.chips}>
+          <Text style={styles.label}>Daily limit{FREE_LAUNCH ? `: ${FREE_GUARD_LIMIT} minutes` : ''}</Text>
+          {!FREE_LAUNCH && <View style={styles.chips}>
             {GUARD_LIMITS.map((m) => (
               <NeuButton key={m} active={activeLimit === m} onPress={() => pickLimit(m)} style={styles.chip} radius={12} depth={3} accessibilityLabel={`${m} minute limit`}>
                 <Text style={[styles.chipText, activeLimit === m && { color: C.accent }]}>
@@ -108,7 +109,7 @@ export function GuardSettings() {
                 </Text>
               </NeuButton>
             ))}
-          </View>
+          </View>}
 
           <Text style={styles.label}>Watch these apps</Text>
           <View style={styles.chips}>
@@ -122,9 +123,9 @@ export function GuardSettings() {
             })}
           </View>
 
-          {!pro && (
+          {!pro && !FREE_LAUNCH && (
             <Text style={styles.freeNote} onPress={() => openPaywall('Watch every app with any limit')}>
-              Free: one app at a 1-hour limit. <Text style={styles.freeLink}>Get Senpai Pass</Text> for every app and any limit.
+              Free: one app at a 30-minute limit. <Text style={styles.freeLink}>Get Senpai Pass</Text> for every app and any limit.
             </Text>
           )}
           <Text style={styles.status}>

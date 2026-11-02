@@ -91,7 +91,7 @@ NAME_PHRASE = {
 }
 
 
-def cut_at_first_pause(pcm, rate: int, min_pause: float = 0.12):
+def cut_at_first_pause(pcm, rate: int, min_pause: float = 0.16):
     """Returns the speech up to the first real pause, or None if there isn't one."""
     import numpy as np
 
@@ -100,7 +100,7 @@ def cut_at_first_pause(pcm, rate: int, min_pause: float = 0.12):
     if n < 10:
         return None
     rms = np.sqrt(np.mean(pcm[: n * frame].astype(np.float64).reshape(n, frame) ** 2, axis=1))
-    quiet = rms < rms.max() * 0.08
+    quiet = rms < rms.max() * 0.06
     voiced = np.flatnonzero(~quiet)
     if not len(voiced):
         return None
@@ -110,7 +110,7 @@ def cut_at_first_pause(pcm, rate: int, min_pause: float = 0.12):
     for i in range(start + 15, n):  # the name itself is at least ~150 ms
         run = run + 1 if quiet[i] else 0
         if run >= need:
-            return pcm[max(0, start - 3) * frame : (i - run + 3) * frame]
+            return pcm[max(0, start - 3) * frame : (i - run + 6) * frame]
     return None
 
 
@@ -206,7 +206,7 @@ def main():
                 continue
             # Orpheus samples randomly and sometimes rambles or cuts off; retry when the length looks wrong.
             words = max(1, len(re.sub(r"<[^>]+>", "", text).split()))
-            max_seconds = 1.5 + words * 0.75
+            max_seconds = 1.0 + words * 0.55
             pcm = None
             for attempt in range(4):
                 # llama.cpp's seed is fixed, so without this every retry would give the same take.
@@ -231,7 +231,7 @@ def main():
                     print(f"  retry {gid}/{rel} (no clean pause after the name)", flush=True)
                     continue
                 seconds = len(pcm) / rate
-                if 0.25 <= seconds <= max_seconds:
+                if max(0.25, words * 0.2) <= seconds <= max_seconds:
                     break
                 print(f"  retry {gid}/{rel} ({seconds:.1f}s for {words} words)", flush=True)
             else:

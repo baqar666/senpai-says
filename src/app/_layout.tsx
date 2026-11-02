@@ -13,7 +13,6 @@ import { NeuCard } from '../components/Neu';
 import { Paywall } from '../components/Paywall';
 import { ToastProvider } from '../components/Toast';
 import { UnlockSheet } from '../components/UnlockSheet';
-import { FREE_LAUNCH } from '../data/launch';
 import { startAds } from '../lib/ads';
 import { loadCustomNames } from '../lib/customNames';
 import { DailyPick, openDaily, scheduleDaily } from '../lib/daily';
@@ -70,7 +69,7 @@ function useDailyMessages() {
 function useScreenGuard() {
   const { ready, guardOn: guardSetting, guardApps, guardLimit, cast, name, lang, honorific } = useSettings();
   const { pro } = usePass();
-  const guardOn = guardSetting && !FREE_LAUNCH;
+  const guardOn = guardSetting;
   useEffect(() => {
     if (!ready) return;
     syncGuard(guardOn, guardApps, guardLimit, pro);

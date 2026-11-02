@@ -113,7 +113,7 @@ export default function SettingsScreen() {
         </View>
       )}
 
-      {!FREE_LAUNCH && <GuardSettings />}
+      <GuardSettings />
 
       <NeuCard radius={18} style={styles.row}>
         <View style={{ flex: 1 }}>

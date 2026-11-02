@@ -11,7 +11,7 @@ type Settings = { enabled: boolean; hour: number; name: string; lang: Lang; hono
 const CHANNEL = 'daily-message';
 const DAYS_AHEAD = 7;
 // Sweet, everyday lines; special moments that aren't generated for the language are skipped.
-const POOL: LineKey[] = ['love', 'miss', 'shy', 'night', 'morning', 'care', 'proud', 'eat', 'luck', 'thanks'];
+const POOL: LineKey[] = ['love', 'miss', 'shy', 'night', 'morning', 'morning2', 'morning3', 'care', 'proud', 'eat', 'luck', 'thanks'];
 
 if (Platform.OS !== 'web') {
   Notifications.setNotificationHandler({

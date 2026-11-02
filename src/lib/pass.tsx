@@ -16,8 +16,8 @@ const DEV_MOCK = __DEV__ && Platform.OS === 'web';
 
 // Free users can set these characters' tones without the Pass (one per group, as a taste).
 export const FREE_TONE_CHARACTERS: readonly GirlId[] = ['hana', 'kaito'];
-// Free "Stop me scrolling": one app at the 1-hour limit.
-export const FREE_GUARD_LIMIT = 60;
+// Free "Stop me scrolling" daily limit, in minutes.
+export const FREE_GUARD_LIMIT = 30;
 
 export type BuyResult ='bought' | 'cancelled' | 'pending' | 'unavailable' | 'error';
 export type RestoreResult = 'restored' | 'none' | 'error';
