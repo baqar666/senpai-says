@@ -7,9 +7,12 @@ import mobileAds, {
   TestIds,
 } from 'react-native-google-mobile-ads';
 
+import { FREE_LAUNCH } from '../data/launch';
+
 // Rewarded ads only: the user chooses to watch one to unlock a single ringtone or moment.
 // Development builds always use Google's test unit; release builds need EXPO_PUBLIC_ADMOB_REWARDED_ID.
-const UNIT = __DEV__ ? TestIds.REWARDED : (process.env.EXPO_PUBLIC_ADMOB_REWARDED_ID ?? '');
+// The free launch has no ads, so the SDK is never started (no consent form, no ad data).
+const UNIT = FREE_LAUNCH ? '' : __DEV__ ? TestIds.REWARDED : (process.env.EXPO_PUBLIC_ADMOB_REWARDED_ID ?? '');
 const LOAD_TIMEOUT_MS = 15_000;
 
 export const adsEnabled = !!UNIT;

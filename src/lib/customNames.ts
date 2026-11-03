@@ -3,13 +3,16 @@ import { Directory, File, Paths } from 'expo-file-system';
 import { unzipSync } from 'fflate';
 import { Platform } from 'react-native';
 
+import { FREE_LAUNCH } from '../data/launch';
+
 export { suggestReading } from './reading';
 
 // "Teach them your name": names that aren't built in are voiced by our name server
 // (server/ in this repo) and saved on the phone, so they work offline from then on.
 // Japanese only for now: English custom names would need the much slower English voice model.
 
-const SERVER = (process.env.EXPO_PUBLIC_NAME_VOICE_URL ?? (__DEV__ ? 'http://127.0.0.1:7860' : '')).replace(/\/$/, '');
+// Off for the free launch; it comes back later as a paid feature.
+const SERVER = FREE_LAUNCH ? '' : (process.env.EXPO_PUBLIC_NAME_VOICE_URL ?? (__DEV__ ? 'http://127.0.0.1:7860' : '')).replace(/\/$/, '');
 const STORE_KEY = 'senpai-says/custom-names';
 const KANA = /^[ァ-ヶー・]{1,20}$/;
 const TIMEOUT_MS = 150_000; // a sleeping free server can take a minute or two to wake up
