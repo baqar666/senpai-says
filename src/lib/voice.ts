@@ -49,6 +49,13 @@ function clipsFor(girl: Girl, key: LineKey, lang: Lang, name: string, honorific:
   return nameClip !== undefined ? [nameClip, rest] : [rest];
 }
 
+// True if this name's clips are already on the phone (or it doesn't need any), without fetching.
+export function nameVoiceSaved(girl: Girl, lang: Lang, name: string): boolean {
+  const known = findName(name, lang);
+  if (!known || known.id.startsWith(CUSTOM_PREFIX) || voiceFor(girl, lang)?.names[known.id]) return true;
+  return packClip(lang, known.id, girl.id, 'sweet') !== undefined;
+}
+
 // Makes sure this name's clips are on the phone. False if they're needed but can't be fetched right now.
 export async function nameVoiceReady(girl: Girl, lang: Lang, name: string): Promise<boolean> {
   const known = findName(name, lang);
@@ -56,7 +63,7 @@ export async function nameVoiceReady(girl: Girl, lang: Lang, name: string): Prom
   return (await ensureNamePack(lang, known.id)) === 'ok';
 }
 
-const NEEDS_INTERNET = 'Connect to the internet once to download your name, then it works offline.';
+const NEEDS_INTERNET = "Your name's voice couldn't be downloaded. Check your internet and try again. After the first download it works offline.";
 
 const toSource = (c: Clip): AudioSource => (typeof c === 'string' ? { uri: c } : c);
 
@@ -152,7 +159,7 @@ export async function setTone(girl: Girl, key: LineKey, lang: Lang, name: string
     if (res !== PermissionsAndroid.RESULTS.GRANTED) return null;
   }
   if (!(await nameVoiceReady(girl, lang, name))) {
-    Alert.alert('No internet', NEEDS_INTERNET);
+    Alert.alert("Couldn't download your name", NEEDS_INTERNET);
     return null;
   }
   const safeTitle = title.replace(/[^\w\- ]+/g, '').trim() || 'Senpai tone';
@@ -192,7 +199,7 @@ export async function saveLineFile(girl: Girl, key: LineKey, lang: Lang, name: s
 // Shares the voice line as an MP3 (WhatsApp, TikTok, Instagram…). On web it downloads instead.
 export async function shareLine(girl: Girl, key: LineKey, lang: Lang, name: string, honorific: Honorific): Promise<boolean> {
   if (!(await nameVoiceReady(girl, lang, name))) {
-    Alert.alert('No internet', NEEDS_INTERNET);
+    Alert.alert("Couldn't download your name", NEEDS_INTERNET);
     return false;
   }
   const bytes = await joinedClip(girl, key, lang, name, honorific);

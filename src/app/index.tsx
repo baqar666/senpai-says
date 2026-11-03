@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { ComponentProps, useEffect, useState } from 'react';
-import { Animated, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Animated, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Face } from '../components/Face';
 import { NeuButton, NeuCard } from '../components/Neu';
@@ -15,7 +15,7 @@ import { customNamesEnabled, onCustomNamesChange } from '../lib/customNames';
 import { useSettings } from '../lib/store';
 import { nameColor, themed, useColors, useTheme } from '../lib/theme';
 import { consumeDaily, onDailyOpen } from '../lib/daily';
-import { lineAvailable, nameVoiceReady, playLine, setTone, shareLine, stopSpeaking } from '../lib/voice';
+import { lineAvailable, nameVoiceReady, nameVoiceSaved, playLine, setTone, shareLine, stopSpeaking } from '../lib/voice';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -48,19 +48,30 @@ export default function CharactersScreen() {
   const hon = HONORIFICS.find((h) => h.key === honorific)!;
   const { subject, object } = pronoun(girl);
   // Fetch the name's voice as soon as it's typed, so the first tap plays straight away.
-  const [nameOffline, setNameOffline] = useState(false);
+  const [nameStatus, setNameStatus] = useState<'ready' | 'downloading' | 'failed'>('ready');
+  const [retry, setRetry] = useState(0);
+  const fetchName = (g = girl) => {
+    if (nameVoiceSaved(g, lang, name)) {
+      setNameStatus('ready');
+      return Promise.resolve();
+    }
+    setNameStatus('downloading');
+    return nameVoiceReady(g, lang, name).then((ok) => setNameStatus(ok ? 'ready' : 'failed'));
+  };
   useEffect(() => {
-    setNameOffline(false);
+    setNameStatus('ready');
     if (!known) return;
     let current = true;
     const timer = setTimeout(() => {
-      nameVoiceReady(girl, lang, name).then((ok) => current && setNameOffline(!ok));
+      if (nameVoiceSaved(girl, lang, name)) return;
+      setNameStatus('downloading');
+      nameVoiceReady(girl, lang, name).then((ok) => current && setNameStatus(ok ? 'ready' : 'failed'));
     }, 500);
     return () => {
       current = false;
       clearTimeout(timer);
     };
-  }, [known?.id, lang]);
+  }, [known?.id, lang, retry]);
 
   useEffect(() => stopSpeaking, []);
   // A tapped daily-message notification: show that girl and play her line.
@@ -86,7 +97,7 @@ export default function CharactersScreen() {
     }
     setTalking(true);
     playLine(getGirl(g), e, lang, name, honorific, () => setTalking(false));
-    nameVoiceReady(getGirl(g), lang, name).then((ok) => setNameOffline(!ok));
+    fetchName(getGirl(g));
   };
 
   const onShare = async () => {
@@ -159,7 +170,20 @@ export default function CharactersScreen() {
               : `This name isn't in the English voice list yet, so ${subject.toLowerCase()}'ll skip your name. Try the Japanese voice.`}
         </Text>
       ) : null}
-      {nameOffline ? <Text style={styles.callHint}>Connect to the internet once to download your name, then it works offline.</Text> : null}
+      {nameStatus === 'downloading' ? (
+        <View style={styles.nameStatus}>
+          <ActivityIndicator size="small" color={C.accent} />
+          <Text style={styles.nameStatusText}>Downloading the voice for {name.trim()}…</Text>
+        </View>
+      ) : null}
+      {nameStatus === 'failed' ? (
+        <View style={styles.nameStatus}>
+          <Text style={[styles.nameStatusText, { color: C.danger, flex: 1 }]}>Couldn&apos;t download the voice for {name.trim()}. Check your internet.</Text>
+          <NeuButton onPress={() => setRetry((n) => n + 1)} style={styles.retry} radius={12} depth={4} accessibilityLabel="Try downloading the name voice again">
+            <Text style={styles.teachText}>Try again</Text>
+          </NeuButton>
+        </View>
+      ) : null}
       {name.trim() && lang === 'jp' && !known && customNamesEnabled ? (
         <NeuButton onPress={() => setTeaching(true)} style={styles.teach} radius={14} depth={4} accessibilityLabel="Teach them your name">
           <View style={styles.teachRow}>
@@ -300,6 +324,9 @@ const useStyles = themed((C) =>
   input: { flex: 1, height: 48, fontSize: 16, color: C.text },
   error: { color: C.danger, fontSize: 13, marginTop: 6 },
   callHint: { color: C.muted, fontSize: 12, marginTop: 8, marginLeft: 4 },
+  nameStatus: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 10, marginLeft: 4 },
+  nameStatusText: { color: C.muted, fontSize: 13 },
+  retry: { height: 36, paddingHorizontal: 12 },
   teach: { height: 44, marginTop: 12, paddingHorizontal: 14, alignSelf: 'flex-start' },
   teachRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   teachText: { fontSize: 14, fontWeight: '700', color: C.accent },
