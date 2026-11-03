@@ -47,7 +47,8 @@ def main():
         nonlocal made, skipped
         sid = styles[(girl["speaker"], style)]
         key = str(dest.relative_to(base))
-        sig = hashlib.sha1(json.dumps([text, sid, girl["speed"], girl["pitch"], tune, pre, post]).encode()).hexdigest()
+        extra = [girl["tuneScale"]] if "tuneScale" in girl else []  # only then, so other characters' clips stay put
+        sig = hashlib.sha1(json.dumps([text, sid, girl["speed"], girl["pitch"], tune, pre, post, *extra]).encode()).hexdigest()
         new_manifest[key] = sig
         if manifest.get(key) == sig and dest.exists():
             skipped += 1

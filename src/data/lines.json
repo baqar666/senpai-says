@@ -103,6 +103,7 @@
       "nameStyle": "うきうき",
       "speed": 1.0,
       "pitch": 0.0,
+      "tuneScale": 0.45,
       "styles": {
         "love": "うきうき",
         "angry": "おちつき",
@@ -729,7 +730,7 @@
       },
       "birthday": {
         "en": "{n}! Happy birthday! <cheer> Let's party all day!",
-        "jp": "{n}！おたんじょうびおめでとう！きょうはいっぱいあそぼう！",
+        "jp": "{n}！おたんじょうび、おめでとう！きょうはいっぱいあそぼう！",
         "tone": "loud",
         "jpContour": "excited",
         "face": "love",

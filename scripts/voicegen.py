@@ -85,8 +85,24 @@ def shape(q, tune: dict):
         _set(moras[-1], "vowel_length", _get(moras[-1], "vowel_length") * tune.get("endLength", 1.0))
 
 
+def soften(tune: dict, k: float) -> dict:
+    """Scales a tune's pitch movement toward flat by k (1 = unchanged). Strong curves make some voices buzz or double."""
+    if k == 1:
+        return tune
+    t = dict(tune)
+    t["intonation"] = 1 + (t.get("intonation", 1.0) - 1) * k
+    for key in ("pitch", "accentBoost", "startPitch"):
+        if key in t:
+            t[key] *= k
+    if "endPitch" in t:
+        t["endPitch"] = [d * k for d in t["endPitch"]]
+    t["volume"] = min(t.get("volume", 1.0), 1.0)
+    return t
+
+
 def render(synth: Synthesizer, sid: int, girl: dict, text: str, tune: dict, pre: float, post: float) -> bytes:
     """Speaks `text` in one style with the character's speed/pitch and an emotion tune. Returns WAV bytes."""
+    tune = soften(tune, girl.get("tuneScale", 1.0))
     q = synth.create_audio_query(text, sid)
     q.speed_scale = girl["speed"] * tune.get("speed", 1.0)
     q.pitch_scale = girl["pitch"] + tune.get("pitch", 0.0)
