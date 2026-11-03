@@ -3,8 +3,9 @@ name: Publish name packs
 # The name clips the app downloads on first use, served from GitHub Pages.
 on:
   push:
-    branches: [main]
+    branches: [main, voice-fixes]
     paths:
+      - .github/workflows/name-packs.yml
       - assets/voices/*/*/names/**
       - src/data/names_bundled.json
       - scripts/build_name_packs.py
