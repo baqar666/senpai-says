@@ -55,8 +55,10 @@ export function guardPermissions(): GuardPermissions {
 }
 
 // Free users get the 30-minute limit, on one app once the Senpai Pass is back; the Pass lifts both.
+// The free launch counts everyone as pro but has no limit picker, so it always uses 30 minutes.
 export function effectiveGuard(apps: GuardAppId[], limit: number, pro: boolean) {
-  return pro ? { apps, limit } : { apps: FREE_LAUNCH ? apps : apps.slice(0, 1), limit: FREE_GUARD_LIMIT };
+  if (FREE_LAUNCH) return { apps, limit: FREE_GUARD_LIMIT };
+  return pro ? { apps, limit } : { apps: apps.slice(0, 1), limit: FREE_GUARD_LIMIT };
 }
 
 // Starts or stops the native watcher to match the settings. Safe to call often.

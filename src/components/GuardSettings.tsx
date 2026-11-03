@@ -1,4 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import * as Notifications from 'expo-notifications';
 import { useEffect, useState } from 'react';
 import { AppState, StyleSheet, Switch, Text, View } from 'react-native';
 
@@ -55,7 +56,11 @@ export function GuardSettings() {
         <Switch
           value={guardOn}
           disabled={!guardSupported}
-          onValueChange={(v) => update({ guardOn: v })}
+          onValueChange={(v) => {
+            update({ guardOn: v });
+            // Android 13+ hides the "watching your screen time" notification without this.
+            if (v) Notifications.requestPermissionsAsync().catch(() => {});
+          }}
           trackColor={{ false: C.dark, true: C.track }}
           thumbColor={guardOn ? C.accent : '#fff'}
         />
