@@ -30,6 +30,10 @@ jobs:
       - name: Typecheck
         run: npx tsc --noEmit
 
+      # Play needs a higher version code for every upload; the run number always goes up.
+      - name: Set Android version code
+        run: node -e "const f='app.json',a=require('./'+f);a.expo.android.versionCode=Number(process.env.GITHUB_RUN_NUMBER);require('fs').writeFileSync(f,JSON.stringify(a,null,2))"
+
       # Purchases and ads (repo secrets). Without them the app builds with Google's test AdMob IDs,
       # no ads in release builds, and purchases switched off.
       - name: Generate native Android project
