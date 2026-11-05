@@ -1,7 +1,7 @@
 {
   "_note": "Each entry: katakana reading, then accepted spellings (lowercase). The first spelling is the clip id. Re-run scripts/generate_voices.py after adding names.",
   "names": [
-    ["アリ", "ali"],
+    ["アリー", "ali"],
     ["アフマド", "ahmed", "ahmad"],
     ["ムハンマド", "muhammad", "mohammad", "mohammed", "muhammed", "mohd"],
     ["ハサン", "hassan", "hasan"],

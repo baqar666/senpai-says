@@ -224,7 +224,7 @@
         "nameMood": "sad"
       },
       "shy": {
-        "en": "{n}... d-don't look at me like that... <giggle>",
+        "en": "{n}... D-don't... um... don't look at me like that... <giggle>",
         "jp": "{n}…み、みないでぇ、はずかしいよ",
         "tone": "soft",
         "jpContour": "shy",
@@ -376,7 +376,7 @@
         "nameMood": "sad"
       },
       "shy": {
-        "en": "{n}... it's not... a big deal.",
+        "en": "{n}... I-it's not... a b-big deal... okay?",
         "jp": "{n}…べ、べつに…なんでもない。",
         "tone": "soft",
         "jpContour": "shy",
@@ -528,7 +528,7 @@
         "nameMood": "sad"
       },
       "shy": {
-        "en": "{n}! W-what are you staring at?!",
+        "en": "{n}! W-what are you... s-staring at?! Stop it, dummy...",
         "jp": "{n}！な、なにじろじろみてるのよっ！",
         "tone": "loud",
         "jpContour": "angry",
@@ -680,7 +680,7 @@
         "nameMood": "sad"
       },
       "shy": {
-        "en": "{n}, <giggle> you're making me blush!",
+        "en": "{n}... um... y-you're making me blush... <giggle>",
         "jp": "{n}、えへへ…はずかしいよぉ！",
         "tone": "soft",
         "jpContour": "shy",
